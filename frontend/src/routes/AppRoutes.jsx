@@ -4,6 +4,7 @@ import Login from "../pages/auth/Login";
 import Signup from "../pages/auth/Signup";
 import Dashboard from "../pages/dashboard/Dashboard";
 import ProtectedRoute from "./ProtectedRoutes";
+import ResumeBuilder from "../pages/resume/ResumeBuilder";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +23,8 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/dashboard/builder" element={<ResumeBuilder/>} />
 
         {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" replace />} />
