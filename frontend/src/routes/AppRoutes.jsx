@@ -1,31 +1,27 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
+import ProtectedRoute from "../routes/ProtectedRoutes";
+import DashboardLayout from "../pages/layout/DashboardLayout";
 import Dashboard from "../pages/dashboard/Dashboard";
-import ProtectedRoute from "./ProtectedRoutes";
+import Login from "../pages/auth/Login";
+import SignUp from "../pages/auth/Signup";
 import ResumeBuilder from "../pages/resume/ResumeBuilder";
 
-const AppRoutes = () => {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-
-        {/* Protected Routes */}
+        <Route path="/signup" element={<SignUp />} />
         <Route
           path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="/dashboard/builder" element={<ResumeBuilder/>} />
-
+          element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="/dashboard/builder" element={<ResumeBuilder/>} />
+          {/* Add more nested routes here */}
+        </Route>
         {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -34,6 +30,4 @@ const AppRoutes = () => {
       </Routes>
     </BrowserRouter>
   );
-};
-
-export default AppRoutes;
+}

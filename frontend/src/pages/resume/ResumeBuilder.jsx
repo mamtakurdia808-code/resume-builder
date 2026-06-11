@@ -1,10 +1,16 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   FiUser, FiMail, FiPhone, FiMapPin, FiLinkedin, FiGithub,
   FiGlobe, FiPlus, FiTrash2, FiDownload, FiEye, FiSave,
   FiRefreshCw, FiChevronDown, FiChevronUp, FiBriefcase,
   FiBook, FiAward, FiCode, FiZap, FiX, FiCheck
 } from "react-icons/fi";
+import {
+  createResume,
+  getAllResumes,
+  updateResume,
+  getResumeById,
+} from "../../services/resumeService";
 
 // ─── Initial State ───────────────────────────────────────────────────────────
 const INITIAL_STATE = {
@@ -279,6 +285,9 @@ export default function ResumeBuilder() {
   const [showPreview, setShowPreview] = useState(false);
   const [toast, setToast] = useState(null);
   const previewRef = useRef(null);
+  const [resumeId, setResumeId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [savedResumes, setSavedResumes] = useState([]);
 
   const notify = (message, type = "success") => {
     setToast({ message, type });
@@ -343,9 +352,65 @@ export default function ResumeBuilder() {
       certifications: prev.certifications.map(c => c.id === id ? { ...c, [key]: val } : c),
     }));
 
-  const handleSave = () => notify("Resume saved successfully!", "success");
+const handleSave = async () => {
+  try {
+    setLoading(true);
+
+    const payload = {
+      title:
+        formData.personal?.fullName?.trim() || "My Resume",
+      resume_data: formData,
+    };
+
+    let response;
+
+    if (resumeId) {
+      response = await updateResume(resumeId, payload);
+    } else {
+      response = await createResume(payload);
+
+      if (response.data?.resume?.id) {
+        setResumeId(response.data.resume.id);
+      }
+    }
+
+    console.log("Resume Saved:", response.data);
+
+    notify("Resume saved successfully!", "success");
+
+    fetchResumes();
+  } catch (error) {
+    console.error("Save Error:", error);
+
+    notify(
+      error.response?.data?.message ||
+        error.message ||
+        "Failed to save resume",
+      "info"
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
   const handleClear = () => { setFormData(INITIAL_STATE); notify("Form cleared.", "info"); };
   const handleDownload = () => notify("PDF download coming soon!", "info");
+
+  useEffect(() => {
+  fetchResumes();
+}, []);
+
+const fetchResumes = async () => {
+  try {
+    const data = await getAllResumes();
+
+    if (data.success) {
+      setSavedResumes(data.resumes);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <>
@@ -372,6 +437,39 @@ export default function ResumeBuilder() {
           {/* ── FORM PANEL ── */}
           <div className={`form-panel ${showPreview ? "hidden-mobile" : ""}`}>
             <div className="panel-scroll">
+
+              <SectionCard
+  icon={FiSave}
+  title="Saved Resumes"
+  color="color-blue"
+>
+  {savedResumes.length === 0 ? (
+    <p className="empty-hint">No resumes found.</p>
+  ) : (
+    <div className="skill-chips">
+      {savedResumes.map((resume) => (
+        <button
+          key={resume.id}
+          className="skill-chip"
+          onClick={async () => {
+            try {
+              const data = await getResumeById(resume.id);
+
+              if (data.success) {
+                setFormData(data.resume.resume_data);
+                setResumeId(data.resume.id);
+              }
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        >
+          {resume.title}
+        </button>
+      ))}
+    </div>
+  )}
+</SectionCard>
 
               {/* Personal */}
               <SectionCard icon={FiUser} title="Personal Information" color="color-blue">
@@ -491,7 +589,14 @@ export default function ResumeBuilder() {
               </SectionCard>
 
               <div className="form-footer-btns">
-                <button onClick={handleSave} className="btn btn-accent full-btn"><FiSave size={15} /> Save Resume</button>
+                <button
+  onClick={handleSave}
+  className="btn btn-accent"
+  disabled={loading}
+>
+  <FiSave size={14} />
+  {loading ? "Saving..." : "Save"}
+</button>
                 <button onClick={handleDownload} className="btn btn-outline full-btn"><FiDownload size={15} /> Download PDF</button>
                 <button onClick={handleClear} className="btn btn-ghost full-btn"><FiRefreshCw size={15} /> Clear Form</button>
               </div>
