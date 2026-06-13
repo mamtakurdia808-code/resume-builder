@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const authenticateToken = require("../middleware/auth.middleware");
-
 const {
   createResume,
   getAllResumes,
@@ -11,14 +9,12 @@ const {
   deleteResume,
 } = require("../controllers/resume.controller");
 
-router.post("/", authenticateToken, createResume);
+const authenticate = require("../middleware/auth.middleware");
 
-router.get("/", authenticateToken, getAllResumes);
-
-router.get("/:id", authenticateToken, getResumeById);
-
-router.put("/:id", authenticateToken, updateResume);
-
-router.delete("/:id", authenticateToken, deleteResume);
+router.post("/", authenticate, createResume);
+router.get("/", authenticate, getAllResumes);
+router.get("/:id", authenticate, getResumeById);
+router.put("/:id", authenticate, updateResume);
+router.delete("/:id", authenticate, deleteResume);
 
 module.exports = router;

@@ -14,6 +14,12 @@ const createResume = async (req, res) => {
         message: "Title and resume data are required",
       });
     }
+    if (!title?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Title is required",
+  });
+}
 
     const result = await pool.query(
       `INSERT INTO resumes (user_id, title, resume_data)
@@ -35,6 +41,8 @@ const createResume = async (req, res) => {
       message: "Internal server error",
     });
   }
+  console.log("USER:", req.user);
+console.log("BODY:", req.body);
 };
 
 /**
@@ -125,16 +133,22 @@ const updateResume = async (req, res) => {
         message: "Resume not found",
       });
     }
+    if (!title?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: "Title is required",
+  });
+}
 
     const result = await pool.query(
-      `UPDATE resumes
-       SET title = $1,
-           resume_data = $2,
-           updated_at = CURRENT_TIMESTAMP
-       WHERE id = $3
-       RETURNING *`,
-      [title, resume_data, resumeId]
-    );
+  `UPDATE resumes
+   SET title = $1,
+       resume_data = $2,
+       updated_at = CURRENT_TIMESTAMP
+   WHERE id = $3 AND user_id = $4
+   RETURNING *`,
+  [title, resume_data, resumeId, userId]
+);
 
     res.status(200).json({
       success: true,

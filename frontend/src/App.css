@@ -70,6 +70,16 @@
   }
 }
 
+/* ── SAFETY OVERRIDE ───────────────────────────────────────────────────
+   This prevents the global boilerplate flex settings from center-aligning 
+   and disrupting elements nested inside your full-bleed login page panels.
+*/
+#center:has(.login-root) {
+  place-items: stretch !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);

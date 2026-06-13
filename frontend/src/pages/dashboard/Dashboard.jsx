@@ -5,43 +5,39 @@ import { useNavigate } from "react-router-dom";
 const STATS = [
   {
     id: "resumes", label: "Total Resumes", value: "7", change: "+2 this month",
-    positive: true, icon: <DocIcon />, color: "#7c3aed",
-    bg: "linear-gradient(135deg,rgba(124,58,237,0.15),rgba(79,70,229,0.08))",
-    border: "rgba(124,58,237,0.25)",
+    positive: true, icon: <DocIcon />, color: "#6366F1",
+    bg: "#FFFFFF", border: "#E2E8F0",
   },
   {
     id: "reports", label: "ATS Reports", value: "24", change: "+5 this week",
-    positive: true, icon: <ScanIcon />, color: "#0ea5e9",
-    bg: "linear-gradient(135deg,rgba(14,165,233,0.15),rgba(6,182,212,0.08))",
-    border: "rgba(14,165,233,0.25)",
+    positive: true, icon: <ScanIcon />, color: "#8B5CF6",
+    bg: "#FFFFFF", border: "#E2E8F0",
   },
   {
     id: "score", label: "Best ATS Score", value: "91%", change: "↑ from 76%",
-    positive: true, icon: <TrophyIcon />, color: "#10b981",
-    bg: "linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.08))",
-    border: "rgba(16,185,129,0.25)",
+    positive: true, icon: <TrophyIcon />, color: "#10B981",
+    bg: "#FFFFFF", border: "#E2E8F0",
   },
   {
     id: "profile", label: "Profile Completion", value: "68%", change: "3 steps left",
-    positive: false, icon: <ProfileIcon />, color: "#f59e0b",
-    bg: "linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.08))",
-    border: "rgba(245,158,11,0.25)",
+    positive: false, icon: <ProfileIcon />, color: "#F59E0B",
+    bg: "#FFFFFF", border: "#E2E8F0",
   },
 ];
 
 const QUICK_ACTIONS = [
-  { id: "create", label: "Create Resume", desc: "Start from scratch or template", icon: "✏️", color: "#7c3aed", bg: "rgba(124,58,237,0.12)", border: "rgba(124,58,237,0.25)" },
-  { id: "upload", label: "Upload Resume", desc: "Import your existing resume", icon: "📤", color: "#0ea5e9", bg: "rgba(14,165,233,0.12)", border: "rgba(14,165,233,0.25)" },
-  { id: "ats", label: "ATS Scan", desc: "Check resume compatibility", icon: "🔍", color: "#10b981", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)" },
-  { id: "analyze", label: "Analyze Job", desc: "Match resume to job posting", icon: "🎯", color: "#f59e0b", bg: "rgba(245,158,11,0.12)", border: "rgba(245,158,11,0.25)" },
+  { id: "create", label: "Create Resume", desc: "Start from scratch or template", icon: "✏️", color: "#6366F1", bg: "rgba(99,102,241,0.06)", border: "#E0E0FD" },
+  { id: "upload", label: "Upload Resume", desc: "Import your existing resume", icon: "📤", color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "#EDE9FE" },
+  { id: "ats", label: "ATS Scan", desc: "Check resume compatibility", icon: "🔍", color: "#10B981", bg: "rgba(16,185,129,0.06)", border: "#D1FAE5" },
+  { id: "analyze", label: "Analyze Job", desc: "Match resume to job posting", icon: "🎯", color: "#F59E0B", bg: "rgba(245,158,11,0.06)", border: "#FEF3C7" },
 ];
 
 const RECENT_ACTIVITY = [
-  { id: 1, type: "created", icon: "📄", title: "Software Engineer Resume", sub: "Created from 'Modern Tech' template", time: "Today, 10:32 AM", score: null, tag: "Created", tagColor: "#7c3aed" },
-  { id: 2, type: "ats", icon: "✅", title: "ATS Scan — Product Manager Resume", sub: "Scored against 'Product Lead' job posting", time: "Yesterday, 3:14 PM", score: 87, tag: "ATS Scan", tagColor: "#10b981" },
-  { id: 3, type: "updated", icon: "🔄", title: "Data Analyst Resume", sub: "Updated skills section & added 3 projects", time: "2 days ago", score: null, tag: "Updated", tagColor: "#0ea5e9" },
-  { id: 4, type: "ats", icon: "✅", title: "ATS Scan — Frontend Developer", sub: "Scored 91% — top match!", time: "3 days ago", score: 91, tag: "ATS Scan", tagColor: "#10b981" },
-  { id: 5, type: "created", icon: "📄", title: "UX Designer Portfolio Resume", sub: "Created from 'Creative Pro' template", time: "4 days ago", score: null, tag: "Created", tagColor: "#7c3aed" },
+  { id: 1, type: "created", icon: "📄", title: "Software Engineer Resume", sub: "Created from 'Modern Tech' template", time: "Today, 10:32 AM", score: null, tag: "Created", tagColor: "#6366F1", tagBg: "rgba(99,102,241,0.08)" },
+  { id: 2, type: "ats", icon: "✅", title: "ATS Scan — Product Manager Resume", sub: "Scored against 'Product Lead' job posting", time: "Yesterday, 3:14 PM", score: 87, tag: "ATS Scan", tagColor: "#10B981", tagBg: "rgba(16,185,129,0.08)" },
+  { id: 3, type: "updated", icon: "🔄", title: "Data Analyst Resume", sub: "Updated skills section & added 3 projects", time: "2 days ago", score: null, tag: "Updated", tagColor: "#8B5CF6", tagBg: "rgba(139,92,246,0.08)" },
+  { id: 4, type: "ats", icon: "✅", title: "ATS Scan — Frontend Developer", sub: "Scored 91% — top match!", time: "3 days ago", score: 91, tag: "ATS Scan", tagColor: "#10B981", tagBg: "rgba(16,185,129,0.08)" },
+  { id: 5, type: "created", icon: "📄", title: "UX Designer Portfolio Resume", sub: "Created from 'Creative Pro' template", time: "4 days ago", score: null, tag: "Created", tagColor: "#6366F1", tagBg: "rgba(99,102,241,0.08)" },
 ];
 
 const RESUMES = [
@@ -52,33 +48,46 @@ const RESUMES = [
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+const card = {
+  background: "#FFFFFF",
+  border: "1px solid #E2E8F0",
+  borderRadius: 12,
+  boxShadow: "0 1px 3px rgba(15,23,42,0.06)",
+};
+
 function StatCard({ stat, delay }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { setTimeout(() => setVisible(true), delay); }, [delay]);
   return (
     <div style={{
-      background: stat.bg, border: `1px solid ${stat.border}`,
-      borderRadius: 16, padding: "20px 22px",
-      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)",
-      transition: "all 0.45s cubic-bezier(0.34,1.1,0.64,1)",
-      cursor: "default", position: "relative", overflow: "hidden",
+      ...card,
+      padding: "20px 22px",
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(12px)",
+      transition: "opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease",
+      cursor: "default",
     }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 30px ${stat.color}22`; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 16px rgba(15,23,42,0.1)`; e.currentTarget.style.transform = "translateY(-1px)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(15,23,42,0.06)"; e.currentTarget.style.transform = "none"; }}
     >
-      <div style={{ position: "absolute", top: -20, right: -20, width: 80, height: 80, borderRadius: "50%", background: stat.color, opacity: 0.06 }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 11, background: `${stat.color}22`, border: `1px solid ${stat.color}44`, display: "flex", alignItems: "center", justifyContent: "center", color: stat.color }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: `${stat.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: stat.color }}>
           {stat.icon}
         </div>
-        <span style={{ fontSize: 11, fontWeight: 600, color: stat.positive ? "#4ade80" : "#fbbf24", background: stat.positive ? "rgba(74,222,128,0.1)" : "rgba(251,191,36,0.1)", border: `1px solid ${stat.positive ? "rgba(74,222,128,0.2)" : "rgba(251,191,36,0.2)"}`, borderRadius: 20, padding: "2px 8px" }}>
+        <span style={{
+          fontSize: 11, fontWeight: 600,
+          color: stat.positive ? "#10B981" : "#F59E0B",
+          background: stat.positive ? "#ECFDF5" : "#FFFBEB",
+          border: `1px solid ${stat.positive ? "#A7F3D0" : "#FDE68A"}`,
+          borderRadius: 20, padding: "2px 8px",
+          fontFamily: "'Inter', sans-serif",
+        }}>
           {stat.change}
         </span>
       </div>
-      <div style={{ fontSize: 30, fontWeight: 800, color: "#f1f5f9", fontFamily: "'Plus Jakarta Sans',sans-serif", letterSpacing: "-0.04em", lineHeight: 1 }}>
+      <div style={{ fontSize: 28, fontWeight: 800, color: "#0F172A", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.04em", lineHeight: 1 }}>
         {stat.value}
       </div>
-      <div style={{ fontSize: 12.5, color: "#64748b", marginTop: 5, fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 500 }}>
+      <div style={{ fontSize: 12.5, color: "#94A3B8", marginTop: 5, fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>
         {stat.label}
       </div>
     </div>
@@ -93,23 +102,23 @@ function QuickActionCard({ action, delay, onClick }) {
       onClick={onClick}
       style={{
         background: action.bg, border: `1px solid ${action.border}`,
-        borderRadius: 14, padding: "18px 20px",
-        display: "flex", alignItems: "center", gap: 14,
+        borderRadius: 10, padding: "14px 16px",
+        display: "flex", alignItems: "center", gap: 12,
         cursor: "pointer", width: "100%", textAlign: "left",
-        opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(12px)",
-        transition: "all 0.4s cubic-bezier(0.34,1.1,0.64,1)",
+        opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(8px)",
+        transition: "opacity 0.35s ease, transform 0.35s ease, box-shadow 0.15s ease",
       }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px) scale(1.01)"; e.currentTarget.style.boxShadow = `0 8px 24px ${action.color}22`; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 12px ${action.color}18`; e.currentTarget.style.transform = "translateY(-1px)"; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "none"; }}
     >
-      <div style={{ width: 44, height: 44, borderRadius: 12, background: `${action.color}18`, border: `1px solid ${action.color}33`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 10, background: `${action.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
         {action.icon}
       </div>
       <div>
-        <div style={{ fontSize: 13.5, fontWeight: 700, color: "#e2e8f0", fontFamily: "'Plus Jakarta Sans',sans-serif", marginBottom: 2 }}>
+        <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0F172A", fontFamily: "'Inter', sans-serif", marginBottom: 2 }}>
           {action.label}
         </div>
-        <div style={{ fontSize: 11.5, color: "#475569", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+        <div style={{ fontSize: 11.5, color: "#94A3B8", fontFamily: "'Inter', sans-serif" }}>
           {action.desc}
         </div>
       </div>
@@ -118,14 +127,15 @@ function QuickActionCard({ action, delay, onClick }) {
 }
 
 function ScorePill({ score }) {
-  const color = score >= 85 ? "#10b981" : score >= 70 ? "#f59e0b" : "#ef4444";
+  const color = score >= 85 ? "#10B981" : score >= 70 ? "#F59E0B" : "#EF4444";
+  const bg = score >= 85 ? "#ECFDF5" : score >= 70 ? "#FFFBEB" : "#FEF2F2";
   const label = score >= 85 ? "Excellent" : score >= 70 ? "Fair" : "Needs Work";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${color}18`, border: `2px solid ${color}44`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-        <span style={{ fontSize: 9, fontWeight: 800, color, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{score}</span>
+      <div style={{ width: 30, height: 30, borderRadius: "50%", background: bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span style={{ fontSize: 9, fontWeight: 700, color, fontFamily: "'Inter', sans-serif" }}>{score}</span>
       </div>
-      <span style={{ fontSize: 11, color, fontWeight: 600 }}>{label}</span>
+      <span style={{ fontSize: 11, color, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>{label}</span>
     </div>
   );
 }
@@ -142,109 +152,103 @@ export default function Dashboard() {
 
   useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
 
+  const font = "'Inter', sans-serif";
+
   return (
-    <div style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", color: "#f1f5f9", minHeight: "100vh" }}>
+    <div style={{ fontFamily: font, color: "#111827" }}>
 
       {/* Welcome Banner */}
       <div style={{
-        background: "linear-gradient(135deg,rgba(124,58,237,0.12) 0%,rgba(79,70,229,0.08) 50%,rgba(14,165,233,0.06) 100%)",
-        border: "1px solid rgba(124,58,237,0.15)",
-        borderRadius: 18, padding: "24px 28px", marginBottom: 28,
+        background: "linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)",
+        borderRadius: 14, padding: "24px 28px", marginBottom: 24,
         display: "flex", justifyContent: "space-between", alignItems: "center",
         flexWrap: "wrap", gap: 16, position: "relative", overflow: "hidden",
-        opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(16px)",
-        transition: "all 0.5s cubic-bezier(0.34,1.1,0.64,1)",
+        opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(12px)",
+        transition: "opacity 0.45s ease, transform 0.45s ease",
+        boxShadow: "0 8px 32px rgba(99,102,241,0.28)",
       }}>
-        {/* Decorative orb */}
-        <div style={{ position: "absolute", right: -30, top: -30, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle,rgba(124,58,237,0.12) 0%,transparent 70%)", pointerEvents: "none" }} />
+        {/* Subtle pattern overlay */}
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 80% -20%, rgba(255,255,255,0.12) 0%, transparent 60%)", pointerEvents: "none" }} />
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <span style={{ fontSize: 20 }}>👋</span>
-            <h2 style={{ fontSize: 20, fontWeight: 800, color: "#f8fafc", letterSpacing: "-0.03em" }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em" }}>
               {greeting}, {firstName}!
             </h2>
           </div>
-          <p style={{ fontSize: 13.5, color: "#64748b", lineHeight: 1.5 }}>
-            You have <span style={{ color: "#a78bfa", fontWeight: 700 }}>3 resumes</span> ready to send. Your best ATS score is <span style={{ color: "#10b981", fontWeight: 700 }}>91%</span> 🎉
+          <p style={{ fontSize: 13.5, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
+            You have <span style={{ color: "#FFFFFF", fontWeight: 700 }}>3 resumes</span> ready to send. Your best ATS score is <span style={{ color: "#A7F3D0", fontWeight: 700 }}>91%</span> 🎉
           </p>
         </div>
         <button
           onClick={() => navigate("/dashboard/builder")}
           style={{
-            display: "flex", alignItems: "center", gap: 8, padding: "11px 20px",
-            background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
-            border: "none", borderRadius: 11, cursor: "pointer",
-            color: "#fff", fontWeight: 700, fontSize: 13.5,
-            fontFamily: "'Plus Jakarta Sans',sans-serif",
-            boxShadow: "0 4px 18px rgba(124,58,237,0.4)", flexShrink: 0,
-            transition: "all 0.2s",
+            display: "flex", alignItems: "center", gap: 8, padding: "10px 20px",
+            background: "#FFFFFF",
+            border: "none", borderRadius: 9, cursor: "pointer",
+            color: "#6366F1", fontWeight: 700, fontSize: 13.5, fontFamily: font,
+            boxShadow: "0 2px 8px rgba(15,23,42,0.12)", flexShrink: 0,
+            transition: "all 0.15s",
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(124,58,237,0.5)"; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 18px rgba(124,58,237,0.4)"; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.18)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(15,23,42,0.12)"; }}
         >
           <span>✏️</span> Build New Resume
         </button>
       </div>
 
       {/* Stats Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 16, marginBottom: 28 }}>
-        {STATS.map((stat, i) => <StatCard key={stat.id} stat={stat} delay={i * 80} />)}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 24 }}>
+        {STATS.map((stat, i) => <StatCard key={stat.id} stat={stat} delay={i * 70} />)}
       </div>
 
-      {/* Main content: Quick Actions + Activity */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 20, marginBottom: 24 }} className="main-grid">
+      {/* Quick Actions + Activity */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 18, marginBottom: 20 }} className="main-grid">
         {/* Quick Actions */}
-        <div style={{
-          background: "rgba(13,17,30,0.7)", border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 18, padding: "22px 20px",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 18 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#7c3aed", boxShadow: "0 0 6px rgba(124,58,237,0.6)" }} />
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#e2e8f0", letterSpacing: "-0.01em" }}>Quick Actions</h3>
+        <div style={{ ...card, padding: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#6366F1" }} />
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>Quick Actions</h3>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {QUICK_ACTIONS.map((action, i) => (
-              <QuickActionCard key={action.id} action={action} delay={200 + i * 70} onClick={() => {}} />
+              <QuickActionCard key={action.id} action={action} delay={180 + i * 60} onClick={() => {}} />
             ))}
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div style={{
-          background: "rgba(13,17,30,0.7)", border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 18, padding: "22px 20px",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#0ea5e9", boxShadow: "0 0 6px rgba(14,165,233,0.6)" }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#e2e8f0", letterSpacing: "-0.01em" }}>Recent Activity</h3>
+        <div style={{ ...card, padding: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#8B5CF6" }} />
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>Recent Activity</h3>
             </div>
-            <span style={{ fontSize: 12, color: "#a78bfa", fontWeight: 600, cursor: "pointer" }}>View all</span>
+            <span style={{ fontSize: 12, color: "#6366F1", fontWeight: 600, cursor: "pointer" }}>View all</span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             {RECENT_ACTIVITY.map((item, i) => (
               <div key={item.id} style={{
-                display: "flex", gap: 14, padding: "13px 0",
-                borderBottom: i < RECENT_ACTIVITY.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                cursor: "pointer", borderRadius: 8,
-                transition: "background 0.15s",
+                display: "flex", gap: 12, padding: "11px 8px",
+                borderBottom: i < RECENT_ACTIVITY.length - 1 ? "1px solid #F1F5F9" : "none",
+                cursor: "pointer", borderRadius: 8, transition: "background 0.12s",
               }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.02)"}
+                onMouseEnter={e => e.currentTarget.style.background = "#F8FAFC"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
-                <div style={{ width: 34, height: 34, borderRadius: 10, background: "rgba(255,255,255,0.05)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, flexShrink: 0 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 9, background: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flexShrink: 0 }}>
                   {item.icon}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{item.title}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: item.tagColor, background: `${item.tagColor}18`, border: `1px solid ${item.tagColor}33`, borderRadius: 20, padding: "1px 7px", flexShrink: 0 }}>{item.tag}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
+                    <span style={{ fontSize: 12.5, fontWeight: 600, color: "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{item.title}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: item.tagColor, background: item.tagBg, borderRadius: 20, padding: "1px 7px", flexShrink: 0 }}>{item.tag}</span>
                   </div>
-                  <div style={{ fontSize: 11.5, color: "#475569", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.sub}</div>
+                  <div style={{ fontSize: 11.5, color: "#94A3B8", marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.sub}</div>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 11, color: "#334155" }}>{item.time}</span>
+                    <span style={{ fontSize: 11, color: "#CBD5E1" }}>{item.time}</span>
                     {item.score && (
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#10b981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 20, padding: "1px 8px" }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#10B981", background: "#ECFDF5", borderRadius: 20, padding: "1px 8px" }}>
                         {item.score}% ATS
                       </span>
                     )}
@@ -257,24 +261,21 @@ export default function Dashboard() {
       </div>
 
       {/* Resume Table */}
-      <div style={{
-        background: "rgba(13,17,30,0.7)", border: "1px solid rgba(255,255,255,0.06)",
-        borderRadius: 18, padding: "22px 24px", marginBottom: 24,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 6px rgba(16,185,129,0.6)" }} />
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#e2e8f0", letterSpacing: "-0.01em" }}>My Resumes</h3>
+      <div style={{ ...card, padding: "20px 24px", marginBottom: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />
+            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>My Resumes</h3>
           </div>
           <button style={{
             display: "flex", alignItems: "center", gap: 6, padding: "7px 14px",
-            background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)",
-            borderRadius: 9, cursor: "pointer", color: "#a78bfa",
-            fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 12.5, fontWeight: 600,
-            transition: "all 0.2s",
+            background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)",
+            borderRadius: 8, cursor: "pointer", color: "#6366F1",
+            fontFamily: font, fontSize: 12.5, fontWeight: 600,
+            transition: "all 0.15s",
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(124,58,237,0.2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(124,58,237,0.12)"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.14)"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.08)"; }}
           >
             <span>+</span> New Resume
           </button>
@@ -284,8 +285,9 @@ export default function Dashboard() {
         <div style={{
           display: "grid", gridTemplateColumns: "1fr 120px 100px 140px 120px",
           gap: 16, padding: "8px 12px", marginBottom: 4,
-          fontSize: 10.5, fontWeight: 700, color: "#334155",
+          fontSize: 10.5, fontWeight: 600, color: "#CBD5E1",
           letterSpacing: "0.06em", textTransform: "uppercase",
+          borderBottom: "1px solid #F1F5F9",
         }} className="resume-table-header">
           <span>Resume Name</span>
           <span>Template</span>
@@ -297,42 +299,37 @@ export default function Dashboard() {
         {RESUMES.map((resume, i) => (
           <div key={resume.id} style={{
             display: "grid", gridTemplateColumns: "1fr 120px 100px 140px 120px",
-            gap: 16, padding: "13px 12px",
-            background: "transparent",
-            borderRadius: 10,
-            borderTop: i > 0 ? "1px solid rgba(255,255,255,0.04)" : "none",
-            alignItems: "center", transition: "background 0.15s", cursor: "pointer",
+            gap: 16, padding: "12px 12px",
+            borderRadius: 8,
+            borderTop: i > 0 ? "1px solid #F8FAFC" : "none",
+            alignItems: "center", transition: "background 0.12s", cursor: "pointer",
           }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+            onMouseEnter={e => e.currentTarget.style.background = "#F8FAFC"}
             onMouseLeave={e => e.currentTarget.style.background = "transparent"}
             className="resume-row"
           >
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 32, height: 32, borderRadius: 9, background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>📄</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0" }}>{resume.title}</div>
-              </div>
+              <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(99,102,241,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>📄</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{resume.title}</div>
             </div>
-            <span style={{ fontSize: 12, color: "#475569" }}>{resume.template}</span>
+            <span style={{ fontSize: 12, color: "#94A3B8" }}>{resume.template}</span>
             <ScorePill score={resume.score} />
-            <span style={{ fontSize: 12, color: "#475569" }}>{resume.updated}</span>
+            <span style={{ fontSize: 12, color: "#94A3B8" }}>{resume.updated}</span>
             <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
               {[
-                { label: "Edit", icon: "✏️", color: "#7c3aed" },
-                { label: "Scan", icon: "🔍", color: "#10b981" },
+                { label: "Edit", color: "#6366F1", bg: "rgba(99,102,241,0.08)", hoverBg: "rgba(99,102,241,0.14)" },
+                { label: "Scan", color: "#10B981", bg: "rgba(16,185,129,0.08)", hoverBg: "rgba(16,185,129,0.14)" },
               ].map(btn => (
                 <button key={btn.label} style={{
-                  padding: "5px 10px", borderRadius: 7, cursor: "pointer",
-                  background: `${btn.color}18`, border: `1px solid ${btn.color}33`,
+                  padding: "5px 10px", borderRadius: 6, cursor: "pointer",
+                  background: btn.bg, border: "none",
                   color: btn.color, fontSize: 11, fontWeight: 600,
-                  fontFamily: "'Plus Jakarta Sans',sans-serif",
-                  display: "flex", alignItems: "center", gap: 4,
-                  transition: "all 0.15s",
+                  fontFamily: font, transition: "all 0.12s",
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = `${btn.color}28`}
-                  onMouseLeave={e => e.currentTarget.style.background = `${btn.color}18`}
+                  onMouseEnter={e => e.currentTarget.style.background = btn.hoverBg}
+                  onMouseLeave={e => e.currentTarget.style.background = btn.bg}
                 >
-                  <span style={{ fontSize: 12 }}>{btn.icon}</span> {btn.label}
+                  {btn.label}
                 </button>
               ))}
             </div>
@@ -342,30 +339,31 @@ export default function Dashboard() {
 
       {/* ATS Tips banner */}
       <div style={{
-        background: "linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.06))",
-        border: "1px solid rgba(16,185,129,0.2)",
-        borderRadius: 16, padding: "18px 24px",
+        background: "#ECFDF5",
+        border: "1px solid #A7F3D0",
+        borderRadius: 12, padding: "18px 22px",
         display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
       }}>
-        <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>💡</div>
+        <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(16,185,129,0.12)", border: "1px solid #A7F3D0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>💡</div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#e2e8f0", marginBottom: 3 }}>Pro Tip: Boost your ATS score by 20%</div>
-          <div style={{ fontSize: 12.5, color: "#475569" }}>Add measurable achievements and job-specific keywords to each resume section. Avoid tables and graphics — ATS parsers can't read them.</div>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#065F46", marginBottom: 3 }}>Pro Tip: Boost your ATS score by 20%</div>
+          <div style={{ fontSize: 12.5, color: "#6B7280" }}>Add measurable achievements and job-specific keywords to each resume section. Avoid tables and graphics — ATS parsers can't read them.</div>
         </div>
         <button style={{
-          padding: "9px 18px", borderRadius: 9, cursor: "pointer", flexShrink: 0,
-          background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.25)",
-          color: "#10b981", fontFamily: "'Plus Jakarta Sans',sans-serif",
-          fontSize: 12.5, fontWeight: 700, transition: "all 0.2s",
+          padding: "8px 16px", borderRadius: 8, cursor: "pointer", flexShrink: 0,
+          background: "#10B981", border: "none",
+          color: "#FFFFFF", fontFamily: font,
+          fontSize: 12.5, fontWeight: 600, transition: "all 0.15s",
         }}
-          onMouseEnter={e => e.currentTarget.style.background = "rgba(16,185,129,0.25)"}
-          onMouseLeave={e => e.currentTarget.style.background = "rgba(16,185,129,0.15)"}
+          onMouseEnter={e => e.currentTarget.style.background = "#059669"}
+          onMouseLeave={e => e.currentTarget.style.background = "#10B981"}
         >
           Learn More →
         </button>
       </div>
 
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         @media (max-width: 900px) {
           .main-grid { grid-template-columns: 1fr !important; }
         }

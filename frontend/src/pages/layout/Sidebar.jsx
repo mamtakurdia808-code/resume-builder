@@ -44,12 +44,11 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
 
   return (
     <>
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           onClick={() => setMobileOpen(false)}
           style={{
-            position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+            position: "fixed", inset: 0, background: "rgba(15,23,42,0.7)",
             zIndex: 40, backdropFilter: "blur(4px)",
           }}
         />
@@ -58,14 +57,12 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
       <aside style={{
         position: "fixed", top: 0, left: 0, bottom: 0,
         width: sidebarWidth,
-        background: "rgba(9,11,20,0.97)",
-        backdropFilter: "blur(20px)",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
+        background: "#0F172A",
+        borderRight: "1px solid rgba(99,102,241,0.12)",
         display: "flex", flexDirection: "column",
         transition: "width 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1)",
         zIndex: 50,
         transform: mobileOpen ? "translateX(0)" : undefined,
-        boxShadow: "4px 0 24px rgba(0,0,0,0.4)",
         overflow: "hidden",
       }}
         className="sidebar-root"
@@ -74,27 +71,31 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
         <div style={{
           height: 64, display: "flex", alignItems: "center",
           padding: collapsed ? "0 18px" : "0 20px",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          borderBottom: "1px solid rgba(99,102,241,0.1)",
           gap: 10, overflow: "hidden",
         }}>
           <div style={{
             width: 34, height: 34, borderRadius: 10, flexShrink: 0,
-            background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
+            background: "linear-gradient(135deg,#6366F1,#8B5CF6)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 4px 14px rgba(124,58,237,0.4)",
+            boxShadow: "0 4px 14px rgba(99,102,241,0.35)",
           }}>
             <ResumeLogoIcon />
           </div>
           {!collapsed && (
             <div style={{ overflow: "hidden", whiteSpace: "nowrap" }}>
               <div style={{
-                fontFamily: "'Plus Jakarta Sans',sans-serif",
-                fontWeight: 800, fontSize: 15.5,
-                background: "linear-gradient(90deg,#a78bfa,#818cf8)",
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700, fontSize: 15.5,
+                background: "linear-gradient(90deg,#818CF8,#A78BFA)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
                 letterSpacing: "-0.02em",
               }}>ResumeAI</div>
-              <div style={{ fontSize: 10, color: "#334155", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", marginTop: -1 }}>
+              <div style={{
+                fontSize: 10, color: "#475569", fontWeight: 600,
+                letterSpacing: "0.06em", textTransform: "uppercase", marginTop: -1,
+                fontFamily: "'Inter', sans-serif",
+              }}>
                 Pro Dashboard
               </div>
             </div>
@@ -102,15 +103,15 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "12px 10px" }}>
+        <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "16px 10px" }}>
           {NAV_ITEMS.map((group) => (
-            <div key={group.group} style={{ marginBottom: 24 }}>
+            <div key={group.group} style={{ marginBottom: 28 }}>
               {!collapsed && (
                 <div style={{
-                  fontSize: 10, fontWeight: 700, color: "#1e293b",
+                  fontSize: 10, fontWeight: 600, color: "#334155",
                   letterSpacing: "0.1em", textTransform: "uppercase",
-                  padding: "0 8px", marginBottom: 6,
-                  fontFamily: "'Plus Jakarta Sans',sans-serif",
+                  padding: "0 10px", marginBottom: 8,
+                  fontFamily: "'Inter', sans-serif",
                 }}>
                   {group.group}
                 </div>
@@ -124,39 +125,45 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
                     title={collapsed ? item.label : undefined}
                     style={{
                       width: "100%", display: "flex", alignItems: "center",
-                      gap: 10, padding: collapsed ? "10px 12px" : "10px 12px",
-                      borderRadius: 10, border: "none", cursor: "pointer",
+                      gap: 10, padding: "9px 10px",
+                      borderRadius: 8, border: "none", cursor: "pointer",
                       background: active
-                        ? "linear-gradient(135deg,rgba(124,58,237,0.2),rgba(79,70,229,0.15))"
+                        ? "rgba(99,102,241,0.15)"
                         : "transparent",
-                      color: active ? "#c4b5fd" : "#475569",
-                      transition: "all 0.18s ease",
+                      color: active ? "#818CF8" : "#64748B",
+                      transition: "all 0.15s ease",
                       marginBottom: 2, textAlign: "left",
                       justifyContent: collapsed ? "center" : "flex-start",
                       position: "relative",
-                      boxShadow: active ? "inset 0 0 0 1px rgba(124,58,237,0.25)" : "none",
+                      boxShadow: active ? "inset 0 0 0 1px rgba(99,102,241,0.2)" : "none",
+                      fontFamily: "'Inter', sans-serif",
                     }}
                     onMouseEnter={(e) => {
-                      if (!active) { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.color = "#94a3b8"; }
+                      if (!active) {
+                        e.currentTarget.style.background = "rgba(99,102,241,0.08)";
+                        e.currentTarget.style.color = "#94A3B8";
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      if (!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#475569"; }
+                      if (!active) {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "#64748B";
+                      }
                     }}
                   >
                     {active && (
                       <div style={{
-                        position: "absolute", left: 0, top: "20%", bottom: "20%",
+                        position: "absolute", left: 0, top: "18%", bottom: "18%",
                         width: 3, borderRadius: "0 3px 3px 0",
-                        background: "linear-gradient(180deg,#a78bfa,#818cf8)",
+                        background: "linear-gradient(180deg,#6366F1,#8B5CF6)",
                       }} />
                     )}
-                    <span style={{ flexShrink: 0, opacity: active ? 1 : 0.6, display: "flex" }}>
+                    <span style={{ flexShrink: 0, opacity: active ? 1 : 0.55, display: "flex" }}>
                       {item.icon}
                     </span>
                     {!collapsed && (
                       <span style={{
                         fontSize: 13.5, fontWeight: active ? 600 : 500,
-                        fontFamily: "'Plus Jakarta Sans',sans-serif",
                         whiteSpace: "nowrap", overflow: "hidden", flex: 1,
                       }}>
                         {item.label}
@@ -164,10 +171,10 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
                     )}
                     {!collapsed && item.badge && (
                       <span style={{
-                        fontSize: 10, fontWeight: 700, color: "#7c3aed",
-                        background: "rgba(124,58,237,0.15)",
-                        border: "1px solid rgba(124,58,237,0.25)",
-                        borderRadius: 6, padding: "1px 6px",
+                        fontSize: 10, fontWeight: 700, color: "#6366F1",
+                        background: "rgba(99,102,241,0.12)",
+                        border: "1px solid rgba(99,102,241,0.2)",
+                        borderRadius: 5, padding: "1px 6px",
                       }}>
                         {item.badge}
                       </span>
@@ -179,39 +186,38 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobile
           ))}
         </nav>
 
-        {/* Collapse toggle */}
-        <div style={{ padding: "10px", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+        {/* Collapse toggle + Logout */}
+        <div style={{ padding: "10px", borderTop: "1px solid rgba(99,102,241,0.1)" }}>
           <button
             onClick={() => setCollapsed(c => !c)}
             style={{
-              width: "100%", padding: "9px", borderRadius: 10,
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              cursor: "pointer", color: "#475569",
+              width: "100%", padding: "9px", borderRadius: 8,
+              background: "rgba(99,102,241,0.06)",
+              border: "1px solid rgba(99,102,241,0.12)",
+              cursor: "pointer", color: "#64748B",
               display: "flex", alignItems: "center", justifyContent: "center",
               gap: 8, transition: "all 0.2s",
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "#94a3b8"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; e.currentTarget.style.color = "#475569"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.12)"; e.currentTarget.style.color = "#94A3B8"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.06)"; e.currentTarget.style.color = "#64748B"; }}
           >
             <ChevronIcon flipped={collapsed} />
-            {!collapsed && <span style={{ fontSize: 12, fontFamily: "'Plus Jakarta Sans',sans-serif", fontWeight: 500 }}>Collapse</span>}
+            {!collapsed && <span style={{ fontSize: 12, fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>Collapse</span>}
           </button>
 
-          {/* Logout */}
           <button
             onClick={handleLogout}
             style={{
-              width: "100%", padding: "10px 12px", borderRadius: 10,
+              width: "100%", padding: "10px 12px", borderRadius: 8,
               background: "transparent", border: "none",
-              cursor: "pointer", color: "#475569",
+              cursor: "pointer", color: "#64748B",
               display: "flex", alignItems: "center",
               justifyContent: collapsed ? "center" : "flex-start",
               gap: 10, marginTop: 4, transition: "all 0.2s",
-              fontFamily: "'Plus Jakarta Sans',sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#f87171"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#475569"; }}
+            onMouseEnter={e => { e.currentTarget.style.background = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#F87171"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#64748B"; }}
           >
             <LogoutIcon />
             {!collapsed && <span style={{ fontSize: 13.5, fontWeight: 500 }}>Logout</span>}

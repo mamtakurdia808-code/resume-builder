@@ -175,14 +175,12 @@ function ResumePreview({ data }) {
         </div>
       </div>
 
-      {/* Summary */}
       {personal.summary && (
         <PreviewSection title="Professional Summary">
           <p className="prev-para">{personal.summary}</p>
         </PreviewSection>
       )}
 
-      {/* Skills */}
       {skills.length > 0 && (
         <PreviewSection title="Skills">
           <div className="prev-skills">
@@ -191,7 +189,6 @@ function ResumePreview({ data }) {
         </PreviewSection>
       )}
 
-      {/* Experience */}
       {experience.some(e => e.company || e.role) && (
         <PreviewSection title="Experience">
           {experience.filter(e => e.company || e.role).map((exp) => (
@@ -207,7 +204,6 @@ function ResumePreview({ data }) {
         </PreviewSection>
       )}
 
-      {/* Education */}
       {education.some(e => e.degree || e.university) && (
         <PreviewSection title="Education">
           {education.filter(e => e.degree || e.university).map((edu) => (
@@ -223,7 +219,6 @@ function ResumePreview({ data }) {
         </PreviewSection>
       )}
 
-      {/* Projects */}
       {projects.some(p => p.title) && (
         <PreviewSection title="Projects">
           {projects.filter(p => p.title).map((proj) => (
@@ -242,7 +237,6 @@ function ResumePreview({ data }) {
         </PreviewSection>
       )}
 
-      {/* Certifications */}
       {certifications.some(c => c.name) && (
         <PreviewSection title="Certifications">
           {certifications.filter(c => c.name).map((cert) => (
@@ -285,8 +279,8 @@ export default function ResumeBuilder() {
   const [showPreview, setShowPreview] = useState(false);
   const [toast, setToast] = useState(null);
   const previewRef = useRef(null);
-  const [resumeId, setResumeId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [resumeId, setResumeId] = useState(null);
   const [savedResumes, setSavedResumes] = useState([]);
 
   const notify = (message, type = "success") => {
@@ -294,11 +288,9 @@ export default function ResumeBuilder() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Personal
   const updatePersonal = (key, val) =>
     setFormData(prev => ({ ...prev, personal: { ...prev.personal, [key]: val } }));
 
-  // Education
   const addEducation = () =>
     setFormData(prev => ({ ...prev, education: [...prev.education, emptyEducation()] }));
   const removeEducation = (id) =>
@@ -309,7 +301,6 @@ export default function ResumeBuilder() {
       education: prev.education.map(e => e.id === id ? { ...e, [key]: val } : e),
     }));
 
-  // Skills
   const addSkill = () => {
     const s = skillInput.trim();
     if (!s || formData.skills.includes(s)) return;
@@ -319,7 +310,6 @@ export default function ResumeBuilder() {
   const removeSkill = (skill) =>
     setFormData(prev => ({ ...prev, skills: prev.skills.filter(s => s !== skill) }));
 
-  // Projects
   const addProject = () =>
     setFormData(prev => ({ ...prev, projects: [...prev.projects, emptyProject()] }));
   const removeProject = (id) =>
@@ -330,7 +320,6 @@ export default function ResumeBuilder() {
       projects: prev.projects.map(p => p.id === id ? { ...p, [key]: val } : p),
     }));
 
-  // Experience
   const addExperience = () =>
     setFormData(prev => ({ ...prev, experience: [...prev.experience, emptyExperience()] }));
   const removeExperience = (id) =>
@@ -341,7 +330,6 @@ export default function ResumeBuilder() {
       experience: prev.experience.map(e => e.id === id ? { ...e, [key]: val } : e),
     }));
 
-  // Certifications
   const addCertification = () =>
     setFormData(prev => ({ ...prev, certifications: [...prev.certifications, emptyCertification()] }));
   const removeCertification = (id) =>
@@ -352,65 +340,47 @@ export default function ResumeBuilder() {
       certifications: prev.certifications.map(c => c.id === id ? { ...c, [key]: val } : c),
     }));
 
-const handleSave = async () => {
-  try {
-    setLoading(true);
-
-    const payload = {
-      title:
-        formData.personal?.fullName?.trim() || "My Resume",
-      resume_data: formData,
-    };
-
-    let response;
-
-    if (resumeId) {
-      response = await updateResume(resumeId, payload);
-    } else {
-      response = await createResume(payload);
-
-      if (response.data?.resume?.id) {
-        setResumeId(response.data.resume.id);
-      }
+  const fetchResumes = async () => {
+    try {
+      const response = await getAllResumes();
+      setSavedResumes(response.data.resumes);
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    console.log("Resume Saved:", response.data);
-
-    notify("Resume saved successfully!", "success");
-
+  useEffect(() => {
     fetchResumes();
-  } catch (error) {
-    console.error("Save Error:", error);
+  }, []);
 
-    notify(
-      error.response?.data?.message ||
-        error.message ||
-        "Failed to save resume",
-      "info"
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const payload = {
+        title: formData.personal?.fullName || "Untitled Resume",
+        resume_data: formData,
+      };
+      let response;
+      if (resumeId) {
+        response = await updateResume(resumeId, payload);
+      } else {
+        response = await createResume(payload);
+        if (response.data.resume?.id) {
+          setResumeId(response.data.resume.id);
+        }
+      }
+      await fetchResumes();
+      notify("Resume saved successfully!", "success");
+    } catch (error) {
+      console.error(error);
+      notify(error.response?.data?.message || "Failed to save resume", "info");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClear = () => { setFormData(INITIAL_STATE); notify("Form cleared.", "info"); };
   const handleDownload = () => notify("PDF download coming soon!", "info");
-
-  useEffect(() => {
-  fetchResumes();
-}, []);
-
-const fetchResumes = async () => {
-  try {
-    const data = await getAllResumes();
-
-    if (data.success) {
-      setSavedResumes(data.resumes);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
 
   return (
     <>
@@ -419,8 +389,8 @@ const fetchResumes = async () => {
         {/* Top Bar */}
         <header className="topbar">
           <div className="topbar-brand">
-            <span className="topbar-logo"><FiZap size={18} /></span>
-            <span className="topbar-name">ResumeAI</span>
+            <span className="topbar-logo"><FiZap size={16} /></span>
+            <span className="topbar-name">Resume Builder</span>
           </div>
           <div className="topbar-actions">
             <button onClick={handleSave} className="btn btn-ghost"><FiSave size={14} /> Save</button>
@@ -438,41 +408,35 @@ const fetchResumes = async () => {
           <div className={`form-panel ${showPreview ? "hidden-mobile" : ""}`}>
             <div className="panel-scroll">
 
-              <SectionCard
-  icon={FiSave}
-  title="Saved Resumes"
-  color="color-blue"
->
-  {savedResumes.length === 0 ? (
-    <p className="empty-hint">No resumes found.</p>
-  ) : (
-    <div className="skill-chips">
-      {savedResumes.map((resume) => (
-        <button
-          key={resume.id}
-          className="skill-chip"
-          onClick={async () => {
-            try {
-              const data = await getResumeById(resume.id);
+              <SectionCard icon={FiSave} title="Saved Resumes" color="color-indigo">
+                {savedResumes.length === 0 ? (
+                  <p className="empty-hint">No resumes found.</p>
+                ) : (
+                  <div className="skill-chips">
+                    {savedResumes.map((resume) => (
+                      <button
+                        key={resume.id}
+                        className="skill-chip"
+                        onClick={async () => {
+                          try {
+                            const data = await getResumeById(resume.id);
+                            if (data.success) {
+                              setFormData(data.resume.resume_data);
+                              setResumeId(data.resume.id);
+                            }
+                          } catch (error) {
+                            console.error(error);
+                          }
+                        }}
+                      >
+                        {resume.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </SectionCard>
 
-              if (data.success) {
-                setFormData(data.resume.resume_data);
-                setResumeId(data.resume.id);
-              }
-            } catch (error) {
-              console.error(error);
-            }
-          }}
-        >
-          {resume.title}
-        </button>
-      ))}
-    </div>
-  )}
-</SectionCard>
-
-              {/* Personal */}
-              <SectionCard icon={FiUser} title="Personal Information" color="color-blue">
+              <SectionCard icon={FiUser} title="Personal Information" color="color-indigo">
                 <div className="grid-2">
                   <InputField label="Full Name" value={formData.personal.fullName} onChange={v => updatePersonal("fullName", v)} required icon={FiUser} />
                   <InputField label="Professional Title" value={formData.personal.title} onChange={v => updatePersonal("title", v)} icon={FiBriefcase} />
@@ -486,8 +450,7 @@ const fetchResumes = async () => {
                 <TextAreaField label="Professional Summary" value={formData.personal.summary} onChange={v => updatePersonal("summary", v)} rows={4} placeholder="Write a short professional summary..." />
               </SectionCard>
 
-              {/* Education */}
-              <SectionCard icon={FiBook} title="Education" color="color-purple">
+              <SectionCard icon={FiBook} title="Education" color="color-violet">
                 {formData.education.map((edu, idx) => (
                   <div key={edu.id} className="dynamic-entry">
                     <div className="entry-header">
@@ -507,8 +470,7 @@ const fetchResumes = async () => {
                 <AddButton onClick={addEducation} label="Add Education" />
               </SectionCard>
 
-              {/* Skills */}
-              <SectionCard icon={FiZap} title="Skills" color="color-green">
+              <SectionCard icon={FiZap} title="Skills" color="color-emerald">
                 <div className="skill-input-row">
                   <input
                     value={skillInput}
@@ -530,8 +492,7 @@ const fetchResumes = async () => {
                 </div>
               </SectionCard>
 
-              {/* Projects */}
-              <SectionCard icon={FiCode} title="Projects" color="color-orange">
+              <SectionCard icon={FiCode} title="Projects" color="color-amber">
                 {formData.projects.map((proj, idx) => (
                   <div key={proj.id} className="dynamic-entry">
                     <div className="entry-header">
@@ -550,8 +511,7 @@ const fetchResumes = async () => {
                 <AddButton onClick={addProject} label="Add Project" />
               </SectionCard>
 
-              {/* Experience */}
-              <SectionCard icon={FiBriefcase} title="Experience" color="color-teal">
+              <SectionCard icon={FiBriefcase} title="Experience" color="color-blue">
                 {formData.experience.map((exp, idx) => (
                   <div key={exp.id} className="dynamic-entry">
                     <div className="entry-header">
@@ -570,8 +530,7 @@ const fetchResumes = async () => {
                 <AddButton onClick={addExperience} label="Add Experience" />
               </SectionCard>
 
-              {/* Certifications */}
-              <SectionCard icon={FiAward} title="Certifications" color="color-pink">
+              <SectionCard icon={FiAward} title="Certifications" color="color-rose">
                 {formData.certifications.map((cert, idx) => (
                   <div key={cert.id} className="dynamic-entry">
                     <div className="entry-header">
@@ -589,14 +548,10 @@ const fetchResumes = async () => {
               </SectionCard>
 
               <div className="form-footer-btns">
-                <button
-  onClick={handleSave}
-  className="btn btn-accent"
-  disabled={loading}
->
-  <FiSave size={14} />
-  {loading ? "Saving..." : "Save"}
-</button>
+                <button onClick={handleSave} className="btn btn-accent full-btn" disabled={loading}>
+                  <FiSave size={14} />
+                  {loading ? "Saving..." : "Save Resume"}
+                </button>
                 <button onClick={handleDownload} className="btn btn-outline full-btn"><FiDownload size={15} /> Download PDF</button>
                 <button onClick={handleClear} className="btn btn-ghost full-btn"><FiRefreshCw size={15} /> Clear Form</button>
               </div>
@@ -626,41 +581,41 @@ const fetchResumes = async () => {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0f1117;
-    --surface: #161b27;
-    --surface2: #1d2436;
-    --border: rgba(255,255,255,0.07);
-    --border-hover: rgba(255,255,255,0.14);
-    --text-primary: #e8ecf4;
-    --text-secondary: #8b96b0;
-    --text-muted: #545e78;
-    --accent: #4f7ef8;
-    --accent-soft: rgba(79,126,248,0.15);
-    --accent-hover: #3d6ae0;
-    --green: #34c48b;
-    --green-soft: rgba(52,196,139,0.15);
-    --purple: #a78bfa;
-    --purple-soft: rgba(167,139,250,0.15);
-    --orange: #fb923c;
-    --orange-soft: rgba(251,146,60,0.15);
-    --teal: #2dd4bf;
-    --teal-soft: rgba(45,212,191,0.15);
-    --pink: #f472b6;
-    --pink-soft: rgba(244,114,182,0.15);
-    --red: #f87171;
-    --red-soft: rgba(248,113,113,0.12);
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface2: #F1F5F9;
+    --border: #E2E8F0;
+    --border-hover: #CBD5E1;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --accent: #6366F1;
+    --accent-soft: rgba(99,102,241,0.08);
+    --accent-hover: #4F46E5;
+    --violet: #8B5CF6;
+    --violet-soft: rgba(139,92,246,0.08);
+    --emerald: #10B981;
+    --emerald-soft: rgba(16,185,129,0.08);
+    --amber: #F59E0B;
+    --amber-soft: rgba(245,158,11,0.08);
+    --blue: #3B82F6;
+    --blue-soft: rgba(59,130,246,0.08);
+    --rose: #F43F5E;
+    --rose-soft: rgba(244,63,94,0.08);
+    --red: #EF4444;
+    --red-soft: rgba(239,68,68,0.08);
     --radius: 10px;
-    --radius-sm: 6px;
-    --shadow: 0 4px 24px rgba(0,0,0,0.35);
+    --radius-sm: 7px;
+    --shadow: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04);
+    --shadow-md: 0 4px 16px rgba(15,23,42,0.08);
     --topbar-h: 56px;
-    --font: 'DM Sans', sans-serif;
-    --font-mono: 'DM Mono', monospace;
-    --transition: all 0.18s cubic-bezier(0.4,0,0.2,1);
+    --font: 'Inter', sans-serif;
+    --transition: all 0.15s ease;
   }
 
   body { font-family: var(--font); background: var(--bg); color: var(--text-primary); }
@@ -670,8 +625,7 @@ const CSS = `
   /* ── Topbar ── */
   .topbar {
     height: var(--topbar-h);
-    background: rgba(22,27,39,0.95);
-    backdrop-filter: blur(12px);
+    background: #FFFFFF;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -681,16 +635,17 @@ const CSS = `
     top: 0;
     z-index: 100;
     gap: 12px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05);
   }
   .topbar-brand { display: flex; align-items: center; gap: 8px; }
   .topbar-logo {
     width: 30px; height: 30px;
-    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    background: linear-gradient(135deg, #6366F1, #8B5CF6);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
     color: #fff;
   }
-  .topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; color: var(--text-primary); }
+  .topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); }
   .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
   /* ── Buttons ── */
@@ -704,7 +659,7 @@ const CSS = `
   .btn-accent { background: var(--accent); color: #fff; }
   .btn-accent:hover { background: var(--accent-hover); }
   .btn-outline { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-hover); }
-  .btn-outline:hover { background: var(--surface2); color: var(--text-primary); }
+  .btn-outline:hover { background: var(--surface2); color: var(--text-primary); border-color: var(--border-hover); }
   .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid transparent; }
   .btn-ghost:hover { background: var(--surface2); color: var(--text-primary); }
   .full-btn { width: 100%; justify-content: center; padding: 10px; }
@@ -720,6 +675,7 @@ const CSS = `
 
   .form-panel {
     border-right: 1px solid var(--border);
+    background: var(--bg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -730,15 +686,16 @@ const CSS = `
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     scrollbar-width: thin;
-    scrollbar-color: var(--surface2) transparent;
+    scrollbar-color: var(--border) transparent;
   }
 
   .preview-panel {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    background: #EEF2FF;
   }
   .preview-sticky {
     position: sticky;
@@ -750,18 +707,18 @@ const CSS = `
   }
   .preview-label {
     display: flex; align-items: center; gap: 6px;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--text-muted);
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--accent);
     padding: 10px 20px 8px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(99,102,241,0.15);
+    background: #FFFFFF;
   }
   .preview-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
-    background: #1a1f2e;
+    padding: 24px;
     scrollbar-width: thin;
-    scrollbar-color: var(--surface2) transparent;
+    scrollbar-color: var(--border) transparent;
   }
 
   /* ── Section Card ── */
@@ -770,31 +727,32 @@ const CSS = `
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: border-color 0.2s;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s ease;
   }
-  .section-card:hover { border-color: var(--border-hover); }
+  .section-card:hover { box-shadow: var(--shadow-md); }
   .section-header {
     width: 100%;
     display: flex; align-items: center; justify-content: space-between;
     padding: 13px 16px;
     background: none; border: none; cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.12s;
   }
-  .section-header:hover { background: rgba(255,255,255,0.03); }
+  .section-header:hover { background: var(--surface2); }
   .section-title-group { display: flex; align-items: center; gap: 10px; }
   .section-icon-wrap {
     width: 28px; height: 28px;
     border-radius: 7px;
     display: flex; align-items: center; justify-content: center;
   }
-  .color-blue { background: var(--accent-soft); color: var(--accent); }
-  .color-purple { background: var(--purple-soft); color: var(--purple); }
-  .color-green { background: var(--green-soft); color: var(--green); }
-  .color-orange { background: var(--orange-soft); color: var(--orange); }
-  .color-teal { background: var(--teal-soft); color: var(--teal); }
-  .color-pink { background: var(--pink-soft); color: var(--pink); }
-  .section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-  .chevron { color: var(--text-muted); transition: transform 0.2s; }
+  .color-indigo { background: var(--accent-soft); color: var(--accent); }
+  .color-violet { background: var(--violet-soft); color: var(--violet); }
+  .color-emerald { background: var(--emerald-soft); color: var(--emerald); }
+  .color-amber { background: var(--amber-soft); color: var(--amber); }
+  .color-blue { background: var(--blue-soft); color: var(--blue); }
+  .color-rose { background: var(--rose-soft); color: var(--rose); }
+  .section-title { font-size: 13.5px; font-weight: 600; color: var(--text-primary); }
+  .chevron { color: var(--text-muted); }
   .section-body { padding: 4px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
 
   /* ── Grid ── */
@@ -811,22 +769,22 @@ const CSS = `
     color: var(--text-muted); pointer-events: none;
   }
   .field-input {
-    width: 100%; background: var(--surface2);
+    width: 100%; background: #FFFFFF;
     border: 1px solid var(--border); border-radius: var(--radius-sm);
     color: var(--text-primary); font-family: var(--font); font-size: 13px;
     padding: 8px 10px; outline: none; transition: var(--transition);
   }
   .field-input.has-icon { padding-left: 30px; }
-  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
   .field-input::placeholder { color: var(--text-muted); }
   .field-textarea {
-    width: 100%; background: var(--surface2);
+    width: 100%; background: #FFFFFF;
     border: 1px solid var(--border); border-radius: var(--radius-sm);
     color: var(--text-primary); font-family: var(--font); font-size: 13px;
     padding: 8px 10px; outline: none; transition: var(--transition);
     resize: vertical; min-height: 72px; line-height: 1.5;
   }
-  .field-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .field-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
   .field-textarea::placeholder { color: var(--text-muted); }
 
   /* ── Dynamic entries ── */
@@ -840,28 +798,28 @@ const CSS = `
   .entry-header {
     display: flex; align-items: center; justify-content: space-between;
   }
-  .entry-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .entry-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
 
   /* ── Add / Remove ── */
   .add-btn {
     display: flex; align-items: center; gap: 6px;
     font-family: var(--font); font-size: 13px; font-weight: 500;
     color: var(--accent); background: var(--accent-soft);
-    border: 1px dashed rgba(79,126,248,0.3);
+    border: 1px dashed rgba(99,102,241,0.3);
     border-radius: var(--radius-sm);
     padding: 8px 14px; cursor: pointer; width: 100%;
     justify-content: center; transition: var(--transition);
     margin-top: 4px;
   }
-  .add-btn:hover { background: rgba(79,126,248,0.25); border-color: var(--accent); }
+  .add-btn:hover { background: rgba(99,102,241,0.14); border-color: var(--accent); }
   .remove-btn {
     display: flex; align-items: center; justify-content: center;
     width: 28px; height: 28px;
     background: var(--red-soft); color: var(--red);
-    border: 1px solid rgba(248,113,113,0.2);
+    border: 1px solid rgba(239,68,68,0.18);
     border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition);
   }
-  .remove-btn:hover { background: rgba(248,113,113,0.2); }
+  .remove-btn:hover { background: rgba(239,68,68,0.14); }
 
   /* ── Skills ── */
   .skill-input-row { display: flex; gap: 8px; }
@@ -871,16 +829,16 @@ const CSS = `
   .skill-chip {
     display: flex; align-items: center; gap: 5px;
     background: var(--accent-soft); color: var(--accent);
-    border: 1px solid rgba(79,126,248,0.25);
+    border: 1px solid rgba(99,102,241,0.2);
     border-radius: 20px; font-size: 12px; font-weight: 500;
-    padding: 4px 10px 4px 12px;
+    padding: 4px 10px 4px 12px; cursor: pointer;
     animation: chip-pop 0.18s cubic-bezier(0.34,1.56,0.64,1);
   }
   @keyframes chip-pop { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   .chip-remove {
     display: flex; align-items: center; justify-content: center;
     width: 16px; height: 16px;
-    background: rgba(79,126,248,0.2); color: var(--accent);
+    background: rgba(99,102,241,0.14); color: var(--accent);
     border: none; border-radius: 50%; cursor: pointer; transition: var(--transition);
   }
   .chip-remove:hover { background: var(--red-soft); color: var(--red); }
@@ -895,45 +853,46 @@ const CSS = `
     color: #1a1a2e;
     border-radius: var(--radius);
     padding: 28px 32px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 10px;
     line-height: 1.5;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 24px rgba(99,102,241,0.12), 0 1px 4px rgba(15,23,42,0.08);
     min-height: 600px;
+    border: 1px solid #E0E7FF;
   }
-  .prev-header { text-align: center; padding-bottom: 14px; border-bottom: 2px solid #2563eb; margin-bottom: 14px; }
-  .prev-name { font-size: 22px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px; line-height: 1.2; }
-  .prev-title { font-size: 11px; font-weight: 500; color: #2563eb; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .prev-header { text-align: center; padding-bottom: 14px; border-bottom: 2px solid #6366F1; margin-bottom: 14px; }
+  .prev-name { font-size: 22px; font-weight: 800; color: #111827; letter-spacing: -0.5px; line-height: 1.2; }
+  .prev-title { font-size: 11px; font-weight: 600; color: #6366F1; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
   .prev-contacts {
     display: flex; flex-wrap: wrap; gap: 6px 14px;
     justify-content: center; margin-top: 8px;
   }
   .prev-contacts span {
     display: flex; align-items: center; gap: 4px;
-    font-size: 9px; color: #475569;
+    font-size: 9px; color: #6B7280;
   }
   .prev-section { margin-bottom: 14px; }
-  .prev-section-title { font-size: 11px; font-weight: 700; color: #1e3a8a; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
-  .prev-section-divider { height: 1.5px; background: #dbeafe; margin-bottom: 8px; }
+  .prev-section-title { font-size: 10.5px; font-weight: 700; color: #4338CA; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .prev-section-divider { height: 1.5px; background: #E0E7FF; margin-bottom: 8px; }
   .prev-para { font-size: 9.5px; color: #374151; line-height: 1.6; }
   .prev-skills { display: flex; flex-wrap: wrap; gap: 5px; }
   .prev-skill-tag {
-    background: #eff6ff; color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background: #EEF2FF; color: #4338CA;
+    border: 1px solid #C7D2FE;
     border-radius: 4px; font-size: 8.5px; font-weight: 500;
     padding: 2px 8px;
   }
   .prev-entry { margin-bottom: 9px; }
   .prev-entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .prev-entry-title { font-size: 10px; font-weight: 700; color: #1e293b; }
-  .prev-entry-sub { font-size: 8.5px; color: #64748b; white-space: nowrap; }
-  .prev-entry-org { font-size: 9px; color: #2563eb; font-weight: 500; margin-top: 1px; }
-  .prev-cgpa { font-size: 9px; color: #64748b; margin-top: 2px; }
-  .prev-tech { font-size: 9px; color: #7c3aed; font-weight: 500; margin-top: 2px; }
+  .prev-entry-title { font-size: 10px; font-weight: 700; color: #111827; }
+  .prev-entry-sub { font-size: 8.5px; color: #9CA3AF; white-space: nowrap; }
+  .prev-entry-org { font-size: 9px; color: #6366F1; font-weight: 600; margin-top: 1px; }
+  .prev-cgpa { font-size: 9px; color: #9CA3AF; margin-top: 2px; }
+  .prev-tech { font-size: 9px; color: #8B5CF6; font-weight: 500; margin-top: 2px; }
   .prev-links { display: flex; gap: 10px; margin-top: 3px; }
-  .prev-links span { display: flex; align-items: center; gap: 3px; font-size: 8.5px; color: #2563eb; }
+  .prev-links span { display: flex; align-items: center; gap: 3px; font-size: 8.5px; color: #6366F1; }
   .prev-cert { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-  .prev-cert-meta { font-size: 8.5px; color: #64748b; }
+  .prev-cert-meta { font-size: 8.5px; color: #9CA3AF; }
 
   /* ── Toast ── */
   .toast {
@@ -941,15 +900,15 @@ const CSS = `
     display: flex; align-items: center; gap: 10px;
     padding: 11px 18px; border-radius: 30px;
     font-size: 13px; font-weight: 500;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 32px rgba(15,23,42,0.15);
     animation: toast-in 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 9999; backdrop-filter: blur(12px);
+    z-index: 9999;
     white-space: nowrap;
   }
-  .toast-success { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
-  .toast-info { background: rgba(79,126,248,0.15); color: var(--accent); border: 1px solid rgba(79,126,248,0.25); }
+  .toast-success { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
+  .toast-info { background: #EEF2FF; color: var(--accent); border: 1px solid #C7D2FE; }
   .toast-icon { display: flex; }
-  .toast-close { background: none; border: none; cursor: pointer; color: inherit; display: flex; margin-left: 4px; opacity: 0.6; }
+  .toast-close { background: none; border: none; cursor: pointer; color: inherit; display: flex; margin-left: 4px; opacity: 0.5; }
   .toast-close:hover { opacity: 1; }
   @keyframes toast-in { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 
@@ -959,7 +918,6 @@ const CSS = `
   @media (max-width: 900px) {
     .main-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
     .form-panel { border-right: none; border-bottom: 1px solid var(--border); }
-    .preview-panel { }
     .preview-sticky { position: static; height: auto; }
     .preview-toggle { display: flex; }
     .hidden-mobile { display: none; }
@@ -983,8 +941,7 @@ const CSS = `
     .panel-scroll { padding: 24px; }
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 `;
