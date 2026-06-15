@@ -50,7 +50,8 @@ const Toast = ({ message, visible }) => (
   <div style={{
     position: "fixed", top: 28, right: 28, zIndex: 9999,
     display: "flex", alignItems: "center", gap: 12,
-    background: "linear-gradient(135deg, #065f46, #047857)",
+    background:
+"linear-gradient(135deg, #0D9488, #14B8A6)",
     color: "#ecfdf5", padding: "14px 22px", borderRadius: 14,
     boxShadow: "0 8px 32px rgba(4,120,87,0.45)",
     fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14,
@@ -88,7 +89,11 @@ const Field = ({ label, id, type, value, onChange, error, placeholder, rightEl, 
             transform: focused || hasValue ? "none" : "translateY(-50%)",
             fontSize: focused || hasValue ? 11 : 14,
             fontWeight: focused || hasValue ? 600 : 400,
-            color: focused ? "#60a5fa" : error ? "#f87171" : "#64748b",
+            color: focused
+  ? "#0D9488"
+  : error
+  ? "#EF4444"
+  : "#64748B",
             letterSpacing: focused || hasValue ? "0.06em" : "normal",
             textTransform: focused || hasValue ? "uppercase" : "none",
             transition: "all 0.22s cubic-bezier(0.4,0,0.2,1)",
@@ -101,37 +106,56 @@ const Field = ({ label, id, type, value, onChange, error, placeholder, rightEl, 
         </label>
 
         <input
-          id={id}
-          type={type}
-          value={value}
-          onChange={onChange}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          autoComplete={autoComplete}
-          placeholder={focused ? placeholder : ""}
-          style={{
-            width: "100%",
-            paddingTop: 22,
-            paddingBottom: 10,
-            paddingLeft: 16,
-            paddingRight: rightEl ? 48 : 16,
-            background: focused
-              ? "rgba(255,255,255,0.07)"
-              : "rgba(255,255,255,0.04)",
-            border: `1.5px solid ${error ? "#f87171" : focused ? "#60a5fa" : "rgba(255,255,255,0.12)"}`,
-            borderRadius: 12,
-            color: "#f1f5f9",
-            fontSize: 15,
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 400,
-            outline: "none",
-            boxSizing: "border-box",
-            transition: "all 0.22s ease",
-            boxShadow: focused
-              ? `0 0 0 3px ${error ? "rgba(248,113,113,0.12)" : "rgba(96,165,250,0.12)"}`
-              : "none",
-          }}
-        />
+  id={id}
+  type={type}
+  value={value}
+  onChange={onChange}
+  onFocus={() => setFocused(true)}
+  onBlur={() => setFocused(false)}
+  autoComplete={autoComplete}
+  placeholder={focused ? placeholder : ""}
+  style={{
+    width: "100%",
+    paddingTop: 22,
+    paddingBottom: 10,
+    paddingLeft: 16,
+    paddingRight: rightEl ? 48 : 16,
+
+    background: focused ? "#F0FDFA" : "#F8FAFC",
+
+    border: `1.5px solid ${
+      error
+        ? "#EF4444"
+        : focused
+        ? "#0D9488"
+        : "#E2E8F0"
+    }`,
+
+    borderRadius: 12,
+
+    color: "#111827",
+
+    fontSize: 15,
+    fontFamily: "'DM Sans', sans-serif",
+    fontWeight: 400,
+
+    outline: "none",
+    boxSizing: "border-box",
+
+    transition:
+      "border-color 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease",
+
+    boxShadow: focused
+      ? error
+        ? "0 0 0 3px rgba(239,68,68,0.12)"
+        : "0 0 0 3px rgba(13,148,136,0.15)"
+      : "0 1px 2px rgba(15,23,42,0.03)",
+
+    appearance: "none",
+    WebkitAppearance: "none",
+    MozAppearance: "none",
+  }}
+/>
 
         {rightEl && (
           <div style={{
@@ -227,7 +251,13 @@ export default function SignUp() {
     }
   };
 
-  const strengthColors = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e"];
+  const strengthColors = [
+"#DC2626",
+"#EA580C",
+"#D97706",
+"#14B8A6",
+"#0D9488"
+];
   const strengthLabels = ["", "Weak", "Fair", "Good", "Strong", "Very Strong"];
 
   const styles = `
@@ -242,9 +272,9 @@ export default function SignUp() {
     @keyframes orb3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,20px) scale(1.04); } }
     @keyframes spin { to { transform: rotate(360deg); } }
     input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
-      -webkit-box-shadow: 0 0 0 1000px rgba(15,23,42,0.9) inset !important;
-      -webkit-text-fill-color: #f1f5f9 !important;
-      caret-color: #f1f5f9;
+      -webkit-box-shadow: 0 0 0 1000px #F8FAFC inset !important;
+-webkit-text-fill-color: #111827 !important;
+      caret-color: #111827;
     }
   `;
 
@@ -256,7 +286,7 @@ export default function SignUp() {
       {/* Background */}
       <div style={{
         minHeight: "100vh", width: "100%",
-        background: "linear-gradient(135deg, #020817 0%, #0b1120 40%, #091428 70%, #06101e 100%)",
+        background: "#F8FAFC",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "40px 16px", position: "relative", overflow: "hidden",
         fontFamily: "'DM Sans', sans-serif",
@@ -266,19 +296,19 @@ export default function SignUp() {
         <div style={{
           position: "absolute", top: "-10%", left: "-5%",
           width: 500, height: 500, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%)",
           animation: "orb1 12s ease-in-out infinite", filter: "blur(1px)",
         }} />
         <div style={{
           position: "absolute", bottom: "-15%", right: "-8%",
           width: 600, height: 600, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(45,212,191,0.10) 0%, transparent 70%)",
           animation: "orb2 16s ease-in-out infinite", filter: "blur(1px)",
         }} />
         <div style={{
           position: "absolute", top: "40%", left: "60%",
           width: 300, height: 300, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(14,165,233,0.1) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(13,148,136,0.08)0%, transparent 70%)",
           animation: "orb3 10s ease-in-out infinite",
         }} />
 
@@ -291,27 +321,32 @@ export default function SignUp() {
 
         {/* Card */}
         <div style={{
-          width: "100%", maxWidth: 480, position: "relative", zIndex: 10,
+          width: "100%", maxWidth: 500, position: "relative", zIndex: 10,
           opacity: mounted ? 1 : 0,
+          padding: "32px 36px",
           transform: mounted ? "none" : "translateY(24px)",
           transition: "all 0.6s cubic-bezier(0.34,1.2,0.64,1)",
         }}>
           {/* Glow behind card */}
-          <div style={{
-            position: "absolute", inset: -2,
-            background: "linear-gradient(135deg, rgba(59,130,246,0.3), rgba(99,102,241,0.2), rgba(14,165,233,0.15))",
-            borderRadius: 26, filter: "blur(20px)", opacity: 0.6,
-          }} />
+          <div
+  style={{
+    position: "absolute",
+    inset: -20,
+    background:
+      "radial-gradient(circle, rgba(13,148,136,0.15) 0%, transparent 70%)",
+    filter: "blur(30px)",
+  }}
+/>
 
           <div style={{
             position: "relative",
-            background: "rgba(10,18,35,0.85)",
-            backdropFilter: "blur(32px)",
-            WebkitBackdropFilter: "blur(32px)",
+            background: "#FFFFFF",
+border: "1px solid #E2E8F0",
+backdropFilter: "none",
+WebkitBackdropFilter: "none",
             borderRadius: 24,
-            border: "1px solid rgba(255,255,255,0.08)",
             padding: "40px 40px 36px",
-            boxShadow: "0 32px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.06)",
+            boxShadow:"0 4px 20px rgba(15,23,42,0.03), 0 1px 2px rgba(15,23,42,0.02)",
           }}>
 
             {/* Header */}
@@ -320,9 +355,9 @@ export default function SignUp() {
               <div style={{
                 display: "inline-flex", alignItems: "center", justifyContent: "center",
                 width: 52, height: 52, borderRadius: 16,
-                background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+                background: "#0D9488",
                 marginBottom: 18,
-                boxShadow: "0 8px 24px rgba(99,102,241,0.4)",
+                boxShadow: "0 10px 24px rgba(13,148,136,0.25)"
               }}>
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                   <rect x="3" y="3" width="7" height="9" rx="1.5" fill="white" opacity="0.9"/>
@@ -335,26 +370,26 @@ export default function SignUp() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
                 <span style={{
                   fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 22,
-                  background: "linear-gradient(90deg, #60a5fa, #818cf8, #38bdf8)",
-                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                  color: "#111827",
                   letterSpacing: "-0.02em",
                 }}>ResumeAI</span>
                 <span style={{
-                  fontSize: 10, fontWeight: 600, color: "#60a5fa",
-                  background: "rgba(96,165,250,0.12)", border: "1px solid rgba(96,165,250,0.3)",
+                  fontSize: 10, fontWeight: 600, color: "#0D9488",
+background: "#F0FDFA",
+border: "1px solid #99F6E4",
                   borderRadius: 6, padding: "2px 7px", letterSpacing: "0.05em",
                   textTransform: "uppercase",
                 }}>Beta</span>
               </div>
 
-              <p style={{ color: "#94a3b8", fontSize: 13, letterSpacing: "0.01em", lineHeight: 1.5 }}>
+              <p style={{ color: "#64748B", fontSize: 13, letterSpacing: "0.01em", lineHeight: 1.5 }}>
                 AI Resume Builder &amp; ATS Checker
               </p>
 
-              <div style={{ marginTop: 20 }}>
+              <div style={{ marginTop: 14 }}>
                 <h1 style={{
                   fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 26,
-                  color: "#f1f5f9", letterSpacing: "-0.03em", lineHeight: 1.2,
+                  color: "#111827", letterSpacing: "-0.03em", lineHeight: 1.2,
                 }}>Create your account</h1>
                 <p style={{ color: "#64748b", fontSize: 13, marginTop: 6 }}>
                   Build resumes that beat ATS systems effortlessly
@@ -395,7 +430,7 @@ export default function SignUp() {
                   error={errors.password} placeholder="Min. 8 characters"
                   autoComplete="new-password"
                   rightEl={
-                    <span onClick={() => setShowPassword(s => !s)} style={{ color: showPassword ? "#60a5fa" : "#64748b", transition: "color 0.2s" }}>
+                    <span onClick={() => setShowPassword(s => !s)} style={{ color: showPassword ? "#0D9488" : "#64748B", transition: "color 0.2s" }}>
                       {showPassword ? <EyeOffIcon /> : <EyeIcon />}
                     </span>
                   }
@@ -435,7 +470,7 @@ export default function SignUp() {
                 error={errors.confirm_password} placeholder="Re-enter your password"
                 autoComplete="new-password"
                 rightEl={
-                  <span onClick={() => setShowConfirm(s => !s)} style={{ color: showConfirm ? "#60a5fa" : "#64748b", transition: "color 0.2s" }}>
+                  <span onClick={() => setShowConfirm(s => !s)} style={{ color: showConfirm ? "#0D9488": "#64748b", transition: "color 0.2s" }}>
                     {showConfirm ? <EyeOffIcon /> : <EyeIcon />}
                   </span>
                 }
@@ -445,9 +480,9 @@ export default function SignUp() {
             {/* Terms */}
             <p style={{ fontSize: 12, color: "#475569", marginTop: 14, lineHeight: 1.6, textAlign: "center" }}>
               By signing up, you agree to our{" "}
-              <a href="#" style={{ color: "#60a5fa", textDecoration: "none", fontWeight: 500 }}>Terms of Service</a>
+              <a href="#" style={{ color: "#0D9488", textDecoration: "none", fontWeight: 500 }}>Terms of Service</a>
               {" "}and{" "}
-              <a href="#" style={{ color: "#60a5fa", textDecoration: "none", fontWeight: 500 }}>Privacy Policy</a>
+              <a href="#" style={{ color: "#0D9488", textDecoration: "none", fontWeight: 500 }}>Privacy Policy</a>
             </p>
 
             {/* Submit button */}
@@ -457,13 +492,11 @@ export default function SignUp() {
               style={{
                 width: "100%", marginTop: 20,
                 padding: "15px 24px",
-                background: loading
-                  ? "rgba(59,130,246,0.5)"
-                  : "linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)",
+                background: "#1E293B",
                 border: "none", borderRadius: 13, cursor: loading ? "not-allowed" : "pointer",
                 color: "#fff", fontFamily: "'DM Sans', sans-serif",
                 fontWeight: 600, fontSize: 15, letterSpacing: "0.01em",
-                boxShadow: loading ? "none" : "0 4px 20px rgba(99,102,241,0.4)",
+                boxShadow:"0 4px 20px rgba(15,23,42,0.08)",
                 transition: "all 0.25s ease",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 10,
                 transform: loading ? "scale(0.99)" : "scale(1)",
@@ -496,8 +529,8 @@ export default function SignUp() {
 
             {/* Divider */}
             <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "20px 0" }}>
-              <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
-              <span style={{ color: "#334155", fontSize: 12, fontWeight: 500 }}>OR SIGN UP WITH</span>
+              <div style={{ flex: 1, height: 1, background: "#E2E8F0",}} />
+              <span style={{ color: "#0D9488", fontSize: 12, fontWeight: 500 }}>OR SIGN UP WITH</span>
               <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.07)" }} />
             </div>
 
@@ -517,22 +550,23 @@ export default function SignUp() {
                   key={label}
                   style={{
                     flex: 1, padding: "11px 16px",
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.09)",
+                    background: "#FFFFFF",
+border: "1px solid #E2E8F0",
+color: "#334155",
                     borderRadius: 11, cursor: "pointer",
-                    color: "#94a3b8", fontSize: 13, fontWeight: 500,
+                   fontSize: 13, fontWeight: 500,
                     fontFamily: "'DM Sans', sans-serif",
                     display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
+                    e.currentTarget.style.background= "#F8FAFC";
+                    e.currentTarget.style.borderColor= "#CBD5E1";
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
-                  }}
+  e.currentTarget.style.background = "#FFFFFF";
+  e.currentTarget.style.borderColor = "#E2E8F0";
+}}
                 >
                   {icon} {label}
                 </button>
@@ -543,8 +577,8 @@ export default function SignUp() {
             <p style={{ textAlign: "center", marginTop: 24, color: "#64748b", fontSize: 13 }}>
               Already have an account?{" "}
               <Link to="/login" style={{
-                color: "#60a5fa", fontWeight: 600, textDecoration: "none",
-                borderBottom: "1px solid rgba(96,165,250,0.3)", paddingBottom: 1,
+                color: "#0D9488", fontWeight: 600, textDecoration: "none",
+                borderBottom: "1px solid rgba(13,148,136,0.25)",paddingBottom: 1,
                 transition: "all 0.2s",
               }}>
                 Sign in

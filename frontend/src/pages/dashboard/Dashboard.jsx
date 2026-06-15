@@ -1,384 +1,388 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// ─── Dummy Data ───────────────────────────────────────────────────────────────
-const STATS = [
-  {
-    id: "resumes", label: "Total Resumes", value: "7", change: "+2 this month",
-    positive: true, icon: <DocIcon />, color: "#6366F1",
-    bg: "#FFFFFF", border: "#E2E8F0",
+// ─── Color & Design System Configuration ─────────────────────────────────────
+const CONFIG = {
+  colors: {
+    primaryTeal: "#0D9488",
+    primaryHover: "#0F766E",
+    primaryLight: "#F0FDFA",
+    primaryLightBorder: "#99F6E4",
+    background: "#F8FAFC",
+    cardBg: "#FFFFFF",
+    border: "#E2E8F0",
+    borderHover: "#CBD5E1",
+    textPrimary: "#111827",
+    textSecondary: "#475569",
+    textMuted: "#64748B",
+    success: "#10B981",
+    warning: "#F59E0B",
+    danger: "#EF4444",
   },
-  {
-    id: "reports", label: "ATS Reports", value: "24", change: "+5 this week",
-    positive: true, icon: <ScanIcon />, color: "#8B5CF6",
-    bg: "#FFFFFF", border: "#E2E8F0",
+  fonts: {
+    body: "'DM Sans', sans-serif",
+    brand: "'Syne', sans-serif",
   },
-  {
-    id: "score", label: "Best ATS Score", value: "91%", change: "↑ from 76%",
-    positive: true, icon: <TrophyIcon />, color: "#10B981",
-    bg: "#FFFFFF", border: "#E2E8F0",
-  },
-  {
-    id: "profile", label: "Profile Completion", value: "68%", change: "3 steps left",
-    positive: false, icon: <ProfileIcon />, color: "#F59E0B",
-    bg: "#FFFFFF", border: "#E2E8F0",
-  },
-];
-
-const QUICK_ACTIONS = [
-  { id: "create", label: "Create Resume", desc: "Start from scratch or template", icon: "✏️", color: "#6366F1", bg: "rgba(99,102,241,0.06)", border: "#E0E0FD" },
-  { id: "upload", label: "Upload Resume", desc: "Import your existing resume", icon: "📤", color: "#8B5CF6", bg: "rgba(139,92,246,0.06)", border: "#EDE9FE" },
-  { id: "ats", label: "ATS Scan", desc: "Check resume compatibility", icon: "🔍", color: "#10B981", bg: "rgba(16,185,129,0.06)", border: "#D1FAE5" },
-  { id: "analyze", label: "Analyze Job", desc: "Match resume to job posting", icon: "🎯", color: "#F59E0B", bg: "rgba(245,158,11,0.06)", border: "#FEF3C7" },
-];
-
-const RECENT_ACTIVITY = [
-  { id: 1, type: "created", icon: "📄", title: "Software Engineer Resume", sub: "Created from 'Modern Tech' template", time: "Today, 10:32 AM", score: null, tag: "Created", tagColor: "#6366F1", tagBg: "rgba(99,102,241,0.08)" },
-  { id: 2, type: "ats", icon: "✅", title: "ATS Scan — Product Manager Resume", sub: "Scored against 'Product Lead' job posting", time: "Yesterday, 3:14 PM", score: 87, tag: "ATS Scan", tagColor: "#10B981", tagBg: "rgba(16,185,129,0.08)" },
-  { id: 3, type: "updated", icon: "🔄", title: "Data Analyst Resume", sub: "Updated skills section & added 3 projects", time: "2 days ago", score: null, tag: "Updated", tagColor: "#8B5CF6", tagBg: "rgba(139,92,246,0.08)" },
-  { id: 4, type: "ats", icon: "✅", title: "ATS Scan — Frontend Developer", sub: "Scored 91% — top match!", time: "3 days ago", score: 91, tag: "ATS Scan", tagColor: "#10B981", tagBg: "rgba(16,185,129,0.08)" },
-  { id: 5, type: "created", icon: "📄", title: "UX Designer Portfolio Resume", sub: "Created from 'Creative Pro' template", time: "4 days ago", score: null, tag: "Created", tagColor: "#6366F1", tagBg: "rgba(99,102,241,0.08)" },
-];
-
-const RESUMES = [
-  { id: 1, title: "Software Engineer Resume", updated: "Today", score: 87, status: "Optimized", template: "Modern Tech" },
-  { id: 2, title: "Product Manager Resume", updated: "Yesterday", score: 74, status: "Fair", template: "Executive" },
-  { id: 3, title: "Data Analyst Resume", updated: "2 days ago", score: 91, status: "Excellent", template: "Clean Pro" },
-  { id: 4, title: "UX Designer Resume", updated: "4 days ago", score: 62, status: "Needs Work", template: "Creative Pro" },
-];
-
-// ─── Sub-components ───────────────────────────────────────────────────────────
-const card = {
-  background: "#FFFFFF",
-  border: "1px solid #E2E8F0",
-  borderRadius: 12,
-  boxShadow: "0 1px 3px rgba(15,23,42,0.06)",
 };
 
-function StatCard({ stat, delay }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => { setTimeout(() => setVisible(true), delay); }, [delay]);
+// ─── Component Styling Constants ─────────────────────────────────────────────
+const globalCardStyle = {
+  background: CONFIG.colors.cardBg,
+  border: `1px solid ${CONFIG.colors.border}`,
+  borderRadius: 16,
+  padding: "24px",
+  transition: "all 0.2s ease",
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function StatCard({ label, value, change, positive, icon }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <div style={{
-      ...card,
-      padding: "20px 22px",
-      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(12px)",
-      transition: "opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease",
-      cursor: "default",
-    }}
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 16px rgba(15,23,42,0.1)`; e.currentTarget.style.transform = "translateY(-1px)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 1px 3px rgba(15,23,42,0.06)"; e.currentTarget.style.transform = "none"; }}
+    <div
+      style={{
+        ...globalCardStyle,
+        borderColor: hovered ? CONFIG.colors.primaryLightBorder : CONFIG.colors.border,
+        transform: hovered ? "translateY(-2px)" : "none",
+        boxShadow: hovered ? "0 8px 24px rgba(15,23,42,0.06)" : "none",
+        cursor: "default",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: `${stat.color}12`, display: "flex", alignItems: "center", justifyContent: "center", color: stat.color }}>
-          {stat.icon}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: CONFIG.colors.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", color: CONFIG.colors.primaryTeal }}>
+          {icon}
         </div>
         <span style={{
-          fontSize: 11, fontWeight: 600,
-          color: stat.positive ? "#10B981" : "#F59E0B",
-          background: stat.positive ? "#ECFDF5" : "#FFFBEB",
-          border: `1px solid ${stat.positive ? "#A7F3D0" : "#FDE68A"}`,
+          fontSize: 12, fontWeight: 600,
+          color: positive ? CONFIG.colors.success : CONFIG.colors.warning,
+          background: positive ? "#HN0FDFA" : "#FFFBEB", // Adjusted slightly fallback
+          backgroundColor: positive ? "#ECFDF5" : "#FFFBEB",
           borderRadius: 20, padding: "2px 8px",
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: CONFIG.fonts.body,
         }}>
-          {stat.change}
+          {change}
         </span>
       </div>
-      <div style={{ fontSize: 28, fontWeight: 800, color: "#0F172A", fontFamily: "'Inter', sans-serif", letterSpacing: "-0.04em", lineHeight: 1 }}>
-        {stat.value}
+      <div style={{ fontSize: 28, fontWeight: 700, color: CONFIG.colors.textPrimary, fontFamily: CONFIG.fonts.body, letterSpacing: "-0.03em", lineHeight: 1 }}>
+        {value}
       </div>
-      <div style={{ fontSize: 12.5, color: "#94A3B8", marginTop: 5, fontFamily: "'Inter', sans-serif", fontWeight: 500 }}>
-        {stat.label}
+      <div style={{ fontSize: 13, color: CONFIG.colors.textMuted, marginTop: 6, fontFamily: CONFIG.fonts.body, fontWeight: 500 }}>
+        {label}
       </div>
     </div>
   );
 }
 
-function QuickActionCard({ action, delay, onClick }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => { setTimeout(() => setVisible(true), delay); }, [delay]);
+function QuickActionCard({ label, desc, icon, onClick }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <button
       onClick={onClick}
       style={{
-        background: action.bg, border: `1px solid ${action.border}`,
-        borderRadius: 10, padding: "14px 16px",
-        display: "flex", alignItems: "center", gap: 12,
+        ...globalCardStyle,
+        padding: "16px",
+        display: "flex", alignItems: "center", gap: 16,
         cursor: "pointer", width: "100%", textAlign: "left",
-        opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(8px)",
-        transition: "opacity 0.35s ease, transform 0.35s ease, box-shadow 0.15s ease",
+        background: hovered ? CONFIG.colors.primaryLight : CONFIG.colors.cardBg,
+        borderColor: hovered ? CONFIG.colors.primaryLightBorder : CONFIG.colors.border,
+        boxShadow: hovered ? "0 8px 24px rgba(15,23,42,0.04)" : "none",
       }}
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = `0 4px 12px ${action.color}18`; e.currentTarget.style.transform = "translateY(-1px)"; }}
-      onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "none"; }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: `${action.color}12`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>
-        {action.icon}
+      <div style={{ width: 42, height: 42, borderRadius: 12, background: CONFIG.colors.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, color: CONFIG.colors.primaryTeal, flexShrink: 0 }}>
+        {icon}
       </div>
       <div>
-        <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0F172A", fontFamily: "'Inter', sans-serif", marginBottom: 2 }}>
-          {action.label}
+        <div style={{ fontSize: 14, fontWeight: 600, color: CONFIG.colors.textPrimary, fontFamily: CONFIG.fonts.body, marginBottom: 2 }}>
+          {label}
         </div>
-        <div style={{ fontSize: 11.5, color: "#94A3B8", fontFamily: "'Inter', sans-serif" }}>
-          {action.desc}
+        <div style={{ fontSize: 12, color: CONFIG.colors.textMuted, fontFamily: CONFIG.fonts.body }}>
+          {desc}
         </div>
       </div>
     </button>
   );
 }
 
-function ScorePill({ score }) {
-  const color = score >= 85 ? "#10B981" : score >= 70 ? "#F59E0B" : "#EF4444";
-  const bg = score >= 85 ? "#ECFDF5" : score >= 70 ? "#FFFBEB" : "#FEF2F2";
-  const label = score >= 85 ? "Excellent" : score >= 70 ? "Fair" : "Needs Work";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-      <div style={{ width: 30, height: 30, borderRadius: "50%", background: bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 9, fontWeight: 700, color, fontFamily: "'Inter', sans-serif" }}>{score}</span>
-      </div>
-      <span style={{ fontSize: 11, color, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>{label}</span>
-    </div>
-  );
-}
-
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+// ─── Main Dashboard Component ─────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const displayName = user.full_name || "there";
+  const displayName = user.full_name || "Guest";
   const firstName = displayName.split(" ")[0];
-  const [mounted, setMounted] = useState(false);
+
+  // Core state containing resumes
+  const [resumes, setResumes] = useState([
+    { id: 1, title: "Senior Software Engineer Resume", updated: "Today", score: 87, status: "Excellent Match", template: "Minimal Tech" },
+    { id: 2, title: "Product Manager Strategy Lead", updated: "Yesterday", score: 74, status: "Good Match", template: "SaaS Executive" },
+    { id: 3, title: "Data Analyst Analyst Resume", updated: "2 days ago", score: 91, status: "Excellent Match", template: "Stripe Clean" },
+  ]);
+
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const greeting = hour < 12 ? "Welcome back" : hour < 17 ? "Good afternoon" : "Good evening";
 
-  useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
-
-  const font = "'Inter', sans-serif";
+  // Navigation handlers
+  const handleCreateResume = () => navigate("/dashboard/builder");
 
   return (
-    <div style={{ fontFamily: font, color: "#111827" }}>
-
-      {/* Welcome Banner */}
+    <div style={{ fontFamily: CONFIG.fonts.body, color: CONFIG.colors.textPrimary, backgroundColor: CONFIG.colors.background, minHeight: "100vh", padding: "4px 0" }}>
+      
+      {/* Premium Hero Welcome Section */}
       <div style={{
-        background: "linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%)",
-        borderRadius: 14, padding: "24px 28px", marginBottom: 24,
+        ...globalCardStyle,
+        borderRadius: 20,
+        padding: "28px 32px",
+        marginBottom: 24,
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        flexWrap: "wrap", gap: 16, position: "relative", overflow: "hidden",
-        opacity: mounted ? 1 : 0, transform: mounted ? "none" : "translateY(12px)",
-        transition: "opacity 0.45s ease, transform 0.45s ease",
-        boxShadow: "0 8px 32px rgba(99,102,241,0.28)",
+        flexWrap: "wrap", gap: 20,
+        boxShadow: "0 4px 20px rgba(15,23,42,0.03)",
       }}>
-        {/* Subtle pattern overlay */}
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle at 80% -20%, rgba(255,255,255,0.12) 0%, transparent 60%)", pointerEvents: "none" }} />
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 20 }}>👋</span>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.02em" }}>
-              {greeting}, {firstName}!
-            </h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+            <span style={{
+              background: CONFIG.colors.primaryLight,
+              border: `1px solid ${CONFIG.colors.primaryLightBorder}`,
+              color: CONFIG.colors.primaryTeal,
+              fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
+              fontFamily: CONFIG.fonts.brand, letterSpacing: "0.03em"
+            }}>
+              RESUMEAI PLATFORM
+            </span>
           </div>
-          <p style={{ fontSize: 13.5, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
-            You have <span style={{ color: "#FFFFFF", fontWeight: 700 }}>3 resumes</span> ready to send. Your best ATS score is <span style={{ color: "#A7F3D0", fontWeight: 700 }}>91%</span> 🎉
+          <h2 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 26, fontWeight: 700, color: CONFIG.colors.textPrimary, margin: 0, letterSpacing: "-0.02em" }}>
+            {greeting}, {firstName}!
+          </h2>
+          <p style={{ fontSize: 14, color: CONFIG.colors.textSecondary, marginTop: 4, marginBottom: 0, lineHeight: 1.5 }}>
+            Continue building ATS-optimized resumes and land more interviews. You have <span style={{ color: CONFIG.colors.primaryTeal, fontWeight: 600 }}>{resumes.length} active documents</span>.
           </p>
         </div>
+        
         <button
-          onClick={() => navigate("/dashboard/builder")}
+          onClick={handleCreateResume}
           style={{
-            display: "flex", alignItems: "center", gap: 8, padding: "10px 20px",
-            background: "#FFFFFF",
-            border: "none", borderRadius: 9, cursor: "pointer",
-            color: "#6366F1", fontWeight: 700, fontSize: 13.5, fontFamily: font,
-            boxShadow: "0 2px 8px rgba(15,23,42,0.12)", flexShrink: 0,
-            transition: "all 0.15s",
+            display: "flex", alignItems: "center", gap: 8, padding: "11px 22px",
+            background: CONFIG.colors.primaryTeal,
+            border: "none", borderRadius: 10, cursor: "pointer",
+            color: "#FFFFFF", fontWeight: 600, fontSize: 14, fontFamily: CONFIG.fonts.body,
+            boxShadow: "0 2px 8px rgba(13,148,136,0.16)", flexShrink: 0,
+            transition: "all 0.15s ease",
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(15,23,42,0.18)"; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(15,23,42,0.12)"; }}
+          onMouseEnter={e => { e.currentTarget.style.background = CONFIG.colors.primaryHover; e.currentTarget.style.transform = "translateY(-1px)"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = CONFIG.colors.primaryTeal; e.currentTarget.style.transform = "none"; }}
         >
-          <span>✏️</span> Build New Resume
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Build New Resume
         </button>
       </div>
 
-      {/* Stats Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 24 }}>
-        {STATS.map((stat, i) => <StatCard key={stat.id} stat={stat} delay={i * 70} />)}
+      {/* Analytics Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <StatCard label="Total Resumes" value={resumes.length} change="+2 this month" positive={true} icon={<DocIcon />} />
+        <StatCard label="ATS Checks Completed" value="38" change="+12 this week" positive={true} icon={<ScanIcon />} />
+        <StatCard label="Job Match Optimization" value="94%" change="↑ 4% growth" positive={true} icon={<MatchIcon />} />
+        <StatCard label="Profile Strength" value="85%" change="Complete" positive={true} icon={<StrengthIcon />} />
       </div>
 
-      {/* Quick Actions + Activity */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: 18, marginBottom: 20 }} className="main-grid">
-        {/* Quick Actions */}
-        <div style={{ ...card, padding: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#6366F1" }} />
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>Quick Actions</h3>
+      {/* Main Dashboard Interactive Split Section */}
+      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: 20, marginBottom: 24 }} className="dashboard-grid">
+        
+        {/* Left Column Container */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          
+          {/* Quick Actions Component */}
+          <div style={globalCardStyle}>
+            <h3 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 15, fontWeight: 700, color: CONFIG.colors.textPrimary, marginTop: 0, marginBottom: 16 }}>
+              Quick Tools
+            </h3>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }} className="quick-actions-subgrid">
+              <QuickActionCard label="Create Resume" desc="Start from modern standard layout" icon="✏️" onClick={handleCreateResume} />
+              <QuickActionCard label="ATS Scan" desc="Check strict syntax matchers" icon="🔍" onClick={() => {}} />
+              <QuickActionCard label="Analyze Job" desc="Compare with production postings" icon="🎯" onClick={() => {}} />
+              <QuickActionCard label="Browse Templates" desc="Explore parsed layouts blueprints" icon="📑" onClick={() => {}} />
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {QUICK_ACTIONS.map((action, i) => (
-              <QuickActionCard key={action.id} action={action} delay={180 + i * 60} onClick={() => {}} />
-            ))}
+
+          {/* Progress Architecture Monitor */}
+          <div style={globalCardStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+              <h3 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 15, fontWeight: 700, color: CONFIG.colors.textPrimary, margin: 0 }}>
+                Primary Profile Strength
+              </h3>
+              <span style={{
+                background: CONFIG.colors.primaryLight,
+                border: `1px solid ${CONFIG.colors.primaryLightBorder}`,
+                color: CONFIG.colors.primaryTeal,
+                fontSize: 12, fontWeight: 600, padding: "2px 8px", borderRadius: 8
+              }}>
+                85% Operational
+              </span>
+            </div>
+            <div style={{ width: "100%", height: 8, background: CONFIG.colors.border, borderRadius: 99, overflow: "hidden" }}>
+              <div style={{ width: "85%", height: "100%", background: CONFIG.colors.primaryTeal, borderRadius: 99 }} />
+            </div>
+            <p style={{ margin: "10px 0 0 0", fontSize: 12.5, color: CONFIG.colors.textMuted }}>
+              Add a verified target structural portfolio node link to unlock full ATS parsing automation tiering metrics.
+            </p>
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div style={{ ...card, padding: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#8B5CF6" }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>Recent Activity</h3>
-            </div>
-            <span style={{ fontSize: 12, color: "#6366F1", fontWeight: 600, cursor: "pointer" }}>View all</span>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {RECENT_ACTIVITY.map((item, i) => (
-              <div key={item.id} style={{
-                display: "flex", gap: 12, padding: "11px 8px",
-                borderBottom: i < RECENT_ACTIVITY.length - 1 ? "1px solid #F1F5F9" : "none",
-                cursor: "pointer", borderRadius: 8, transition: "background 0.12s",
-              }}
-                onMouseEnter={e => e.currentTarget.style.background = "#F8FAFC"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >
-                <div style={{ width: 32, height: 32, borderRadius: 9, background: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, flexShrink: 0 }}>
-                  {item.icon}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontSize: 12.5, fontWeight: 600, color: "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>{item.title}</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: item.tagColor, background: item.tagBg, borderRadius: 20, padding: "1px 7px", flexShrink: 0 }}>{item.tag}</span>
-                  </div>
-                  <div style={{ fontSize: 11.5, color: "#94A3B8", marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.sub}</div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 11, color: "#CBD5E1" }}>{item.time}</span>
-                    {item.score && (
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#10B981", background: "#ECFDF5", borderRadius: 20, padding: "1px 8px" }}>
-                        {item.score}% ATS
-                      </span>
-                    )}
-                  </div>
-                </div>
+        {/* Right Column: Standout High-impact ATS Widget & Activity Timeline */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          
+          {/* ATS Score Visualization Widget */}
+          <div style={{ ...globalCardStyle, display: "flex", alignItems: "center", gap: 24, background: "linear-gradient(to bottom right, #FFFFFF, #FAFAFA)" }}>
+            {/* Minimal SVG Native Circular Progress */}
+            <div style={{ position: "relative", width: 84, height: 84, flexShrink: 0 }}>
+              <svg width="84" height="84" viewBox="0 0 36 36">
+                <path stroke={CONFIG.colors.border} strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path stroke={CONFIG.colors.primaryTeal} strokeWidth="3" strokeDasharray="87, 100" strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              </svg>
+              <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", fontSize: 18, fontWeight: 700, color: CONFIG.colors.textPrimary, fontFamily: CONFIG.fonts.body }}>
+                87%
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Resume Table */}
-      <div style={{ ...card, padding: "20px 24px", marginBottom: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} />
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", letterSpacing: "-0.01em" }}>My Resumes</h3>
-          </div>
-          <button style={{
-            display: "flex", alignItems: "center", gap: 6, padding: "7px 14px",
-            background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.18)",
-            borderRadius: 8, cursor: "pointer", color: "#6366F1",
-            fontFamily: font, fontSize: 12.5, fontWeight: 600,
-            transition: "all 0.15s",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = "rgba(99,102,241,0.14)"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "rgba(99,102,241,0.08)"; }}
-          >
-            <span>+</span> New Resume
-          </button>
-        </div>
-
-        {/* Table header */}
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 120px 100px 140px 120px",
-          gap: 16, padding: "8px 12px", marginBottom: 4,
-          fontSize: 10.5, fontWeight: 600, color: "#CBD5E1",
-          letterSpacing: "0.06em", textTransform: "uppercase",
-          borderBottom: "1px solid #F1F5F9",
-        }} className="resume-table-header">
-          <span>Resume Name</span>
-          <span>Template</span>
-          <span>ATS Score</span>
-          <span>Last Updated</span>
-          <span style={{ textAlign: "right" }}>Actions</span>
-        </div>
-
-        {RESUMES.map((resume, i) => (
-          <div key={resume.id} style={{
-            display: "grid", gridTemplateColumns: "1fr 120px 100px 140px 120px",
-            gap: 16, padding: "12px 12px",
-            borderRadius: 8,
-            borderTop: i > 0 ? "1px solid #F8FAFC" : "none",
-            alignItems: "center", transition: "background 0.12s", cursor: "pointer",
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = "#F8FAFC"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            className="resume-row"
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(99,102,241,0.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>📄</div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "#111827" }}>{resume.title}</div>
             </div>
-            <span style={{ fontSize: 12, color: "#94A3B8" }}>{resume.template}</span>
-            <ScorePill score={resume.score} />
-            <span style={{ fontSize: 12, color: "#94A3B8" }}>{resume.updated}</span>
-            <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+            <div>
+              <span style={{ background: CONFIG.colors.primaryLight, border: `1px solid ${CONFIG.colors.primaryLightBorder}`, color: CONFIG.colors.primaryTeal, fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 6 }}>
+                Excellent Match
+              </span>
+              <h4 style={{ fontSize: 15, fontWeight: 600, color: CONFIG.colors.textPrimary, margin: "6px 0 2px 0" }}>Top Scan Architecture</h4>
+              <p style={{ margin: 0, fontSize: 12, color: CONFIG.colors.textSecondary, lineHeight: 1.4 }}>Your active template matches industry metrics thresholds for tech hiring pipelines.</p>
+            </div>
+          </div>
+
+          {/* Clean Analytics Timeline Activity Logger */}
+          <div style={globalCardStyle}>
+            <h3 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 15, fontWeight: 700, color: CONFIG.colors.textPrimary, marginTop: 0, marginBottom: 16 }}>
+              Recent Telemetry Logs
+            </h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
-                { label: "Edit", color: "#6366F1", bg: "rgba(99,102,241,0.08)", hoverBg: "rgba(99,102,241,0.14)" },
-                { label: "Scan", color: "#10B981", bg: "rgba(16,185,129,0.08)", hoverBg: "rgba(16,185,129,0.14)" },
-              ].map(btn => (
-                <button key={btn.label} style={{
-                  padding: "5px 10px", borderRadius: 6, cursor: "pointer",
-                  background: btn.bg, border: "none",
-                  color: btn.color, fontSize: 11, fontWeight: 600,
-                  fontFamily: font, transition: "all 0.12s",
-                }}
-                  onMouseEnter={e => e.currentTarget.style.background = btn.hoverBg}
-                  onMouseLeave={e => e.currentTarget.style.background = btn.bg}
-                >
-                  {btn.label}
-                </button>
+                { label: "ATS compiler sequence scan complete", sub: "Score verified at 87% index structural", time: "10m ago", color: CONFIG.colors.success },
+                { label: "Target production matrix resume updated", sub: "Section node 'Skills Framework' synchronized", time: "2h ago", color: CONFIG.colors.primaryTeal },
+                { label: "New parsed layout design criteria applied", sub: "Transitioned to Minimal Tech architecture profile", time: "1d ago", color: CONFIG.colors.textMuted }
+              ].map((item, idx) => (
+                <div key={idx} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: item.color, marginTop: 5, flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, color: CONFIG.colors.textSecondary, fontWeight: 500 }}>{item.label}</div>
+                    <div style={{ fontSize: 11, color: CONFIG.colors.textMuted }}>{item.sub}</div>
+                  </div>
+                  <span style={{ fontSize: 11, color: CONFIG.colors.textMuted, whiteSpace: "nowrap" }}>{item.time}</span>
+                </div>
               ))}
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* ATS Tips banner */}
-      <div style={{
-        background: "#ECFDF5",
-        border: "1px solid #A7F3D0",
-        borderRadius: 12, padding: "18px 22px",
-        display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
-      }}>
-        <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(16,185,129,0.12)", border: "1px solid #A7F3D0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>💡</div>
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#065F46", marginBottom: 3 }}>Pro Tip: Boost your ATS score by 20%</div>
-          <div style={{ fontSize: 12.5, color: "#6B7280" }}>Add measurable achievements and job-specific keywords to each resume section. Avoid tables and graphics — ATS parsers can't read them.</div>
         </div>
-        <button style={{
-          padding: "8px 16px", borderRadius: 8, cursor: "pointer", flexShrink: 0,
-          background: "#10B981", border: "none",
-          color: "#FFFFFF", fontFamily: font,
-          fontSize: 12.5, fontWeight: 600, transition: "all 0.15s",
-        }}
-          onMouseEnter={e => e.currentTarget.style.background = "#059669"}
-          onMouseLeave={e => e.currentTarget.style.background = "#10B981"}
-        >
-          Learn More →
-        </button>
       </div>
 
+      {/* Conditionally Rendered Core Data Node Area (Data Grid vs Empty State) */}
+      {resumes.length === 0 ? (
+        /* Standout Native Premium Empty State Layout Design */
+        <div style={{ ...globalCardStyle, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", textAlign: "center" }}>
+          <div style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CONFIG.colors.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, color: CONFIG.colors.primaryTeal, marginBottom: 16 }}>
+            📭
+          </div>
+          <h3 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 18, fontWeight: 700, color: CONFIG.colors.textPrimary, margin: "0 0 6px 0" }}>
+            No resumes yet
+          </h3>
+          <p style={{ margin: "0 0 20px 0", fontSize: 14, color: CONFIG.colors.textSecondary, maxWidth: 380, lineHeight: 1.5 }}>
+            Create your first ATS-optimized resume blueprints and initialize production target tracking today.
+          </p>
+          <button
+            onClick={handleCreateResume}
+            style={{
+              padding: "10px 20px", background: CONFIG.colors.primaryTeal, color: "#FFFFFF",
+              border: "none", borderRadius: 10, fontWeight: 600, fontSize: 13.5, cursor: "pointer",
+              transition: "background 0.15s"
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = CONFIG.colors.primaryHover}
+            onMouseLeave={e => e.currentTarget.style.background = CONFIG.colors.primaryTeal}
+          >
+            Create Resume
+          </button>
+        </div>
+      ) : (
+        /* Redesigned Minimal Production Data Table Layout */
+        <div style={{ ...globalCardStyle, padding: "20px 0" }}>
+          <div style={{ padding: "0 24px 16px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h3 style={{ fontFamily: CONFIG.fonts.brand, fontSize: 15, fontWeight: 700, color: CONFIG.colors.textPrimary, margin: 0 }}>
+              Stored Resume Ecosystem Profiles ({resumes.length})
+            </h3>
+          </div>
+
+          <div style={{ overflowX: "auto" }}>
+            <div style={{ minWidth: 700 }}>
+              {/* Header Grid Row */}
+              <div style={{
+                display: "grid", gridTemplateColumns: "2.5fr 1.2fr 1fr 1.2fr 1.2fr",
+                padding: "10px 24px", borderBottom: `1px solid ${CONFIG.colors.border}`,
+                fontSize: 11, fontWeight: 600, color: CONFIG.colors.textMuted, letterSpacing: "0.05em", textTransform: "uppercase"
+              }}>
+                <span>Document Framework Title</span>
+                <span>Template File</span>
+                <span>ATS Parsing Index</span>
+                <span>Telemetry Delta</span>
+                <span style={{ textAlign: "right" }}>Management Node</span>
+              </div>
+
+              {/* Dynamic Map Data Generator List */}
+              {resumes.map((resume) => (
+                <div
+                  key={resume.id}
+                  style={{
+                    display: "grid", gridTemplateColumns: "2.5fr 1.2fr 1fr 1.2fr 1.2fr",
+                    padding: "16px 24px", alignItems: "center",
+                    borderBottom: `1px solid ${CONFIG.colors.background}`,
+                    transition: "background 0.15s ease",
+                  }}
+                  className="table-row-hover"
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: CONFIG.colors.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, color: CONFIG.colors.primaryTeal }}>📄</div>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: CONFIG.colors.textPrimary }}>{resume.title}</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: CONFIG.colors.textSecondary }}>{resume.template}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: resume.score >= 85 ? CONFIG.colors.success : CONFIG.colors.warning }} />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: CONFIG.colors.textPrimary }}>{resume.score}%</span>
+                  </div>
+                  <span style={{ fontSize: 13, color: CONFIG.colors.textMuted }}>{resume.updated}</span>
+                  <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                    <button style={{ padding: "6px 12px", border: `1px solid ${CONFIG.colors.border}`, background: "#FFFFFF", borderRadius: 8, color: CONFIG.colors.textSecondary, fontSize: 12, fontWeight: 500, cursor: "pointer" }}>Edit</button>
+                    <button style={{ padding: "6px 12px", border: "none", background: CONFIG.colors.primaryLight, borderRadius: 8, color: CONFIG.colors.primaryTeal, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Scan</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Embedded High-Fidelity Custom Layout Style Overrides */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        @media (max-width: 900px) {
-          .main-grid { grid-template-columns: 1fr !important; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap');
+        
+        .table-row-hover:hover {
+          background-color: ${CONFIG.colors.primaryLight}40 !important;
         }
-        @media (max-width: 640px) {
-          .resume-table-header { display: none !important; }
-          .resume-row { grid-template-columns: 1fr auto !important; }
-          .resume-row > :nth-child(2), .resume-row > :nth-child(3), .resume-row > :nth-child(4) { display: none; }
+        
+        @media (max-width: 960px) {
+          .dashboard-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .quick-actions-subgrid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </div>
   );
 }
 
-// Icons
-function DocIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>; }
-function ScanIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>; }
-function TrophyIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="11"/><path d="M17 11A5 5 0 0 0 7 11"/><path d="M5 7h14M5 7l1 5h12l1-5"/></svg>; }
-function ProfileIcon() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>; }
+// ─── Native Platform Clean SVGs Icons Components ─────────────────────────────
+function DocIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>; }
+function ScanIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>; }
+function MatchIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>; }
+function StrengthIcon() { return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>; }
