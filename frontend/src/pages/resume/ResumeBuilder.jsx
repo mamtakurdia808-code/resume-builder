@@ -642,7 +642,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   padding: 0 32px;
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 10;
   gap: 12px;
 }
 .topbar-brand { display: flex; align-items: center; gap: 10px; }

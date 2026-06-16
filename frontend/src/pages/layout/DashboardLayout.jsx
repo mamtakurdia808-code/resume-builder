@@ -18,7 +18,11 @@ export default function DashboardLayout() {
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  const sidebarWidth = isMobile ? 0 : (collapsed ? 72 : 240);
+  const sidebarWidth = isMobile
+  ? 0
+  : collapsed
+    ? 72
+    : 240;
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap');
@@ -57,12 +61,13 @@ export default function DashboardLayout() {
           transition: "padding-left 0.3s cubic-bezier(0.4,0,0.2,1)",
           background: "#F8FAFC",
         }}>
-          <div style={{ 
-            padding: "32px 32px 48px", 
-            maxWidth: 1400, 
-            margin: "0 auto",
-            transition: "all 0.2s ease" 
-          }}>
+          <div
+  style={{
+    padding: isMobile ? "12px" : "32px 32px 48px",
+    maxWidth: 1400,
+    margin: "0 auto",
+  }}
+>
             <Outlet />
           </div>
         </main>

@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "../routes/ProtectedRoutes";
@@ -7,6 +6,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import Login from "../pages/auth/Login";
 import SignUp from "../pages/auth/Signup";
 import ResumeBuilder from "../pages/resume/ResumeBuilder";
+import MyResumes from "../pages/resume/MyResumes";
 
 export default function App() {
   return (
@@ -14,16 +14,26 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+
+        {/* Protected Routes with DashboardLayout */}
         <Route
-          path="/dashboard"
-          element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="/dashboard/builder" element={<ResumeBuilder/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/resume-builder" element={<ResumeBuilder />} />
+          <Route path="/resumes" element={<MyResumes />} />
+          <Route path="/resumes/create" element={<ResumeBuilder />} />
+          <Route path="/resumes/edit/:id" element={<ResumeBuilder />} />
+          <Route path="/resumes/:id" element={<Dashboard />} />
           {/* Add more nested routes here */}
         </Route>
+
         {/* Default Route */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         {/* 404 Route */}
         <Route path="*" element={<h1>404 - Page Not Found</h1>} />

@@ -73,7 +73,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
       </button>
 
       {/* Page title */}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 0 }}>
         <h1 style={{
           fontFamily: "'DM Sans', sans-serif",
           fontWeight: 700, fontSize: 16, color: "#111827",
@@ -82,7 +82,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
         }}>
           Dashboard
         </h1>
-        <p style={{ fontSize: 11.5, color: "#64748B", fontFamily: "'DM Sans', sans-serif", margin: "2px 0 0 0" }}>
+        <p style={{ fontSize: 11.5, color: "#64748B", fontFamily: "'DM Sans', sans-serif", margin: "2px 0 0 0", whiteSpace: "nowrap"}}>
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
         </p>
       </div>
@@ -137,7 +137,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
           {notifOpen && (
             <div style={{
               position: "absolute", top: "calc(100% + 8px)", right: 0,
-              width: 310, ...dropdownStyle,
+              width: "calc(100vw - 20px)", maxWidth: 310, ...dropdownStyle,
             }}>
               <div style={{ padding: "14px 16px 10px", borderBottom: "1px solid #E2E8F0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#111827", fontFamily: "'DM Sans', sans-serif" }}>Notifications</span>
@@ -191,7 +191,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
             }}>
               {initials || "U"}
             </div>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", fontFamily: "'DM Sans', sans-serif", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <span className="profile-name" style={{ fontSize: 13, fontWeight: 600, color: "#111827", fontFamily: "'DM Sans', sans-serif", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {displayName.split(" ")[0]}
             </span>
             <ChevronDownIcon strokeColor={dropOpen ? "#0D9488" : "#64748B"} />
@@ -200,7 +200,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
           {dropOpen && (
             <div style={{
               position: "absolute", top: "calc(100% + 8px)", right: 0,
-              width: 220, ...dropdownStyle,
+              width: "min(220px, calc(100vw - 20px))" , ...dropdownStyle,
             }}>
               <div style={{ padding: "14px 16px", borderBottom: "1px solid #E2E8F0" }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", fontFamily: "'DM Sans', sans-serif" }}>{displayName}</div>
@@ -248,13 +248,23 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
       </div>
 
       <style>{`
-        @keyframes dropIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-        @media (max-width: 768px) {
-          .navbar-root { padding-left: 16px !important; }
-          .mobile-menu-btn { display: flex !important; }
-          .search-btn span:not(:first-child) { display: none !important; }
-        }
-      `}</style>
+  @keyframes dropIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to { opacity:1; transform:none; }
+  }
+
+  @media (max-width: 768px) {
+    .navbar-root { padding-left: 16px !important; }
+    .mobile-menu-btn { display: flex !important; }
+    .search-btn span:not(:first-child) { display: none !important; }
+  }
+
+  @media (max-width: 480px) {
+    .profile-name {
+      display: none !important;
+    }
+  }
+`}</style>
     </header>
   );
 }
