@@ -1,380 +1,527 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { Search, Plus, Eye, Edit2, Trash2, Loader } from 'lucide-react';
-import DeleteResumeModal from '../../components/modals/DeleteResumeModal';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  Search,
+  Plus,
+  Eye,
+  Edit2,
+  Trash2,
+  FileText,
+  Loader2,
+} from "lucide-react";
 
-// Tailwind CSS Classes - Modern HR-Tech SaaS Theme
-const STYLES = {
-  // Main Container
-  mainContainer: 'min-h-screen bg-slate-50',
-
-  // Header
-  headerContainer:
-  "bg-white border-b border-slate-200 sticky top-0 z-10",
-
-headerContent: "px-4 sm:px-6 lg:px-8 py-6",
-
-headerInner:
-  "flex flex-col md:flex-row md:items-center md:justify-between gap-4",
-
-mainTitle:
-  "text-3xl md:text-4xl font-bold text-slate-900",
-
-resumeCount:
-  "text-slate-500 mt-1",
-
-  // Create Button
-  createButton:
-  "flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 w-full md:w-auto",
-  // Main Content
-  contentContainer: "w-full px-4 sm:px-6 lg:px-8 py-6",
-
-  // Search Bar
-  searchContainer:
-  "mb-6",
-  searchWrapper: "relative w-full max-w-2xl",
-  searchIcon: 'absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400',
-  searchInput: 'w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200',
-
-  // Error Message
-  errorContainer: 'mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-3',
-  errorDot: 'w-2 h-2 bg-red-500 rounded-full flex-shrink-0',
-
-  // Loading State
-  loadingContainer: 'flex flex-col items-center justify-center py-16',
-  loadingIcon: 'text-teal-600 animate-spin mb-4',
-  loadingText: 'text-slate-600',
-
-  // Empty State
-  emptyContainer:
-  "flex flex-col items-center justify-center min-h-[450px] text-center",
-  emptyIconBox:
-  "inline-flex items-center justify-center w-20 h-20 bg-slate-100 rounded-2xl mb-5",
-  emptyIcon: 'text-slate-400',
-  emptyTitle: 'text-xl font-semibold text-slate-900 mb-2',
-  emptyDescription: 'text-slate-600 mb-6',
-  emptyButton: 'inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-all duration-200 active:scale-95',
-
-  // Grid
-  grid: "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6",
-
-  // Card
-  card:
-  "bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden",
-  cardHeader: 'h-1 bg-gradient-to-r from-teal-600 to-teal-500',
-  cardContent: 'p-5',
-
-  // Card Title
-  cardTitle: 'text-lg font-semibold text-slate-900 mb-4 line-clamp-2 group-hover:text-teal-600 transition-colors',
-
-  // Card Dates
-  datesContainer: 'space-y-3 mb-6 text-sm',
-  dateRow: 'flex items-center justify-between',
-  dateLabel: 'text-slate-600 font-medium',
-  dateValue: 'text-slate-900 font-semibold',
-
-  // Card Divider
-  divider: 'h-px bg-slate-200 mb-5',
-
-  // Card Actions
-  actionsContainer:
-  "grid grid-cols-3 gap-2",
-
-  // Action Buttons
-  viewButton: 'flex-1 flex items-center justify-center gap-2 bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-600 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 border border-slate-200 hover:border-teal-300',
-  editButton: 'flex-1 flex items-center justify-center gap-2 bg-teal-50 hover:bg-teal-100 text-teal-600 hover:text-teal-700 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 border border-teal-200 hover:border-teal-300',
-  deleteButton: 'flex-1 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 border border-red-200 hover:border-red-300',
-
-  // Button Text (hidden on mobile)
-  buttonText:
-  "hidden lg:inline",
-};
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function MyResumes() {
   const navigate = useNavigate();
+
   const [resumes, setResumes] = useState([]);
   const [filteredResumes, setFilteredResumes] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [deleteModal, setDeleteModal] = useState({
-    isOpen: false,
-    resumeId: null,
-    resumeTitle: '',
-  });
+  const [error, setError] = useState("");
 
-  // Fetch all resumes
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const fetchResumes = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await axios.get('/api/resumes');
-        
-        // Handle both array and object responses
-        const resumesData = Array.isArray(response.data) 
-          ? response.data 
-          : response.data.resumes || [];
-        
-        console.log('Resumes fetched:', resumesData);
-        setResumes(resumesData);
-        setFilteredResumes(resumesData);
-      } catch (err) {
-        console.error('Error fetching resumes:', err);
-        setError(
-          err.response?.data?.message || 'Failed to fetch resumes. Please try again.'
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchResumes();
   }, []);
 
-  // Handle search
   useEffect(() => {
     const filtered = resumes.filter((resume) =>
-      resume.title.toLowerCase().includes(searchQuery.toLowerCase())
+      resume.title.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredResumes(filtered);
-  }, [searchQuery, resumes]);
+  }, [search, resumes]);
 
-  // Handle create resume
-  const handleCreateResume = () => {
-    navigate('/resumes/create');
+  const fetchResumes = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/resumes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setResumes(response.data.resumes || []);
+      setFilteredResumes(response.data.resumes || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load resumes");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle view resume
-  const handleViewResume = (resumeId) => {
-    navigate(`/resumes/${resumeId}`);
+  const deleteResume = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this resume?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${API_URL}/resumes/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setResumes((prev) => prev.filter((r) => r.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete resume");
+    }
   };
 
-  // Handle edit resume
-  const handleEditResume = (resumeId) => {
-    navigate(`/resumes/edit/${resumeId}`);
-  };
-
-  // Handle delete resume
-  const handleDeleteResume = (resumeId, resumeTitle) => {
-    setDeleteModal({
-      isOpen: true,
-      resumeId,
-      resumeTitle,
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   };
 
-  // Handle delete confirmation
-  const handleDeleteConfirm = async () => {
-    try {
-      await axios.delete(`/api/resumes/${deleteModal.resumeId}`);
-      setResumes((prev) =>
-        prev.filter((resume) => resume.id !== deleteModal.resumeId)
-      );
-      setFilteredResumes((prev) =>
-        prev.filter((resume) => resume.id !== deleteModal.resumeId)
-      );
-      setDeleteModal({ isOpen: false, resumeId: null, resumeTitle: '' });
-      // Optional: Show success message
-      setError(null);
-    } catch (err) {
-      console.error('Error deleting resume:', err);
-      setError('Failed to delete resume. Please try again.');
-    }
-  };
-
-  // Format date
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      });
-    } catch (err) {
-      console.error('Date formatting error:', err);
-      return 'N/A';
-    }
-  };
-
   return (
-    <div className={STYLES.mainContainer}>
+    <div className="resume-page-container">
+      {/* Scope-isolated standard CSS styles inside the same file */}
+      <style>{`
+        .resume-page-container {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto; /* Ensures no extra top/bottom margin is pulling or pushing space */
+        padding: 8px 24px 32px 24px; /* Reduced the top padding from 32px to 8px */
+        font-family: system-ui, -apple-system, sans-serif;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        }
+
+        /* Header Card */
+        .header-card {
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          padding: 32px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+
+        .title-block {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+
+        .title-block h1 {
+          font-size: 32px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .subtitle {
+          font-size: 15px;
+          color: #64748b;
+          margin: 0;
+        }
+
+        .resume-count {
+          font-size: 12px;
+          font-weight: 600;
+          color: #94a3b8;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-top: 4px;
+        }
+
+        /* Custom Create Button */
+        .btn-create {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          background-color: #0d9488;
+          color: #ffffff;
+          font-weight: 600;
+          font-size: 14px;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: background-color 0.2s ease, transform 0.1s ease;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          white-space: nowrap;
+        }
+
+        .btn-create:hover {
+          background-color: #0f766e;
+        }
+
+        /* Divider & Search Input Layout */
+        .header-divider {
+          border-top: 1px solid #f1f5f9;
+          margin-top: 24px;
+          padding-top: 24px;
+        }
+
+        .search-wrapper {
+          position: relative;
+          max-w: 360px;
+          width: 100%;
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 14px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #94a3b8;
+          pointer-events: none;
+        }
+
+        .search-input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 10px 16px 10px 42px;
+          font-size: 14px;
+          border: 1px solid #cbd5e1;
+          border-radius: 10px;
+          background-color: #f8fafc;
+          outline: none;
+          transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+          background-color: #ffffff;
+          border-color: #0d9488;
+          box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
+        }
+
+        /* Grid Framework Layout */
+        .resume-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+          gap: 24px;
+        }
+
+        /* Grid Cards Elements */
+        .resume-card {
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .resume-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-top-bar {
+          height: 4px;
+          background-color: #0d9488;
+        }
+
+        .card-content {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        .card-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 16px 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .card-details {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .card-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+        }
+
+        .card-label {
+          color: #94a3b8;
+        }
+
+        .card-value {
+          font-weight: 500;
+          color: #334155;
+        }
+
+        /* Actions Bar Layout */
+        .card-divider {
+          border-top: 1px solid #f1f5f9;
+          padding-top: 16px;
+          margin-top: auto;
+        }
+
+        .actions-group {
+          display: flex;
+          gap: 10px;
+          justify-content: flex-end;
+        }
+
+        .btn-action {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px;
+          border-radius: 8px;
+          border: 1px solid transparent;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .btn-view {
+          background-color: #f1f5f9;
+          color: #475569;
+          border-color: #e2e8f0;
+        }
+        .btn-view:hover { background-color: #e2e8f0; }
+
+        .btn-edit {
+          background-color: #f0fdfa;
+          color: #0f766e;
+          border-color: #ccfbf1;
+        }
+        .btn-edit:hover { background-color: #ccfbf1; }
+
+        .btn-delete {
+          background-color: #fef2f2;
+          color: #b91c1c;
+          border-color: #fee2e2;
+        }
+        .btn-delete:hover { background-color: #fee2e2; }
+
+        /* General States CSS */
+        .error-banner {
+          background-color: #fef2f2;
+          border: 1px solid #fee2e2;
+          color: #991b1b;
+          font-size: 14px;
+          border-radius: 10px;
+          padding: 16px;
+        }
+
+        .loading-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 64px 0;
+          color: #0d9488;
+        }
+
+        .empty-container {
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          padding: 64px 32px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .empty-icon-box {
+          width: 64px;
+          height: 64px;
+          border-radius: 14px;
+          background-color: #f8fafc;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 16px;
+          color: #94a3b8;
+        }
+
+        .empty-title {
+          font-size: 20px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0;
+        }
+
+        .empty-text {
+          font-size: 14px;
+          color: #64748b;
+          margin: 8px 0 0 0;
+          max-width: 280px;
+        }
+
+        .animate-spin {
+          animation: spin-kf 1s linear infinite;
+        }
+
+        @keyframes spin-kf {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 640px) {
+          .header-top {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .search-wrapper {
+            max-width: 100%;
+          }
+        }
+      `}</style>
+
       {/* Header */}
-      <div className={STYLES.headerContainer}>
-        <div className={STYLES.headerContent}>
-  <div className="max-w-[1400px] mx-auto">
-    <div className={STYLES.headerInner}>
-            <div className="flex-1">
-              <h1 className={STYLES.mainTitle}>
-                My Resumes
-              </h1>
-              <p className={STYLES.resumeCount}>
-                {resumes.length} {resumes.length === 1 ? 'resume' : 'resumes'}
-              </p>
-            </div>
-            <button
-              onClick={handleCreateResume}
-              className={`${STYLES.createButton} w-full md:w-auto`}
-            >
-              <Plus size={20} />
-              Create Resume
-            </button>
+      <div className="header-card">
+        <div className="header-top">
+          <div className="title-block">
+            <h1>My Resumes</h1>
+            <p className="subtitle">
+              Manage and organize all your resumes in one place
+            </p>
+            <p className="resume-count">
+              {resumes.length} {resumes.length === 1 ? "Resume" : "Resumes"}
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate("/resumes/create")}
+            className="btn-create"
+          >
+            <Plus size={18} />
+            Create Resume
+          </button>
+        </div>
+
+        <div className="header-divider">
+          <div className="search-wrapper">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search resumes..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-input"
+            />
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className={STYLES.contentContainer}>
-  <div className="max-w-[1400px] mx-auto">
-        {/* Search Bar */}
-        <div className={STYLES.searchContainer}>
-  <div className="flex justify-start">
-    <div className={STYLES.searchWrapper}>
-            <Search
-              size={20}
-              className={STYLES.searchIcon}
-            />
-            <input
-              type="text"
-              placeholder="Search resumes by title..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={STYLES.searchInput}
-            />
-          </div>
+      {/* Error State Banner */}
+      {error && <div className="error-banner">{error}</div>}
+
+      {/* Logic Rendering Pipeline */}
+      {loading ? (
+        <div className="loading-container">
+          <Loader2 size={36} className="animate-spin" />
         </div>
+      ) : filteredResumes.length === 0 ? (
+        /* Empty State */
+        <div className="empty-container">
+          <div className="empty-icon-box">
+            <FileText size={32} />
+          </div>
+          <h2 className="empty-title">
+            {search ? "No Resumes Found" : "No Resumes Yet"}
+          </h2>
+          <p className="empty-text">
+            {search
+              ? "Try using a different search term."
+              : "Create your first resume and start building your professional profile."}
+          </p>
+          {!search && (
+            <button
+              onClick={() => navigate("/resumes/create")}
+              className="btn-create"
+              style={{ marginTop: "24px" }}
+            >
+              <Plus size={16} />
+              Create Resume
+            </button>
+          )}
         </div>
+      ) : (
+        /* Clean Responsive Card Grid Layout */
+        <div className="resume-grid">
+          {filteredResumes.map((resume) => (
+            <div key={resume.id} className="resume-card">
+              <div className="card-top-bar" />
 
-        {/* Error Message */}
-        {error && (
-          <div className={STYLES.errorContainer}>
-            <div className={STYLES.errorDot} />
-            <span>{error}</span>
-          </div>
-        )}
+              <div className="card-content">
+                <h3 className="card-title" title={resume.title}>
+                  {resume.title}
+                </h3>
 
-        {/* Loading State */}
-        {loading ? (
-          <div className={STYLES.loadingContainer}>
-            <Loader size={40} className={STYLES.loadingIcon} />
-            <p className={STYLES.loadingText}>Loading your resumes...</p>
-          </div>
-        ) : filteredResumes.length === 0 ? (
-          // Empty State
-          <div className="flex flex-col items-center justify-center min-h-[450px] text-center">
-            <div className={STYLES.emptyIconBox}>
-              <Plus size={32} className={STYLES.emptyIcon} />
-            </div>
-            <h3 className={STYLES.emptyTitle}>
-              {searchQuery ? 'No resumes found' : 'No resumes yet'}
-            </h3>
-            <p className={STYLES.emptyDescription}>
-              {searchQuery
-                ? 'Try adjusting your search query'
-                : 'Create your first resume to get started'}
-            </p>
-            {!searchQuery && (
-              <button
-                onClick={handleCreateResume}
-                className={STYLES.emptyButton}
-              >
-                <Plus size={18} />
-                Create Resume
-              </button>
-            )}
-          </div>
-        ) : (
-          // Resume Grid
-          <div className={STYLES.grid}>
-            {filteredResumes.map((resume) => (
-              <div
-                key={resume.id}
-                className={STYLES.card}
-              >
-                {/* Card Header */}
-                <div className={STYLES.cardHeader} />
-
-                {/* Card Content */}
-                <div className={STYLES.cardContent}>
-                  {/* Title */}
-                  <h3 className={STYLES.cardTitle}>
-                    {resume.title || 'Untitled Resume'}
-                  </h3>
-
-                  {/* Dates */}
-                  <div className={STYLES.datesContainer}>
-                    <div className={STYLES.dateRow}>
-                      <span className={STYLES.dateLabel}>Created:</span>
-                      <span className={STYLES.dateValue}>
-                        {formatDate(resume.created_at)}
-                      </span>
-                    </div>
-                    <div className={STYLES.dateRow}>
-                      <span className={STYLES.dateLabel}>Updated:</span>
-                      <span className={STYLES.dateValue}>
-                        {formatDate(resume.updated_at)}
-                      </span>
-                    </div>
+                <div className="card-details">
+                  <div className="card-row">
+                    <span className="card-label">Created</span>
+                    <span className="card-value">
+                      {formatDate(resume.created_at)}
+                    </span>
                   </div>
 
-                  {/* Divider */}
-                  <div className={STYLES.divider} />
+                  <div className="card-row">
+                    <span className="card-label">Updated</span>
+                    <span className="card-value">
+                      {formatDate(resume.updated_at)}
+                    </span>
+                  </div>
+                </div>
 
-                  {/* Actions */}
-                  <div className={STYLES.actionsContainer}>
-                    {/* View Button */}
+                <div className="card-divider">
+                  <div className="actions-group">
                     <button
-                      onClick={() => handleViewResume(resume.id)}
-                      className={STYLES.viewButton}
-                      title="View resume"
+                      onClick={() => navigate(`/resumes/${resume.id}`)}
+                      className="btn-action btn-view"
+                      title="View Resume"
                     >
                       <Eye size={16} />
-                      <span className={STYLES.buttonText}>View</span>
                     </button>
 
-                    {/* Edit Button */}
                     <button
-                      onClick={() => handleEditResume(resume.id)}
-                      className={STYLES.editButton}
-                      title="Edit resume"
+                      onClick={() => navigate(`/resumes/edit/${resume.id}`)}
+                      className="btn-action btn-edit"
+                      title="Edit Resume"
                     >
                       <Edit2 size={16} />
-                      <span className={STYLES.buttonText}>Edit</span>
                     </button>
 
-                    {/* Delete Button */}
                     <button
-                      onClick={() =>
-                        handleDeleteResume(resume.id, resume.title)
-                      }
-                      className={STYLES.deleteButton}
-                      title="Delete resume"
+                      onClick={() => deleteResume(resume.id)}
+                      className="btn-action btn-delete"
+                      title="Delete Resume"
                     >
                       <Trash2 size={16} />
-                      <span className={STYLES.buttonText}>Delete</span>
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-      </div>
-      </div>
-
-      {/* Delete Resume Modal */}
-      {deleteModal.isOpen && (
-        <DeleteResumeModal
-          isOpen={deleteModal.isOpen}
-          resumeTitle={deleteModal.resumeTitle}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() =>
-            setDeleteModal({ isOpen: false, resumeId: null, resumeTitle: '' })
-          }
-        />
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

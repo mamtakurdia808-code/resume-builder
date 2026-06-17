@@ -7,6 +7,10 @@ import Login from "../pages/auth/Login";
 import SignUp from "../pages/auth/Signup";
 import ResumeBuilder from "../pages/resume/ResumeBuilder";
 import MyResumes from "../pages/resume/MyResumes";
+import EditResume from "../pages/resume/EditResume";
+import ResumePreview from "../pages/resume/ResumePreview";
+import Templates from "../pages/resume/Templates";
+import Profile from "../pages/profile/Profile";
 
 export default function App() {
   return (
@@ -15,7 +19,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
-        {/* Protected Routes with DashboardLayout */}
+        {/* Protected Routes */}
         <Route
           element={
             <ProtectedRoute>
@@ -24,18 +28,17 @@ export default function App() {
           }
         >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard/resume-builder" element={<ResumeBuilder />} />
+          <Route path="/dashboard/builder" element={<ResumeBuilder />} />
           <Route path="/resumes" element={<MyResumes />} />
+          <Route path="/resumes/templates" element={<Templates />} />
           <Route path="/resumes/create" element={<ResumeBuilder />} />
-          <Route path="/resumes/edit/:id" element={<ResumeBuilder />} />
-          <Route path="/resumes/:id" element={<Dashboard />} />
-          {/* Add more nested routes here */}
+          <Route path="/resumes/edit/:id" element={<EditResume />} />
+          <Route path="/resumes/:id" element={<ResumePreview />} />
+          
+          <Route path="/dashboard/profile" element={<Profile />} />
         </Route>
 
-        {/* Default Route */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-        {/* 404 Route */}
         <Route path="*" element={<h1>404 - Page Not Found</h1>} />
       </Routes>
     </BrowserRouter>

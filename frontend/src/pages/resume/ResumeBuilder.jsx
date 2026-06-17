@@ -607,7 +607,7 @@ const CSS = `
   --emerald-soft: #ECFDF5;
   --amber: #F59E0B;
   --amber-soft: #FFFBEB;
-  --blue: #0D9488; /* Fallback from legacy purple configurations */
+  --blue: #0D9488;
   --blue-soft: #F0FDFA;
   --rose: #EF4444;
   --rose-soft: #FEF2F2;
@@ -631,7 +631,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 
 .app-root { min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
 
-/* ── Topbar (Clean Premium Navbar Layout) ── */
+/* ── Topbar ── */
 .topbar {
   height: var(--topbar-h);
   background: var(--surface);
@@ -656,7 +656,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 .topbar-name { font-family: var(--font-brand); font-size: 16px; font-weight: 700; letter-spacing: -0.02em; color: var(--text-primary); }
 .topbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-/* ── Buttons & Clickable Triggers ── */
+/* ── Buttons ── */
 .btn {
   display: flex; align-items: center; gap: 6px;
   font-family: var(--font); font-size: 13.5px; font-weight: 600;
@@ -672,7 +672,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 .btn-ghost:hover { background: var(--accent-soft); color: var(--accent); }
 .full-btn { width: 100%; justify-content: center; padding: 11px; }
 
-/* ── Main Production Divided Workspace Layout ── */
+/* ── Main Production Layout ── */
 .main-layout {
   flex: 1;
   display: grid;
@@ -695,15 +695,13 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
 }
 
 .preview-panel {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #F1F5F9; /* Neutral light framing background */
+  background: #F1F5F9;
 }
 .preview-sticky {
   position: sticky;
@@ -725,11 +723,9 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   flex: 1;
   overflow-y: auto;
   padding: 32px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
 }
 
-/* ── Minimal Section Card Architectures ── */
+/* ── Section Cards ── */
 .section-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -744,7 +740,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 20px;
   background: none; border: none; cursor: pointer;
-  transition: var(--transition);
 }
 .section-header:hover { background: var(--accent-soft); }
 .section-title-group { display: flex; align-items: center; gap: 12px; }
@@ -754,7 +749,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Unified Structural Light Aesthetic Badging Styles */
 .color-indigo, .color-violet, .color-blue { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-soft-border); }
 .color-emerald { background: var(--emerald-soft); color: var(--emerald); border: 1px solid #A7F3D0; }
 .color-amber { background: var(--amber-soft); color: var(--amber); border: 1px solid #FDE68A; }
@@ -764,11 +758,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 .chevron { color: var(--text-muted); transition: var(--transition); }
 .section-body { padding: 4px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
 
-/* ── Form Multi-Column Grid System ── */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
 
-/* ── Inputs & Form Controls ── */
+/* ── Inputs ── */
 .field-wrap { display: flex; flex-direction: column; gap: 6px; }
 .field-label { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
 .required-dot { color: var(--red); margin-left: 3px; }
@@ -785,7 +778,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 }
 .field-input.has-icon { padding-left: 36px; }
 .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,148,136,0.12); background: #ffffff; }
-.field-input::placeholder { color: var(--text-muted); font-weight: 400; }
 
 .field-textarea {
   width: 100%; background: var(--surface);
@@ -795,9 +787,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   resize: vertical; min-height: 80px; line-height: 1.6;
 }
 .field-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(13,148,136,0.12); background: #ffffff; }
-.field-textarea::placeholder { color: var(--text-muted); font-weight: 400; }
 
-/* ── Dynamic Nested Entity Entries ── */
 .dynamic-entry {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -809,7 +799,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 .entry-header { display: flex; align-items: center; justify-content: space-between; }
 .entry-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
-/* ── Control Action Buttons ── */
 .add-btn {
   display: flex; align-items: center; gap: 6px;
   font-family: var(--font); font-size: 13px; font-weight: 600;
@@ -820,7 +809,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   justify-content: center; transition: var(--transition);
   margin-top: 6px;
 }
-.add-btn:hover { background: #E0F2FE; background-color: rgba(13,148,136,0.1); border-color: var(--accent); }
+.add-btn:hover { background: rgba(13,148,136,0.1); border-color: var(--accent); }
 .remove-btn {
   display: flex; align-items: center; justify-content: center;
   width: 30px; height: 30px;
@@ -830,7 +819,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 }
 .remove-btn:hover { background: #FEE2E2; color: var(--red); }
 
-/* ── Inline Skill Arrays ── */
 .skill-input-row { display: flex; gap: 8px; }
 .skill-input { flex: 1; }
 .skill-add-btn { padding: 10px 16px; flex-shrink: 0; border-radius: var(--radius-sm); }
@@ -840,23 +828,19 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   background: var(--accent-soft); color: var(--accent);
   border: 1px solid var(--accent-soft-border);
   border-radius: 20px; font-size: 12.5px; font-weight: 600;
-  padding: 5px 10px 5px 14px; cursor: default;
-  animation: chip-pop 0.18s cubic-bezier(0.34,1.56,0.64,1);
+  padding: 5px 10px 5px 14px;
 }
-@keyframes chip-pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .chip-remove {
   display: flex; align-items: center; justify-content: center;
   width: 18px; height: 18px;
   background: rgba(13,148,136,0.08); color: var(--accent);
-  border: none; border-radius: 50%; cursor: pointer; transition: var(--transition);
+  border: none; border-radius: 50%; cursor: pointer;
 }
-.chip-remove:hover { background: var(--rose-soft); color: var(--rose); }
 .empty-hint { font-size: 13px; color: var(--text-muted); font-style: italic; }
 
-/* ── Form View Interfaces Footer ── */
 .form-footer-btns { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; }
 
-/* ── Document Compilation Render Preview Canvas ── */
+/* ── Preview Canvas Sheet ── */
 .preview-doc {
   background: var(--surface);
   color: #111827;
@@ -866,31 +850,20 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
   font-size: 11px;
   line-height: 1.6;
   box-shadow: 0 4px 20px rgba(15,23,42,0.03), 0 10px 30px rgba(15,23,42,0.04);
-  min-height: 842px; /* Standard proportions mimic */
+  min-height: 842px;
   border: 1px solid var(--border);
 }
 .prev-header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid var(--accent); margin-bottom: 20px; }
 .prev-name { font-family: var(--font-brand); font-size: 26px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.2; }
 .prev-title { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-.prev-contacts {
-  display: flex; flex-wrap: wrap; gap: 8px 16px;
-  justify-content: center; margin-top: 12px;
-}
-.prev-contacts span {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--text-secondary);
-}
+.prev-contacts { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; margin-top: 12px; }
+.prev-contacts span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); }
 .prev-section { margin-bottom: 20px; }
 .prev-section-title { font-family: var(--font-brand); font-size: 12px; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
 .prev-section-divider { height: 1px; background: var(--border); margin-bottom: 12px; }
 .prev-para { font-size: 12px; color: var(--text-secondary); line-height: 1.6; white-space: pre-line; }
 .prev-skills { display: flex; flex-wrap: wrap; gap: 6px; }
-.prev-skill-tag {
-  background: var(--bg); color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 6px; font-size: 11px; font-weight: 600;
-  padding: 3px 10px;
-}
+.prev-skill-tag { background: var(--bg); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 11px; font-weight: 600; padding: 3px 10px; }
 .prev-entry { margin-bottom: 14px; }
 .prev-entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .prev-entry-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
@@ -903,57 +876,110 @@ body { font-family: var(--font); background: var(--bg); color: var(--text-primar
 .prev-cert { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
 .prev-cert-meta { font-size: 11px; color: var(--text-muted); }
 
-/* ── Modern Safe Toast Micro-notifications ── */
 .toast {
   position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 24px; border-radius: 40px;
-  font-size: 13.5px; font-weight: 600;
-  box-shadow: 0 10px 30px rgba(15,23,42,0.1);
-  animation: toast-in 0.22s cubic-bezier(0.34,1.56,0.64,1);
-  z-index: 9999;
-  white-space: nowrap;
+  display: flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 40px;
+  font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 30px rgba(15,23,42,0.1); z-index: 9999;
 }
 .toast-success { background: var(--emerald-soft); color: #065F46; border: 1px solid #A7F3D0; }
 .toast-info { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-soft-border); }
-.toast-icon { display: flex; }
-.toast-close { background: none; border: none; cursor: pointer; color: inherit; display: flex; margin-left: 6px; opacity: 0.5; transition: var(--transition); }
-.toast-close:hover { opacity: 1; }
-@keyframes toast-in { from { transform: translateX(-50%) translateY(16px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+.toast-close { background: none; border: none; cursor: pointer; color: inherit; display: flex; margin-left: 6px; opacity: 0.5; }
 
-/* ── Precise Structural Fluid Responsiveness Breakpoints ── */
 .preview-toggle { display: none; }
 
 @media (max-width: 1024px) {
-  .main-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .main-layout { grid-template-columns: 1fr; height: auto; }
   .form-panel { border-right: none; border-bottom: 1px solid var(--border); }
   .preview-sticky { position: static; height: auto; }
   .preview-toggle { display: flex; }
   .hidden-mobile { display: none; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .grid-3 { grid-template-columns: 1fr; }
-  .topbar-actions .btn-ghost { display: none; }
-  .topbar-actions .btn-outline:not(.preview-toggle) { display: none; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .topbar-actions .btn-ghost, .topbar-actions .btn-outline:not(.preview-toggle) { display: none; }
 }
 
 @media (max-width: 600px) {
-  .topbar { padding: 0 16px; height: auto; py: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .topbar { padding: 0 16px; height: auto; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
   .topbar-actions { width: 100%; justify-content: flex-start; }
-  .panel-scroll { padding: 16px; }
+  .panel-scroll, .preview-scroll { padding: 16px; }
   .section-body { padding: 4px 14px 14px; }
-  .preview-scroll { padding: 16px; }
   .preview-doc { padding: 24px; }
   .prev-name { font-size: 20px; }
 }
 
-@media (min-width: 1400px) {
-  .main-layout { grid-template-columns: 1.15fr 0.85fr; }
-  .panel-scroll { padding: 36px; }
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   CRITICAL PRINT LAYOUT MEDIA OVERRIDES
+   Hides the layout shells, headers, dashboards and strips down to the marked sheet.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4;
+    margin: 0mm !important; /* Strips browser headers/footers */
+  }
 
-/* Custom Mini Scrollbars Matrix Trackers */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 20px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+  /* Hide everything else outside the direct preview element */
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 210mm;
+    height: 297mm;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Escape any outer layout components, dashboards, wrappers or nav elements */
+  div, header, sidebar, section, nav, button, .topbar, .form-panel, .preview-label {
+    display: none !important;
+  }
+
+  /* Specifically force display only on the preview card and its parent layout hierarchy */
+  .app-root, 
+  .main-layout, 
+  .preview-panel, 
+  .preview-sticky, 
+  .preview-scroll, 
+  .preview-doc,
+  .preview-doc * {
+    display: block !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    visibility: visible !important;
+  }
+
+  /* Force standard block positioning and clear out viewport containers */
+  .app-root, .main-layout {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .preview-panel, .preview-sticky, .preview-scroll {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Re-apply precise container padding cleanly to standard A4 sheet dimensions */
+  .preview-doc {
+    padding: 20mm !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    border-radius: 0 !important;
+  }
+
+  /* Prevent sections or blocks from being awkwardly split across page margins */
+  .prev-section, .prev-entry, .prev-cert {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
 `;

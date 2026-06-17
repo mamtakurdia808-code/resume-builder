@@ -54,17 +54,21 @@ export default function DashboardLayout() {
         />
 
         {/* Main content area */}
-        <main style={{
-          paddingLeft: sidebarWidth,
-          paddingTop: 64,
-          minHeight: "100vh",
-          transition: "padding-left 0.3s cubic-bezier(0.4,0,0.2,1)",
-          background: "#F8FAFC",
-        }}>
+        <main
+  style={{
+    marginLeft: sidebarWidth,
+    paddingTop: 66,
+    minHeight: "100vh",
+    width: `calc(100vw - ${sidebarWidth}px)`,
+    transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
+    background: "#F8FAFC",
+    overflowX: "hidden",
+  }}
+>
           <div
   style={{
-    padding: isMobile ? "12px" : "32px 32px 48px",
-    maxWidth: 1400,
+    padding: isMobile ? "12px" : "48px 32px 64px",
+    maxWidth: 1200,
     margin: "0 auto",
   }}
 >
