@@ -12,7 +12,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
+        const response = await fetch("http://localhost:5000/api/profile", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await response.json();
@@ -33,7 +33,7 @@ export default function Profile() {
   setLoading(true); // Optional: add a global loading state or specific button state
   try {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:5000/api/auth/profile", {
+    const response = await fetch("http://localhost:5000/api/profile", {
       method: "PUT", // Ensure your backend route supports PUT/PATCH
       headers: {
         "Content-Type": "application/json",
