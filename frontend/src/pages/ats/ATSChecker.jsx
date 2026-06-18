@@ -1,36 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
-import { Loader2, FileText, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import api from "../../services/api";
+import { Loader2, FileText } from "lucide-react";
 
 const ATSChecker = () => {
+  // -----------------------------
+  // State
+  // -----------------------------
   const [resumes, setResumes] = useState([]);
-  const [selectedResumeId, setSelectedResumeId] = useState('');
-  const [jobDescription, setJobDescription] = useState('');
+  const [selectedResumeId, setSelectedResumeId] = useState("");
+
+  const [jobTitle, setJobTitle] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState(null);
 
+  // -----------------------------
+  // Fetch User Resumes
+  // -----------------------------
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const { data } = await api.get('/resumes');
-        setResumes(data.resumes || []);
-      } catch (err) {
-        console.error("Failed to fetch resumes:", err);
+        const { data } = await api.get("/resumes");
+
+        if (data.success) {
+          setResumes(data.resumes);
+        }
+      } catch (error) {
+        console.error("Failed to fetch resumes:", error);
       }
     };
+
     fetchResumes();
   }, []);
 
+  // -----------------------------
+  // Analyze Resume
+  // -----------------------------
   const handleAnalyze = async () => {
-    setLoading(true);
+    if (!selectedResumeId) {
+      return alert("Please select a resume.");
+    }
+
+    if (!jobTitle.trim()) {
+      return alert("Please enter a job title.");
+    }
+
+    if (!jobDescription.trim()) {
+      return alert("Please enter the job description.");
+    }
+
     try {
-      const { data } = await api.post('/ats/analyze', { 
-        resumeId: selectedResumeId, 
-        jobDescription 
+      setLoading(true);
+
+      const { data } = await api.post("/ats/analyze", {
+        resume_id: selectedResumeId,
+        job_title: jobTitle,
+        company_name: companyName,
+        job_description: jobDescription,
       });
-      setAnalysis(data);
-    } catch (err) {
-      console.error("Analysis failed:", err);
+
+      if (data.success) {
+        setAnalysis(data.report);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to analyze resume."
+      );
     } finally {
       setLoading(false);
     }
@@ -180,28 +222,54 @@ html, body, #root {
         {/* Left Section: Inputs */}
         <section className="ats-card">
           <div className="form-group">
-            <label className="form-label">Select Saved Resume</label>
-            <div className="select-wrapper">
-              <select 
-                value={selectedResumeId} 
-                onChange={(e) => setSelectedResumeId(e.target.value)}
-                className="form-control"
-              >
-                <option value="">Choose a resume...</option>
-                {resumes.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
-              </select>
-            </div>
-          </div>
+  <label className="form-label">Select Saved Resume</label>
+  <div className="select-wrapper">
+    <select
+      value={selectedResumeId}
+      onChange={(e) => setSelectedResumeId(e.target.value)}
+      className="form-control"
+    >
+      <option value="">Choose a resume...</option>
+      {resumes.map((r) => (
+        <option key={r.id} value={r.id}>
+          {r.title}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
 
-          <div className="form-group">
-            <label className="form-label">Job Description</label>
-            <textarea
-              className="form-control textarea-large"
-              placeholder="Paste the job description here to compare..."
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-            />
-          </div>
+<div className="form-group">
+  <label className="form-label">Job Title</label>
+  <input
+    type="text"
+    className="form-control"
+    placeholder="e.g. Frontend Developer"
+    value={jobTitle}
+    onChange={(e) => setJobTitle(e.target.value)}
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">Company Name (Optional)</label>
+  <input
+    type="text"
+    className="form-control"
+    placeholder="e.g. Google"
+    value={companyName}
+    onChange={(e) => setCompanyName(e.target.value)}
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">Job Description</label>
+  <textarea
+    className="form-control textarea-large"
+    placeholder="Paste the complete job description here..."
+    value={jobDescription}
+    onChange={(e) => setJobDescription(e.target.value)}
+  />
+</div>
 
           <button 
             className="btn-analyze" 
@@ -223,9 +291,13 @@ html, body, #root {
             <div className="results-content">
               <h3 className="results-title">Match Report</h3>
               <div className="score-box">
-                <span className="score-value">{analysis.score}%</span>
-              </div>
-              <p>Your resume matches {analysis.score}% of the job requirements.</p>
+                <span className="score-value">
+  {analysis.ats_score}%
+</span>
+</div>
+<p>
+  Your resume matches {analysis.ats_score}% of the job requirements.
+</p>
             </div>
           )}
         </section>

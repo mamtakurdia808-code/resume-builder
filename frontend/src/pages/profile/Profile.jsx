@@ -59,16 +59,35 @@ export default function Profile() {
   }
 };
 
+const handleCancel = () => {
+  setFormData(userData); // Revert form data to the last saved state
+  setIsEditing(false);   // Close edit mode
+};
+
   if (loading) return <div style={styles.pageContainer}>Loading...</div>;
 
   return (
     <div style={styles.pageContainer}>
       <div style={styles.header}>
-        <h1 style={styles.title}>Account Overview</h1>
-        <button onClick={() => isEditing ? handleSave() : setIsEditing(true)} style={styles.actionBtn}>
-          {isEditing ? <><FiSave /> Save Changes</> : <><FiEdit2 /> Edit Profile</>}
-        </button>
-      </div>
+  <h1 style={styles.title}>Account Overview</h1>
+  
+ <div style={styles.actionGroup}>
+  {isEditing ? (
+    <>
+      <button onClick={handleCancel} style={styles.cancelBtn}>
+        <FiX /> Cancel Changes
+      </button>
+      <button onClick={handleSave} style={styles.saveBtn}>
+        <FiSave /> Save Changes
+      </button>
+    </>
+  ) : (
+    <button onClick={() => setIsEditing(true)} style={styles.saveBtn}>
+      <FiEdit2 /> Edit Profile
+    </button>
+  )}
+</div>
+</div>
 
       <div style={styles.card}>
         <div style={styles.gridForm}>
@@ -108,5 +127,22 @@ const styles = {
   label: { fontSize: "11px", fontWeight: "700", color: "#64748B" },
   inputActive: { padding: "12px", borderRadius: "10px", border: "1px solid #0D9488", outline: "none" },
   inputStatic: { padding: "12px", borderRadius: "10px", border: "1px solid #E2E8F0", backgroundColor: "#F8FAFC" },
-  actionBtn: { display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0D9488", color: "#fff", cursor: "pointer" }
+  actionBtn: { display: "flex", alignItems: "center", gap: "8px", padding: "10px 20px", borderRadius: "10px", border: "none", background: "#0D9488", color: "#fff", cursor: "pointer" },
+  actionGroup: { 
+    display: "flex", 
+    flexDirection: "column", // Stacks buttons vertically
+    gap: "10px" 
+  },
+  saveBtn: { 
+    display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", 
+    padding: "12px 20px", borderRadius: "10px", 
+    border: "none", background: "#0D9488", // Teal/Green color
+    color: "#fff", cursor: "pointer", fontWeight: "600" 
+  },
+  cancelBtn: { 
+    display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", 
+    padding: "12px 20px", borderRadius: "10px", 
+    border: "none", background: "#64748B", // Gray/Blue color from your image
+    color: "#fff", cursor: "pointer", fontWeight: "600" 
+  }
 };
