@@ -100,29 +100,9 @@ export default function Templates() {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: colors.bg, color: colors.textPrimary, fontFamily: "sans-serif", paddingBottom: "80px" }}>
-      
-      {/* UI Section: Header */}
-      <header style={{ backgroundColor: colors.surface, borderBottom: `1px solid ${colors.border}`, position: "sticky", top: 0, zIndex: 40 }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", height: "80px", display: "flex", alignItems: "center", justifyContent: "between", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div style={{ width: "44px", height: "44px", backgroundColor: colors.accent, borderRadius: "12px", display: "flex", alignItems: "center", justifyValue: "center", justifyContent: "center", color: "#FFFFFF" }}>
-              <FiLayout style={{ width: "22px", height: "22px" }} />
-            </div>
-            <div>
-              <h1 style={{ margin: 0, fontSize: "20px", fontWeight: "bold", letterSpacing: "-0.5px" }}>Template Marketplace</h1>
-              <p style={{ margin: "4px 0 0 0", fontSize: "13px", color: colors.textMuted, fontWeight: 500 }}>Select your baseline resume layout</p>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", backgroundColor: colors.accentLight, border: `1px solid ${colors.accentBorder}`, padding: "6px 16px", borderRadius: "20px" }}>
-            <FiZap style={{ width: "16px", height: "16px", color: colors.accent }} />
-            <span style={{ fontSize: "12px", fontWeight: "bold", color: colors.accent }}>Premium Layout System</span>
-          </div>
-        </div>
-      </header>
 
       {/* Main Container */}
-      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px" }}>
+      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
         
         {/* Hub Title Block */}
         <div style={{ marginBottom: "40px" }}>
@@ -192,19 +172,14 @@ export default function Templates() {
                   onClick={() => setSelectedTemplateId(template.id)}
                   onMouseEnter={() => setHoveredCardId(template.id)}
                   onMouseLeave={() => setHoveredCardId(null)}
-                  style={{
-                    backgroundColor: colors.surface,
-                    border: isSelected ? `2px solid ${colors.accent}` : `1px solid ${colors.border}`,
-                    borderRadius: "20px",
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    display: "flex",
-                    flexDirection: "column",
-                    position: "relative",
-                    transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-                    transform: isHovered ? "translateY(-6px)" : "none",
-                    boxShadow: isHovered ? "0 20px 25px -5px rgba(0,0,0,0.05)" : "0 4px 6px -1px rgba(0,0,0,0.02)"
-                  }}
+                  style={{ 
+      minHeight: "100vh", 
+      backgroundColor: colors.bg, 
+      color: colors.textPrimary, 
+      fontFamily: "'DM Sans', sans-serif", // Matching your Navbar font
+      paddingBottom: "80px",
+      paddingTop: "88px", // 64px (Navbar height) + 24px (breathing room)
+    }}
                 >
                   {/* Badges Overlay */}
                   <div style={{ position: "absolute", top: "20px", left: "20px", zIndex: 10, display: "flex", flexDirection: "column", gap: "8px" }}>

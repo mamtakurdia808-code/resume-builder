@@ -11,6 +11,7 @@ import EditResume from "../pages/resume/EditResume";
 import ResumePreview from "../pages/resume/ResumePreview";
 import Templates from "../pages/resume/Templates";
 import Profile from "../pages/profile/Profile";
+import ATSChecker from "../pages/ats/ATSChecker";
 
 export default function App() {
   return (
@@ -30,12 +31,12 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/builder" element={<ResumeBuilder />} />
           <Route path="/resumes" element={<MyResumes />} />
-          <Route path="/resumes/templates" element={<Templates />} />
           <Route path="/resumes/create" element={<ResumeBuilder />} />
           <Route path="/resumes/edit/:id" element={<EditResume />} />
           <Route path="/resumes/:id" element={<ResumePreview />} />
-          
+          <Route path="/templates" element={<Templates />} />
           <Route path="/dashboard/profile" element={<Profile />} />
+          <Route path="/ats-checker" element={<ATSChecker/>} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

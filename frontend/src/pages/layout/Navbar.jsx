@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Navbar({ sidebarWidth, setMobileOpen }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const displayName = user.full_name || "User";
   const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
@@ -44,6 +45,18 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
     transition: "all 0.2s ease",
   };
 
+  const pageTitles = {
+  "/dashboard": "Dashboard",
+  "/resumes": "My Resumes",
+  "/templates": "Templates",
+  "/dashboard/profile": "Profile",
+  "/dashboard/settings": "Settings",
+  "/dashboard/builder": "Resume Builder",
+  "/ats-checker": "ATS Checker",
+};
+
+const pageTitle = pageTitles[location.pathname] || "Dashboard";
+
   return (
     <header style={{
       position: "fixed", top: 0, right: 0, left: 0,
@@ -80,7 +93,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
           letterSpacing: "-0.02em",
           margin: 0
         }}>
-          Dashboard
+          {pageTitle}
         </h1>
         <p style={{ fontSize: 11.5, color: "#64748B", fontFamily: "'DM Sans', sans-serif", margin: "2px 0 0 0", whiteSpace: "nowrap"}}>
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
