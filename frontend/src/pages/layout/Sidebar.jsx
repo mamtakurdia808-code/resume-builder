@@ -35,7 +35,7 @@ const NAV_ITEMS = [
     group: 'Optimization',
     items: [
       { id: 'ats-checker', label: 'ATS Checker', path: '/ats-checker', icon: ScanIcon },
-      { id: 'ats-reports', label: 'ATS Reports', path: '/ats-reports', icon: BarChartIcon },
+      { id: 'ats/reports', label: 'ATS Reports', path: '/ats/reports', icon: BarChartIcon },
     ],
   },
   {

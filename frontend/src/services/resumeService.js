@@ -17,6 +17,13 @@ API.interceptors.request.use((config) => {
 export const createResume = (data) =>
   API.post("/resumes", data);
 
+export const uploadResume = (formData) =>
+  API.post("/resumes/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
 export const getAllResumes = () =>
   API.get("/resumes");
 

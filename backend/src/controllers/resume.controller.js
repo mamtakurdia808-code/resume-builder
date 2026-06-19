@@ -201,10 +201,69 @@ const deleteResume = async (req, res) => {
   }
 };
 
+const uploadResume = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { title } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload a resume file.",
+      });
+    }
+
+    if (!title?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume title is required.",
+      });
+    }
+
+    // TODO:
+    // Extract text from PDF/DOC/DOCX here.
+    // For now we'll store a placeholder.
+    const resumeData = {
+      originalFileName: req.file.originalname,
+      mimeType: req.file.mimetype,
+      size: req.file.size,
+      extractedText: "",
+    };
+
+    const result = await pool.query(
+      `
+      INSERT INTO resumes (
+        user_id,
+        title,
+        resume_data
+      )
+      VALUES ($1, $2, $3)
+      RETURNING *
+      `,
+      [userId, title, resumeData]
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Resume uploaded successfully.",
+      resume: result.rows[0],
+    });
+
+  } catch (error) {
+    console.error("Upload Resume Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to upload resume.",
+    });
+  }
+};
+
 module.exports = {
   createResume,
   getAllResumes,
   getResumeById,
   updateResume,
   deleteResume,
+  uploadResume,
 };

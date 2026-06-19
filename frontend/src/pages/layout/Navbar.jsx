@@ -53,6 +53,8 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
   "/dashboard/settings": "Settings",
   "/dashboard/builder": "Resume Builder",
   "/ats-checker": "ATS Checker",
+  "/ats/reports": "ATS Reports",
+  "/ai-review": "AI Review",
 };
 
 const pageTitle = pageTitles[location.pathname] || "Dashboard";
