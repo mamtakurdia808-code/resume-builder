@@ -16,6 +16,8 @@ const ATSChecker = () => {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState(null);
 
+  const [resumeFile, setResumeFile] = useState(null);
+
   // -----------------------------
   // Fetch User Resumes
   // -----------------------------
@@ -39,9 +41,9 @@ const ATSChecker = () => {
   // Analyze Resume
   // -----------------------------
   const handleAnalyze = async () => {
-    if (!selectedResumeId) {
-      return alert("Please select a resume.");
-    }
+    if (!selectedResumeId && !resumeFile) {
+  return alert("Please select or upload a resume.");
+}
 
     if (!jobTitle.trim()) {
       return alert("Please enter a job title.");
@@ -54,12 +56,24 @@ const ATSChecker = () => {
     try {
       setLoading(true);
 
-      const { data } = await api.post("/ats/analyze", {
-        resume_id: selectedResumeId,
-        job_title: jobTitle,
-        company_name: companyName,
-        job_description: jobDescription,
-      });
+      const formData = new FormData();
+
+if (selectedResumeId) {
+  formData.append("resume_id", selectedResumeId);
+}
+
+if (resumeFile) {
+  formData.append("resume", resumeFile);
+}
+
+formData.append("job_title", jobTitle);
+formData.append("company_name", companyName);
+formData.append("job_description", jobDescription);
+
+const { data } = await api.post(
+  "/ats/analyze",
+  formData,
+);
 
       if (data.success) {
         setAnalysis(data.report);
@@ -223,13 +237,18 @@ html, body, #root {
         <section className="ats-card">
           <div className="form-group">
   <label className="form-label">Select Saved Resume</label>
+
   <div className="select-wrapper">
     <select
       value={selectedResumeId}
-      onChange={(e) => setSelectedResumeId(e.target.value)}
+      onChange={(e) => {
+        setSelectedResumeId(e.target.value);
+        setResumeFile(null);
+      }}
       className="form-control"
     >
       <option value="">Choose a resume...</option>
+
       {resumes.map((r) => (
         <option key={r.id} value={r.id}>
           {r.title}
@@ -237,6 +256,28 @@ html, body, #root {
       ))}
     </select>
   </div>
+</div>
+
+<div className="form-group">
+  <label className="form-label">Or Upload Resume</label>
+
+  <input
+    type="file"
+    className="form-control"
+    accept=".pdf,.doc,.docx"
+    onChange={(e) => {
+      if (e.target.files.length > 0) {
+        setResumeFile(e.target.files[0]);
+        setSelectedResumeId("");
+      }
+    }}
+  />
+
+  {resumeFile && (
+    <p style={{ marginTop: 8, color: "#0D9488", fontSize: 13 }}>
+      {resumeFile.name}
+    </p>
+  )}
 </div>
 
 <div className="form-group">
@@ -274,7 +315,12 @@ html, body, #root {
           <button 
             className="btn-analyze" 
             onClick={handleAnalyze}
-            disabled={loading || !selectedResumeId || !jobDescription}
+           disabled={
+  loading ||
+  (!selectedResumeId && !resumeFile) ||
+  !jobTitle.trim() ||
+  !jobDescription.trim()
+}
           >
             {loading ? <Loader2 className="animate-spin" size={20} /> : 'Analyze Resume'}
           </button>

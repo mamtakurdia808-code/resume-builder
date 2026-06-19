@@ -1,6 +1,9 @@
 const pool = require("../config/db");
 const analyzeResumeWithGemini = require("../services/atsService");
 
+const extractPdfText = require("../utils/extractPdf");
+const extractDocxText = require("../utils/extractDocx");
+
 /**
  * POST /api/ats/analyze
  * Analyze Resume using Gemini
@@ -20,11 +23,11 @@ const analyzeResume = async (req, res) => {
     // Validation
     // -----------------------------
 
-    if (!resume_id) {
+    if (!resume_id && !req.file) {
       return res.status(400).json({
         success: false,
-        message: "Resume ID is required.",
-      });
+        message: "Please select or upload a resume.",
+       });
     }
 
     if (!job_title) {
@@ -45,34 +48,56 @@ const analyzeResume = async (req, res) => {
     // Fetch Resume
     // -----------------------------
 
-    const resumeResult = await pool.query(
-      `
-      SELECT
-          id,
-          title,
-          resume_data
-      FROM resumes
-      WHERE id = $1
-      AND user_id = $2
-      `,
-      [resume_id, userId]
-    );
+    // -----------------------------
+// Get Resume Data
+// -----------------------------
 
-    if (resumeResult.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Resume not found.",
-      });
-    }
+let resumeData = "";
+let actualResumeId = null;
 
-    const resume = resumeResult.rows[0];
+if (resume_id) {
+  const resumeResult = await pool.query(
+    `
+    SELECT id, title, resume_data
+    FROM resumes
+    WHERE id = $1
+    AND user_id = $2
+    `,
+    [resume_id, userId]
+  );
+
+  if (resumeResult.rows.length === 0) {
+    return res.status(404).json({
+      success: false,
+      message: "Resume not found.",
+    });
+  }
+
+  actualResumeId = resumeResult.rows[0].id;
+  resumeData = resumeResult.rows[0].resume_data;
+} else {
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({
+      success: false,
+      message: "Resume file is required.",
+    });
+  }
+
+  if (file.mimetype === "application/pdf") {
+    resumeData = await extractPdfText(file.buffer);
+  } else {
+    resumeData = await extractDocxText(file.buffer);
+  }
+}
 
     // -----------------------------
     // Gemini Analysis
     // -----------------------------
 
     const analysis = await analyzeResumeWithGemini({
-      resume: resume.resume_data,
+      resume: resumeData,
       jobTitle: job_title,
       companyName: company_name,
       jobDescription: job_description,
@@ -113,7 +138,7 @@ const analyzeResume = async (req, res) => {
       `,
       [
         userId,
-        resume_id,
+        actualResumeId,
         job_title,
         company_name,
 
