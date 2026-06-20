@@ -49,7 +49,7 @@ const NAV_ITEMS = [
   {
     group: 'Settings',
     items: [
-      { id: 'profile', label: 'Profile', path: '/profile', icon: UserIcon },
+      { id: 'profile', label: 'Profile', path: '/dashboard/profile', icon: UserIcon },
     ],
   },
 ];

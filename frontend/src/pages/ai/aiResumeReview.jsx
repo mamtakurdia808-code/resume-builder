@@ -55,7 +55,6 @@ const S = {
     gap: "14px",
     position: "sticky",
     top: 0,
-    zIndex: 1000,
     boxShadow: "0 1px 8px rgba(20,184,166,0.06)",
   },
   headerIcon: {

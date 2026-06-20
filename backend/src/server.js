@@ -8,7 +8,7 @@ const resumeRoutes = require("./routes/resume.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const profileRoutes = require("./routes/profile.routes");
 const atsRoutes = require("./routes/ats.routes");
-const aiReviewRoutes = require("./routes/aiReview.routes");
+const aiReviewRoutes = require("./routes/ai.routes");
 
 const app = express();
 

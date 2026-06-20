@@ -1,5 +1,6 @@
 const pool = require("../config/db");
 const reviewResumeWithGemini = require("../services/reviewService");
+const rewriteResume = require("../services/rewriteService");
 
 /**
  * POST /api/ai/review
@@ -203,9 +204,123 @@ const deleteAIReview = async (req, res) => {
   }
 };
 
+const ALLOWED_SECTIONS = [
+  "summary",
+  "project",
+  "experience",
+  "skills",
+  "achievements",
+];
+
+const rewriteResumeContent = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { resume_id, section, content } = req.body;
+
+    // Validate resume id
+    if (!resume_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume ID is required.",
+      });
+    }
+
+    // Validate section
+    if (!section) {
+      return res.status(400).json({
+        success: false,
+        message: "Section is required.",
+      });
+    }
+
+    if (!ALLOWED_SECTIONS.includes(section)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid section. Allowed sections: ${ALLOWED_SECTIONS.join(
+          ", "
+        )}.`,
+      });
+    }
+
+    // Validate content
+    if (!content || !content.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Content cannot be empty.",
+      });
+    }
+
+    const cleanContent = content.trim();
+
+    // Check resume ownership
+    const resume = await pool.query(
+      `SELECT id
+       FROM resumes
+       WHERE id = $1
+       AND user_id = $2`,
+      [resume_id, userId]
+    );
+
+    if (resume.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Resume not found.",
+      });
+    }
+
+    // Rewrite using Gemini
+    const aiResponse = await rewriteResume({
+  section,
+  content: cleanContent,
+});
+
+    // Save history
+    const review = await pool.query(
+      `INSERT INTO ai_reviews
+      (
+        user_id,
+        resume_id,
+        review_type,
+        input_text,
+        ai_response
+      )
+      VALUES ($1,$2,$3,$4,$5)
+      RETURNING *`,
+      [
+        userId,
+        resume_id,
+        "rewrite",
+        cleanContent,
+        JSON.stringify({
+          section,
+          rewritten: aiResponse,
+        }),
+      ]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Resume rewritten successfully.",
+      data: {
+        reviewId: review.rows[0].id,
+        rewritten: aiResponse,
+      },
+    });
+  } catch (error) {
+    console.error("Rewrite Resume Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to rewrite resume.",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createAIReview,
   getAIReviews,
   getAIReviewById,
   deleteAIReview,
+  rewriteResumeContent,
 };

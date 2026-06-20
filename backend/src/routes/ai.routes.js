@@ -8,7 +8,8 @@ const {
   getAIReviews,
   getAIReviewById,
   deleteAIReview,
-} = require("../controllers/aiReview.controller");
+  rewriteResumeContent,
+} = require("../controllers/ai.controller");
 
 // All AI review routes require authentication
 router.use(authMiddleware);
@@ -20,5 +21,10 @@ router.get("/reviews", getAIReviews);
 router.get("/reviews/:id", getAIReviewById);
 
 router.delete("/reviews/:id", deleteAIReview);
+
+router.post(
+  "/rewrite",
+  rewriteResumeContent
+);
 
 module.exports = router;
