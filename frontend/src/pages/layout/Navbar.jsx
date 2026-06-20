@@ -56,6 +56,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
   "/ats/reports": "ATS Reports",
   "/ai-review": "AI Review",
   "/ai-rewrite": "AI Rewrite",
+  "/job-analyzer": "Job Analyzer",
 };
 
 const pageTitle = pageTitles[location.pathname] || "Dashboard";

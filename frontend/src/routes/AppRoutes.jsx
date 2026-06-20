@@ -16,6 +16,8 @@ import ATSReports from "../pages/ats/ATSReports";
 import ATSReportDetail from "../pages/ats/ATSReportDetail";
 import AIResumeReview from "../pages/ai/aiResumeReview";
 import AIResumeRewrite from "../pages/ai/aiResumeRewrite";
+import jobAnalysis from "../pages/job/jobAnalysis";
+import JobAnalyzer from "../pages/job/jobAnalysis";
 
 export default function App() {
   return (
@@ -45,6 +47,7 @@ export default function App() {
           <Route path="/ats/reports/:id" element={<ATSReportDetail/>} />
           <Route path="/ai-review" element={<AIResumeReview/>} />
           <Route path="/ai-rewrite" element={<AIResumeRewrite/>} />
+          <Route path="/job-analyzer" element={<JobAnalyzer/>} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

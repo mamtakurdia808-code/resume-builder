@@ -9,6 +9,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const profileRoutes = require("./routes/profile.routes");
 const atsRoutes = require("./routes/ats.routes");
 const aiReviewRoutes = require("./routes/ai.routes");
+const jobAnalysisRoutes = require("./routes/jobAnalysis.routes");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/ats", atsRoutes);
 app.use("/api/ai", aiReviewRoutes);
+app.use("/api/job-analysis", jobAnalysisRoutes);
 
 app.get("/", (req, res) => {
   res.send("ResumeAI API Running");
