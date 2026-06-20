@@ -18,6 +18,7 @@ import AIResumeReview from "../pages/ai/aiResumeReview";
 import AIResumeRewrite from "../pages/ai/aiResumeRewrite";
 import jobAnalysis from "../pages/job/jobAnalysis";
 import JobAnalyzer from "../pages/job/jobAnalysis";
+import Settings from "../pages/settings/Settings";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
           <Route path="/ai-review" element={<AIResumeReview/>} />
           <Route path="/ai-rewrite" element={<AIResumeRewrite/>} />
           <Route path="/job-analyzer" element={<JobAnalyzer/>} />
+          <Route path="/dashboard/settings" element={<Settings/>} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
