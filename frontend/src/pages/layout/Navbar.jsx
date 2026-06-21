@@ -6,6 +6,9 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const displayName = user.full_name || "User";
+
+  const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+  
   const initials = displayName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
   const [dropOpen, setDropOpen] = useState(false);
@@ -54,6 +57,17 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
 };
 
 const pageTitle = pageTitles[location.pathname] || "Dashboard";
+
+// const existing = JSON.parse(localStorage.getItem("user") || "{}");
+
+// localStorage.setItem(
+//   "user",
+//   JSON.stringify({
+//     ...existing,
+//     profile_picture: updated.profile_picture,
+//     full_name: updated.full_name,
+//   })
+// );
 
   return (
     <header style={{
@@ -133,15 +147,40 @@ const pageTitle = pageTitles[location.pathname] || "Dashboard";
             onMouseEnter={e => { if (!dropOpen) { e.currentTarget.style.background = "#F0FDFA"; e.currentTarget.style.borderColor = "#99F6E4"; }}}
             onMouseLeave={e => { if (!dropOpen) { e.currentTarget.style.background = "#F8FAFC"; e.currentTarget.style.borderColor = "#E2E8F0"; }}}
           >
-            <div style={{
-              width: 28, height: 28, borderRadius: "12px",
-              background: "#0D9488",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, fontWeight: 700, color: "#FFFFFF",
-              fontFamily: "'DM Sans', sans-serif",
-            }}>
-              {initials || "U"}
-            </div>
+            {user.profile_picture ? (
+  <img
+    src={`${BASE_URL}${user.profile_picture}`}
+    alt={displayName}
+    style={{
+      width: 36,
+      height: 36,
+      borderRadius: "50%",
+      objectFit: "cover",
+      border: "2px solid #E2E8F0",
+    }}
+    onError={(e) => {
+      e.target.style.display = "none";
+      e.target.nextSibling.style.display = "flex";
+    }}
+  />
+) : null}
+
+<div
+  style={{
+    width: 36,
+    height: 36,
+    borderRadius: "50%",
+    background: "#0D9488",
+    color: "#fff",
+    display: user.profile_picture ? "none" : "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 700,
+    fontSize: 13,
+  }}
+>
+  {initials || "U"}
+</div>
             <span className="profile-name" style={{ fontSize: 13, fontWeight: 600, color: "#111827", fontFamily: "'DM Sans', sans-serif", maxWidth: 90, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {displayName.split(" ")[0]}
             </span>

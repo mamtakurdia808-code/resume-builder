@@ -71,7 +71,6 @@ const updateProfile = async (req, res) => {
       linkedin,
       github,
       portfolio,
-      profile_picture,
       currentrole,
       experience_years,
     } = req.body;
@@ -86,11 +85,10 @@ const updateProfile = async (req, res) => {
         linkedin = $4,
         github = $5,
         portfolio = $6,
-        profile_picture = $7,
-        currentrole = $8,
-        experience_years = $9,
+        currentrole = $7,
+        experience_years = $8,
         updated_at = CURRENT_TIMESTAMP
-      WHERE id = $10
+      WHERE id = $9
       RETURNING
         id,
         full_name,
@@ -100,7 +98,6 @@ const updateProfile = async (req, res) => {
         linkedin,
         github,
         portfolio,
-        profile_picture,
         currentrole,
         experience_years,
         created_at,
@@ -113,7 +110,6 @@ const updateProfile = async (req, res) => {
         linkedin,
         github,
         portfolio,
-        profile_picture,
         currentrole,
         experience_years,
         userId,
@@ -146,8 +142,48 @@ const updateProfile = async (req, res) => {
   }
 };
 
+const uploadProfilePhoto = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload a profile image.",
+      });
+    }
+    const imagePath = `/uploads/profile/${req.file.filename}`;
+
+    const result = await pool.query(
+      `
+      UPDATE users
+      SET profile_picture = $1,
+          updated_at = NOW()
+      WHERE id = $2
+      RETURNING id, full_name, email, profile_picture
+      `,
+      [imagePath, userId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile photo updated successfully.",
+      profile_picture: imagePath,
+      user: result.rows[0],
+    });
+  } catch (error) {
+    console.error("Upload Profile Photo:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to upload profile photo.",
+    });
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
+  uploadProfilePhoto,
 };
 

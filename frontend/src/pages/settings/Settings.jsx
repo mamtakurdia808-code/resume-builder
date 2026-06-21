@@ -342,20 +342,75 @@ const EditProfileModal = ({ user, onClose, onSaved }) => {
     linkedin:         user.linkedin         || "",
     github:           user.github           || "",
     portfolio:        user.portfolio        || "",
-    profile_picture:  user.profile_picture  || "",
     currentrole:      user.currentrole      || "",
     experience_years: user.experience_years || "",
   });
+
+  const [profileImage, setProfileImage] = useState(null);
+  const BASE_URL = API_URL.replace("/api", "");
+  const [preview, setPreview] = useState(
+  user.profile_picture
+    ? `${BASE_URL}${user.profile_picture}`
+    : ""
+);
+
   const [loading, setLoading] = useState(false);
   const [alert,   setAlert]   = useState({ type: "", msg: "" });
 
   const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }));
+
+  const handleImageChange = (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    return setAlert({
+      type: "error",
+      msg: "Please select an image file.",
+    });
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    return setAlert({
+      type: "error",
+      msg: "Image must be less than 5 MB.",
+    });
+  }
+
+  setProfileImage(file);
+  setPreview(URL.createObjectURL(file));
+};
 
   const handleSave = async () => {
     if (!form.full_name.trim())
       return setAlert({ type: "error", msg: "Full name is required." });
 
     setLoading(true);
+    let uploadedPhoto = user.profile_picture;
+
+if (profileImage) {
+  const imageData = new FormData();
+  imageData.append("profile_picture", profileImage);
+
+  const uploadRes = await fetch(`${API_URL}/profile/photo`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${TOKEN()}`,
+    },
+    body: imageData,
+  });
+
+  const uploadJson = await uploadRes.json();
+
+  if (!uploadRes.ok) {
+    throw new Error(uploadJson.message);
+  }
+
+  uploadedPhoto = `${API_URL.replace("/api", "")}${uploadJson.profile_picture}`;
+
+setPreview(uploadedPhoto);
+}
     setAlert({ type: "", msg: "" });
     try {
       const res = await fetch(`${API_URL}/profile`, {
@@ -369,7 +424,6 @@ const EditProfileModal = ({ user, onClose, onSaved }) => {
           linkedin:         form.linkedin.trim(),
           github:           form.github.trim(),
           portfolio:        form.portfolio.trim(),
-          profile_picture:  form.profile_picture.trim(),
           currentrole:      form.currentrole.trim(),
           experience_years: form.experience_years,
         }),
@@ -387,7 +441,7 @@ const EditProfileModal = ({ user, onClose, onSaved }) => {
         linkedin:         u.linkedin         || form.linkedin,
         github:           u.github           || form.github,
         portfolio:        u.portfolio        || form.portfolio,
-        profile_picture:  u.profile_picture  || form.profile_picture,
+        profile_picture:  u.profile_picture  || uploadedPhoto         || user.profile_picture,
         currentrole:      u.currentrole      || form.currentrole,
         experience_years: u.experience_years || form.experience_years,
         memberSince:      u.created_at       || user.memberSince,
@@ -452,9 +506,63 @@ const EditProfileModal = ({ user, onClose, onSaved }) => {
         </div>
 
         <div style={s.field}>
-          <label style={s.label}>Profile Picture URL</label>
-          <input style={s.input} value={form.profile_picture} onChange={set("profile_picture")} placeholder="https://example.com/avatar.jpg" />
-        </div>
+  <label style={s.label}>Profile Photo</label>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "18px",
+    }}
+  >
+    <img
+      src={
+        preview ||
+        "https://ui-avatars.com/api/?background=0d9488&color=fff&name=" +
+          encodeURIComponent(form.full_name || "User")
+      }
+      alt="Profile"
+      style={{
+        width: 90,
+        height: 90,
+        borderRadius: "50%",
+        objectFit: "cover",
+        border: "3px solid #e2e8f0",
+      }}
+    />
+
+    <div>
+      <input
+        id="profile-upload"
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={handleImageChange}
+      />
+
+      <label
+        htmlFor="profile-upload"
+        style={{
+          ...s.btnSecondary,
+          cursor: "pointer",
+          display: "inline-flex",
+        }}
+      >
+        Upload Photo
+      </label>
+
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 12,
+          color: "#64748b",
+        }}
+      >
+        JPG, PNG or WEBP (Max 5 MB)
+      </div>
+    </div>
+  </div>
+</div>
 
         {/* ── Social Links ── */}
         <div style={s.modalSection}><FiLink size={11} /> Social Links</div>
@@ -556,6 +664,7 @@ const Settings = () => {
         github:    u.github    || "",
         portfolio: u.portfolio || "",
       });
+      
     } catch (err) {
       console.error("[Settings] profile:", err.message);
     }

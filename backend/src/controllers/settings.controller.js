@@ -115,7 +115,6 @@ const updateSocialLinks = async (req, res) => {
       linkedin,
       github,
       portfolio,
-      website,
     } = req.body;
 
     const result = await pool.query(
@@ -125,16 +124,14 @@ const updateSocialLinks = async (req, res) => {
         linkedin = COALESCE($1, linkedin),
         github = COALESCE($2, github),
         portfolio = COALESCE($3, portfolio),
-        website = COALESCE($4, website),
         updated_at = CURRENT_TIMESTAMP
-      WHERE user_id = $5
+      WHERE user_id = $4
       RETURNING *;
       `,
       [
         linkedin,
         github,
         portfolio,
-        website,
         userId,
       ]
     );
@@ -168,8 +165,6 @@ const resetSettings = async (req, res) => {
         linkedin = NULL,
         github = NULL,
         portfolio = NULL,
-        website = NULL,
-
         updated_at = CURRENT_TIMESTAMP
       WHERE user_id = $1
       RETURNING *;
