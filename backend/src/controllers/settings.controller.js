@@ -40,103 +40,6 @@ const getSettings = async (req, res) => {
 };
 
 /**
- * GET /api/settings/profile
- */
-const getUserProfile = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const result = await pool.query(
-      `
-      SELECT
-        id,
-        full_name,
-        email,
-        created_at
-      FROM users
-      WHERE id = $1
-      `,
-      [userId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found.",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      profile: result.rows[0],
-    });
-  } catch (error) {
-    console.error("Get User Profile Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch user profile.",
-    });
-  }
-};
-
-/**
- * PUT /api/settings/preferences
- */
-const updatePreferences = async (req, res) => {
-  try {
-    const userId = req.user.id;
-
-    const {
-      theme,
-      language,
-      auto_save,
-      email_notifications,
-      ats_tips,
-      ai_suggestions,
-    } = req.body;
-
-    const result = await pool.query(
-      `
-      UPDATE settings
-      SET
-        theme = COALESCE($1, theme),
-        language = COALESCE($2, language),
-        auto_save = COALESCE($3, auto_save),
-        email_notifications = COALESCE($4, email_notifications),
-        ats_tips = COALESCE($5, ats_tips),
-        ai_suggestions = COALESCE($6, ai_suggestions),
-        updated_at = CURRENT_TIMESTAMP
-      WHERE user_id=$7
-      RETURNING *;
-      `,
-      [
-        theme,
-        language,
-        auto_save,
-        email_notifications,
-        ats_tips,
-        ai_suggestions,
-        userId,
-      ]
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Preferences updated successfully.",
-      settings: result.rows[0],
-    });
-  } catch (error) {
-    console.error("Update Preferences Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to update preferences.",
-    });
-  }
-};
-
-/**
  * PUT /api/settings/change-password
  */
 const changePassword = async (req, res) => {
@@ -262,16 +165,6 @@ const resetSettings = async (req, res) => {
       `
       UPDATE settings
       SET
-        theme = 'light',
-        language = 'English',
-        default_template = 1,
-        auto_save = TRUE,
-        email_notifications = TRUE,
-        ats_tips = TRUE,
-        ai_suggestions = TRUE,
-        pdf_format = 'A4',
-        font = 'Professional',
-
         linkedin = NULL,
         github = NULL,
         portfolio = NULL,
@@ -328,8 +221,6 @@ const deleteAccount = async (req, res) => {
 
 module.exports = {
   getSettings,
-  getUserProfile,
-  updatePreferences,
   changePassword,
   updateSocialLinks,
   resetSettings,

@@ -5,8 +5,6 @@ const authMiddleware = require("../middleware/auth.middleware");
 
 const {
     getSettings,
-    getUserProfile,
-  updatePreferences,
   changePassword,
   updateSocialLinks,
   resetSettings,
@@ -16,10 +14,6 @@ const {
 router.use(authMiddleware)
 
 router.get("/", getSettings);
-
-router.get("/profile", getUserProfile);
-
-router.put("/preferences", updatePreferences);
 
 router.put("/change-password", changePassword);
 
