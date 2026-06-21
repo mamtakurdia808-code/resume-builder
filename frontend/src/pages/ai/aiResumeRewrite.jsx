@@ -609,16 +609,31 @@ const ACCEPTED_TYPES = ".pdf,.doc,.docx";
 
 // ─── sub-components ──────────────────────────────────────────────────────────
 function HighlightedText({ text }) {
-  if (!text) return null;
-  const parts = text.split(
+  if (text == null) return null;
+
+  const safeText =
+    typeof text === "string"
+      ? text
+      : Array.isArray(text)
+      ? text.join("\n")
+      : JSON.stringify(text, null, 2);
+
+  const parts = safeText.split(
     /(\d+%?|\d+\+?|increased|reduced|improved|achieved|led|built|delivered|optimized|streamlined)/gi
   );
+
   return (
     <>
       {parts.map((p, i) =>
-        /(\d+%?|\d+\+?|increased|reduced|improved|achieved|led|built|delivered|optimized|streamlined)/i.test(p)
-          ? <span key={i} style={styles.highlightChunk}>{p}</span>
-          : <span key={i}>{p}</span>
+        /(\d+%?|\d+\+?|increased|reduced|improved|achieved|led|built|delivered|optimized|streamlined)/i.test(
+          p
+        ) ? (
+          <span key={i} style={styles.highlightChunk}>
+            {p}
+          </span>
+        ) : (
+          <span key={i}>{p}</span>
+        )
       )}
     </>
   );

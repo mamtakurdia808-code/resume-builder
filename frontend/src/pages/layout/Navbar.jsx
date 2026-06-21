@@ -56,18 +56,18 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
   "/job-analyzer": "Job Analyzer",
 };
 
-const pageTitle = pageTitles[location.pathname] || "Dashboard";
+const getPageTitle = (pathname) => {
+  if (pathname.startsWith("/resumes/edit/")) {
+    return "Edit Resume";
+  }
+  if (pathname.startsWith("/resumes/")) {
+    return "View Resume";
+  }
 
-// const existing = JSON.parse(localStorage.getItem("user") || "{}");
+  return pageTitles[pathname] || "Dashboard";
+};
 
-// localStorage.setItem(
-//   "user",
-//   JSON.stringify({
-//     ...existing,
-//     profile_picture: updated.profile_picture,
-//     full_name: updated.full_name,
-//   })
-// );
+const pageTitle = getPageTitle(location.pathname);
 
   return (
     <header style={{
@@ -105,7 +105,7 @@ const pageTitle = pageTitles[location.pathname] || "Dashboard";
           letterSpacing: "-0.02em",
           margin: 0
         }}>
-          {pageTitle}
+          {pageTitle || getPageTitle}
         </h1>
         <p style={{ fontSize: 11.5, color: "#64748B", fontFamily: "'DM Sans', sans-serif", margin: "2px 0 0 0", whiteSpace: "nowrap"}}>
           {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
