@@ -19,6 +19,7 @@ import AIResumeRewrite from "../pages/ai/aiResumeRewrite";
 import jobAnalysis from "../pages/job/jobAnalysis";
 import JobAnalyzer from "../pages/job/jobAnalysis";
 import Settings from "../pages/settings/Settings";
+import HelpSupport from "../pages/layout/HelpSupport";
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/ai-rewrite" element={<AIResumeRewrite/>} />
           <Route path="/job-analyzer" element={<JobAnalyzer/>} />
           <Route path="/dashboard/settings" element={<Settings/>} />
+          <Route path="/dashboard/helpsupport" element={<HelpSupport/>} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
