@@ -927,14 +927,14 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
 
   // Merge uploaded photo into resumeData before passing to template
   const resumeWithPhoto = resumeData
-    ? {
-        ...resumeData,
-        personalInfo: {
-          ...resumeData.personalInfo,
-          photo: photoUrl || resumeData.personalInfo?.photo || "",
-        },
-      }
-    : null;
+  ? {
+      ...resumeData,
+      personal: {                          // ← was "personalInfo"
+        ...resumeData.personal,
+        photo: photoUrl || resumeData.personal?.photo || "",
+      },
+    }
+  : null;
 
   // Fetch resume data
   useEffect(() => {
@@ -949,26 +949,26 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
       const r = raw?.resume_data || raw;
 
       const normalized = {
-        personalInfo: {
-          name:     r.personal?.name      || r.personal?.full_name || "",
-          title:    r.personal?.title     || "",
-          email:    r.personal?.email     || "",
-          phone:    r.personal?.phone     || "",
-          location: r.personal?.location  || r.personal?.city      || "",
-          photo:    r.personal?.photo     || r.personal?.photo_url  || "",
-          website:  r.personal?.website   || r.personal?.portfolio  || "",
-          linkedin: r.personal?.linkedin  || "",
-          github:   r.personal?.github    || "",
-        },
-        summary:        r.personal?.summary || r.summary             || "",
-        skills:         Array.isArray(r.skills)         ? r.skills         : [],
-        experience:     Array.isArray(r.experience)     ? r.experience     : [],
-        projects:       Array.isArray(r.projects)       ? r.projects       : [],
-        education:      Array.isArray(r.education)      ? r.education      : [],
-        certifications: Array.isArray(r.certifications) ? r.certifications : [],
-        languages:      Array.isArray(r.languages)      ? r.languages      : [],
-        achievements:   Array.isArray(r.achievements)   ? r.achievements   : [],
-      };
+  personal: {                                    // ← was "personalInfo"
+    fullName: r.personal?.fullName || "",        // ← was name/full_name
+    title:    r.personal?.title    || "",
+    email:    r.personal?.email    || "",
+    phone:    r.personal?.phone    || "",
+    location: r.personal?.location || "",
+    photo:    r.personal?.photo    || "",
+    portfolio: r.personal?.portfolio || r.personal?.website || "",
+    linkedin: r.personal?.linkedin || "",
+    github:   r.personal?.github   || "",
+    summary:  r.personal?.summary  || "",
+  },
+  skills:         Array.isArray(r.skills)         ? r.skills         : [],
+  experience:     Array.isArray(r.experience)     ? r.experience     : [],
+  projects:       Array.isArray(r.projects)       ? r.projects       : [],
+  education:      Array.isArray(r.education)      ? r.education      : [],
+  certifications: Array.isArray(r.certifications) ? r.certifications : [],
+  languages:      Array.isArray(r.languages)      ? r.languages      : [],
+  achievements:   Array.isArray(r.achievements)   ? r.achievements   : [],
+};
 
       if (!cancelled) setResumeData(normalized);
     } catch (err) {
@@ -1032,7 +1032,7 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
         <div>
           <p style={styles.livePreviewTopbarTitle}>
             {template.template_name} Template
-            {resumeData && ` · ${resumeData.personalInfo?.name || "Your Resume"}`}
+            {resumeData && ` · ${resumeData.personal?.fullName || "Your Resume"}`}
           </p>
           <p style={styles.livePreviewTopbarSub}>
             {applied ? "Changes saved to your resume" : "Preview only — nothing is saved yet"}

@@ -561,30 +561,29 @@ const PRINT_STYLES = `
 
 const ModernTemplate = ({ resume = {} }) => {
   const {
-  personal = {},
-  skills = [],
-  experience = [],
-  projects = [],
-  education = [],
-  certifications = [],
-  languages = [],
-  achievements = [],
-} = resume;
+    personal = {},        // DB stores as "personal"
+    skills = [],
+    experience = [],
+    projects = [],
+    education = [],
+    certifications = [],
+    languages = [],
+    achievements = [],
+  } = resume;
 
-const summary = personal.summary || "";
-
+  // summary lives inside personal in DB
   const {
-  fullName = "",
-  title: jobTitle = "",
-  email = "",
-  phone = "",
-  location = "",
-  photo = "",
-  portfolio = "",
-  linkedin = "",
-  github = "",
-} = personal;
-
+    fullName: name = "",      // DB field is "fullName"
+    title: jobTitle = "",
+    email = "",
+    phone = "",
+    location = "",
+    photo = "",
+    portfolio: website = "",  // DB field is "portfolio", not "website"
+    linkedin = "",
+    github = "",
+    summary = "",             // summary is INSIDE personal in DB
+  } = personal;
   // Normalise skills: support both [{category, items}] and [string]
   const normalisedSkills = skills.length > 0
     ? typeof skills[0] === "string"
@@ -608,18 +607,18 @@ const summary = personal.summary || "";
   {photo ? (
     <img
       src={photo}
-      alt={fullName || "Profile"}
+      alt={name || "Profile"}
       style={styles.photo}
     />
   ) : (
     <div style={styles.photoPlaceholder}>
-      {getInitials(fullName)}
+      {getInitials(name)}
     </div>
   )}
 </div>
 
             {/* Name + Title */}
-            {fullName && <h1 style={styles.name}>{fullName}</h1>}
+            {name && <h1 style={styles.name}>{name}</h1>}
             {jobTitle && <p style={styles.jobTitle}>{jobTitle}</p>}
 
             <div style={styles.divider} />
@@ -681,13 +680,13 @@ const summary = personal.summary || "";
             )}
 
             {/* Links */}
-            {(portfolio || linkedin || github) && (
+            {(website || linkedin || github) && (
               <SidebarSection label="Links">
-                {portfolio && (
+                {website && (
                   <div style={styles.contactRow}>
                     <Icon.Globe />
-                    <a href={portfolio} target="_blank" rel="noreferrer" style={styles.contactLink}>
-                      {portfolio.replace(/^https?:\/\//, "")}
+                    <a href={website} target="_blank" rel="noreferrer" style={styles.contactLink}>
+                      {website.replace(/^https?:\/\//, "")}
                     </a>
                   </div>
                 )}
@@ -717,10 +716,10 @@ const summary = personal.summary || "";
 
             {/* Summary */}
             {summary && (
-              <Section title="Professional Summary">
-                <p style={styles.summaryText}>{summary}</p>
-              </Section>
-            )}
+  <Section title="Professional Summary">
+    <p style={styles.summaryText}>{summary}</p>
+  </Section>
+)}
 
             {/* Experience */}
             {Array.isArray(experience) && experience.length > 0 && (
@@ -749,13 +748,32 @@ const summary = personal.summary || "";
                 {projects.map((proj, i) => (
                   <div key={i} style={styles.projectCard}>
                     <div style={styles.projectHeader}>
-                      <p style={styles.projectName}>{proj.title}</p>
-                      {proj.demo && (
-                        <a href={proj.demo} target="_blank" rel="noreferrer" style={styles.projectLink}>
-                          ↗ {proj.demo.replace(/^https?:\/\//, "")}
-                        </a>
-                      )}
-                    </div>
+  <p style={styles.projectName}>{proj.title}</p>
+
+  <div style={{ display: "flex", gap: "10px" }}>
+    {proj.demo && (
+      <a
+        href={proj.demo}
+        target="_blank"
+        rel="noreferrer"
+        style={styles.projectLink}
+      >
+        Live Demo
+      </a>
+    )}
+
+    {proj.github && (
+      <a
+        href={proj.github}
+        target="_blank"
+        rel="noreferrer"
+        style={styles.projectLink}
+      >
+        GitHub
+      </a>
+    )}
+  </div>
+</div>
                     {proj.description && (
                       <p style={styles.projectDesc}>{proj.description}</p>
                     )}

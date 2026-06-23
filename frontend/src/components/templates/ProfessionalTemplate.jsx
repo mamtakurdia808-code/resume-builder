@@ -284,14 +284,14 @@ const HeaderSection = ({ info }) => {
   const displayName = fullName || [firstName, lastName].filter(Boolean).join(" ");
 
   const links = [
-    email    && { label: email,    href: `mailto:${email}` },
-    phone    && { label: phone,    href: `tel:${phone}` },
-    location && { label: location, href: null },
-    linkedin && { label: "LinkedIn", href: linkedin },
-    github   && { label: "GitHub",   href: github },
-    website  && { label: "Website",  href: website },
-    portfolio && { label: "Portfolio", href: portfolio },
-  ].filter(Boolean);
+  email    && { label: email,                                          href: `mailto:${email}` },
+  phone    && { label: phone,                                          href: `tel:${phone}` },
+  location && { label: location,                                       href: null },
+  linkedin && { label: linkedin.replace(/^https?:\/\/(www\.)?/i, ""), href: linkedin },
+  github   && { label: github.replace(/^https?:\/\/(www\.)?/i, ""),   href: github },
+  website  && { label: website.replace(/^https?:\/\/(www\.)?/i, ""),  href: website },
+  portfolio && { label: portfolio.replace(/^https?:\/\/(www\.)?/i, ""), href: portfolio },
+].filter(Boolean);
 
   return (
     <header style={styles.header}>
@@ -346,14 +346,20 @@ const ExperienceSection = ({ experience }) => {
           </p>
           {/* Bullets take priority; fall back to description string */}
           {Array.isArray(job.bullets) && job.bullets.length > 0 ? (
-            <ul style={styles.bulletList}>
-              {job.bullets.map((b, j) => (
-                <li key={j} style={styles.bulletItem}>{b}</li>
-              ))}
-            </ul>
-          ) : job.description ? (
-            <p style={styles.descriptionText}>{job.description}</p>
-          ) : null}
+  <ul style={styles.bulletList}>
+    {job.bullets.map((b, j) => (
+      <li key={j} style={styles.bulletItem}>{b}</li>
+    ))}
+  </ul>
+) : job.responsibilities ? (
+  <ul style={styles.bulletList}>
+    {job.responsibilities.split("\n").filter(Boolean).map((b, j) => (
+      <li key={j} style={styles.bulletItem}>{b}</li>
+    ))}
+  </ul>
+) : job.description ? (
+  <p style={styles.descriptionText}>{job.description}</p>
+) : null}
         </div>
       ))}
     </section>
@@ -370,24 +376,35 @@ const ProjectsSection = ({ projects }) => {
         <div key={i} style={styles.itemBlock}>
           <div style={styles.itemHeader}>
             <h3 style={styles.itemTitle}>
-              {proj.url
-                ? <a href={proj.url} style={{ color: tokens.color.heading, textDecoration: "none" }}>{proj.name}</a>
-                : proj.name
+              {proj.demo || proj.github || proj.url
+                ? <a href={proj.demo || proj.github || proj.url} style={{ color: tokens.color.heading, textDecoration: "none" }}>
+                    {proj.title || proj.name}
+                  </a>
+                : proj.title || proj.name
               }
             </h3>
-            {(proj.startDate || proj.year) && (
-              <span style={styles.itemMeta}>
-                {proj.startDate
-                  ? [proj.startDate, proj.endDate || "Present"].join(" – ")
-                  : proj.year}
-              </span>
-            )}
+            <div style={{ display: "flex", gap: "10px" }}>
+              {proj.github && (
+                <a href={proj.github} style={{ ...styles.itemMeta, color: tokens.color.muted, textDecoration: "none" }}>
+                  {proj.github.replace(/^https?:\/\/(www\.)?github\.com\//, "github.com/")}
+                </a>
+              )}
+              {proj.demo && (
+                <a href={proj.demo} style={{ ...styles.itemMeta, color: tokens.color.muted, textDecoration: "none" }}>
+                  {proj.demo}
+                </a>
+              )}
+            </div>
           </div>
-          {proj.techStack && (
+
+          {(proj.technologies || proj.techStack) && (
             <p style={{ ...styles.itemSubtitle, fontStyle: "italic" }}>
-              {Array.isArray(proj.techStack) ? proj.techStack.join(", ") : proj.techStack}
+              {proj.technologies
+                ? proj.technologies
+                : Array.isArray(proj.techStack) ? proj.techStack.join(", ") : proj.techStack}
             </p>
           )}
+
           {Array.isArray(proj.bullets) && proj.bullets.length > 0 ? (
             <ul style={styles.bulletList}>
               {proj.bullets.map((b, j) => <li key={j} style={styles.bulletItem}>{b}</li>)}
@@ -419,12 +436,12 @@ const EducationSection = ({ education }) => {
             </span>
           </div>
           <p style={styles.eduInstitution}>
-            {[edu.institution, edu.location].filter(Boolean).join("  ·  ")}
-          </p>
-          {edu.gpa && (
-            <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
-              GPA: {edu.gpa}
-            </p>
+  {[edu.college, edu.university].filter(Boolean).join(", ")}
+</p>
+          {(edu.cgpa || edu.gpa) && (
+  <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
+    CGPA: {edu.cgpa || edu.gpa}
+  </p>
           )}
           {edu.honors && (
             <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
@@ -487,8 +504,9 @@ const CertificationsSection = ({ certifications }) => {
       <ul style={styles.inlineList}>
         {certifications.map((cert, i) => {
           const label = typeof cert === "string"
-            ? cert
-            : [cert.name, cert.issuer, cert.year || cert.date].filter(Boolean).join("  ·  ");
+  ? cert
+  : [cert.name, cert.organization || cert.issuer, cert.year || cert.date]
+      .filter(Boolean).join("  ·  ");
           return <li key={i} style={styles.inlineItem}>{label}</li>;
         })}
       </ul>
@@ -551,16 +569,29 @@ const AchievementsSection = ({ achievements }) => {
  */
 const ProfessionalTemplate = ({ resume = {} }) => {
   const {
-    personalInfo,
-    summary,
+    personal = {},
+    skills,
     experience,
     projects,
     education,
-    skills,
     certifications,
     languages,
     achievements,
   } = resume;
+
+  // Map DB shape → what HeaderSection expects
+  const personalInfo = {
+    fullName:  personal.fullName  || "",
+    title:     personal.title     || "",
+    email:     personal.email     || "",
+    phone:     personal.phone     || "",
+    location:  personal.location  || "",
+    linkedin:  personal.linkedin  || "",
+    github:    personal.github    || "",
+    portfolio: personal.portfolio || "",
+  };
+
+  const summary = personal.summary || "";
 
   return (
     <>
