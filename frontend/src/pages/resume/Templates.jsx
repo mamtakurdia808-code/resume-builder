@@ -25,6 +25,9 @@ import ExecutiveTemplate from "../../components/templates/ExecutiveTemplate";
 import CreativeTemplate from "../../components/templates/CreativeTemplate";
 import ClassicTemplate from "../../components/templates/ClassicTemplate";
 
+// Importing template images
+import Modern from "../../assets/templates/Modern.png";
+
 /**
  * TEMPLATE REGISTRY
  * Maps the `template_name` string stored in your DB → the React component.
@@ -38,6 +41,10 @@ const TEMPLATE_REGISTRY = {
   Executive: ExecutiveTemplate,
   Creative: CreativeTemplate,
   Classic: ClassicTemplate,
+};
+
+const LOCAL_THUMBS = {
+  modern:  Modern,
 };
 
 /** Returns the component for a given template, falling back to ProfessionalTemplate. */
@@ -675,8 +682,22 @@ function SkeletonCard() {
 
 // ─── Template Card ────────────────────────────────────────────────────────────
 function TemplateCard({ template, onPreview, onUse }) {
+  console.log("Template:", template);
+console.log("template_name:", template.template_name);
+console.log("category:", template.category);
+console.log("thumbnail:", template.thumbnail);
+  const localThumb = LOCAL_THUMBS[template.category?.toLowerCase()] 
+                  || LOCAL_THUMBS[template.template_name?.toLowerCase()];
+
+  const thumbSrc = template.thumbnail
+    ? `${BASE_URL}${template.thumbnail}`  // API thumb takes priority
+    : localThumb;  
+    
+    console.log("localThumb:", localThumb);
+console.log("thumbSrc:", thumbSrc);
+
+  const hasThumb = !!thumbSrc;
   const [hovered, hoverProps] = useHover();
-  const hasThumb = !!template.thumbnail;
   return (
     <article
       style={{
@@ -692,16 +713,19 @@ function TemplateCard({ template, onPreview, onUse }) {
       <div style={styles.cardThumbWrap}>
         {hasThumb && (
           <img
-            src={`${BASE_URL}${template.thumbnail}`}
-            alt={`${template.template_name} preview`}
-            style={{ ...styles.cardThumb, transform: hovered ? "scale(1.04)" : "scale(1)" }}
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-              const ph = e.currentTarget.nextElementSibling;
-              if (ph) ph.style.display = "flex";
-            }}
-          />
+  src={thumbSrc}
+  alt={`${template.template_name} preview`}
+  style={{
+    ...styles.cardThumb,
+    transform: hovered ? "scale(1.04)" : "scale(1)",
+  }}
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.style.display = "none";
+    const ph = e.currentTarget.nextElementSibling;
+    if (ph) ph.style.display = "flex";
+  }}
+/>
         )}
         <div style={{ ...styles.cardThumbPlaceholder, display: hasThumb ? "none" : "flex" }}>
           <HiOutlineTemplate size={48} color={T.teal} opacity={0.5} />
@@ -767,6 +791,14 @@ function PreviewModal({ template, onClose, onUse }) {
     if (ref.current) ro.observe(ref.current);
     return () => ro.disconnect();
   }, []);
+
+  const localThumb =
+  LOCAL_THUMBS[template.category?.toLowerCase()] ||
+  LOCAL_THUMBS[template.template_name?.toLowerCase()];
+
+const thumbSrc = template.thumbnail
+  ? `${BASE_URL}${template.thumbnail}`
+  : localThumb;
   return (
     <div style={styles.backdrop} onClick={(e) => e.target === e.currentTarget && onClose()} role="dialog" aria-modal="true">
       <div style={styles.modal(true)} ref={ref} tabIndex={-1}>
@@ -777,9 +809,17 @@ function PreviewModal({ template, onClose, onUse }) {
         <div style={styles.modalBody}>
           <div style={narrow ? { display: "flex", flexDirection: "column", gap: "20px" } : styles.previewGrid}>
             <div style={styles.previewImgWrap}>
-              {template.thumbnail
-                ? <img src={`${BASE_URL}${template.thumbnail}`} alt={template.template_name} style={styles.previewImg} />
-                : <div style={{ ...styles.cardThumbPlaceholder, height: "100%" }}><HiOutlineTemplate size={64} color={T.teal} opacity={0.4} /></div>}
+              {thumbSrc ? (
+  <img
+    src={thumbSrc}
+    alt={template.template_name}
+    style={styles.previewImg}
+  />
+) : (
+  <div style={{ ...styles.cardThumbPlaceholder, height: "100%" }}>
+    <HiOutlineTemplate size={64} color={T.teal} opacity={0.4} />
+  </div>
+)}
             </div>
             <div style={styles.previewInfo}>
               <div style={styles.infoRow}>
