@@ -22,6 +22,7 @@ import ProfessionalTemplate from "../../components/templates/ProfessionalTemplat
 import ModernTemplate       from "../../components/templates/ModernTemplate";
 import MinimalTemplate      from "../../components/templates/MinimalTemplate";
 import ExecutiveTemplate from "../../components/templates/ExecutiveTemplate";
+import CreativeTemplate from "../../components/templates/CreativeTemplate";
 
 /**
  * TEMPLATE REGISTRY
@@ -34,6 +35,7 @@ const TEMPLATE_REGISTRY = {
   Modern:           ModernTemplate,
   Minimal:          MinimalTemplate,
   Executive: ExecutiveTemplate,
+  Creative: CreativeTemplate,
 };
 
 /** Returns the component for a given template, falling back to ProfessionalTemplate. */
@@ -919,7 +921,7 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
 
   const TemplateComponent = resolveTemplate(template.template_name);
 
-  const photoTemplates = ["Modern", "Executive"];
+  const photoTemplates = ["Modern", "Executive", "Creative"];
 
   const showPhotoUpload = photoTemplates.includes(template.template_name);
 
