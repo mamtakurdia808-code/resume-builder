@@ -27,6 +27,11 @@ import ClassicTemplate from "../../components/templates/ClassicTemplate";
 
 // Importing template images
 import Modern from "../../assets/templates/Modern.png";
+import Professional from "../../assets/templates/Professional.png";
+import Minimal from "../../assets/templates/Minimal.png";
+import Executive from "../../assets/templates/Executive.png";
+import Creative from "../../assets/templates/Creative.png";
+import Classic from "../../assets/templates/Classic.png";
 
 /**
  * TEMPLATE REGISTRY
@@ -44,7 +49,12 @@ const TEMPLATE_REGISTRY = {
 };
 
 const LOCAL_THUMBS = {
-  modern:  Modern,
+  Modern:  Modern,
+  Professional: Professional,
+  Minimal: Minimal,
+  Executive: Executive,
+  Creative: Creative,
+  Classic: Classic,
 };
 
 /** Returns the component for a given template, falling back to ProfessionalTemplate. */
@@ -457,14 +467,22 @@ const styles = {
     flexShrink:     0,
   },
   previewGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" },
-  previewImgWrap: {
-    background:   T.surfaceAlt,
-    borderRadius: T.radiusSm,
-    overflow:     "hidden",
-    aspectRatio:  "3/4",
-    border:       `1px solid ${T.border}`,
-  },
-  previewImg:  { width: "100%", height: "100%", objectFit: "cover" },
+ previewImgWrap: {
+  background: T.surfaceAlt,
+  borderRadius: T.radiusSm,
+  overflow: "hidden",
+  aspectRatio: "3/4",
+  border: `1px solid ${T.border}`,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+},
+
+previewImg: {
+  width: "100%",
+  height: "100%",
+  objectFit: "contain",
+},
   previewInfo: { display: "flex", flexDirection: "column", gap: "14px" },
   infoRow:     { display: "flex", flexDirection: "column", gap: "4px" },
   infoLabel:   { fontSize: "11px", fontWeight: 700, letterSpacing: "0.07em", textTransform: "uppercase", color: T.inkFaint },
@@ -686,15 +704,9 @@ function TemplateCard({ template, onPreview, onUse }) {
 console.log("template_name:", template.template_name);
 console.log("category:", template.category);
 console.log("thumbnail:", template.thumbnail);
-  const localThumb = LOCAL_THUMBS[template.category?.toLowerCase()] 
-                  || LOCAL_THUMBS[template.template_name?.toLowerCase()];
-
-  const thumbSrc = template.thumbnail
-    ? `${BASE_URL}${template.thumbnail}`  // API thumb takes priority
-    : localThumb;  
+  const thumbSrc = LOCAL_THUMBS[template.template_name];
     
-    console.log("localThumb:", localThumb);
-console.log("thumbSrc:", thumbSrc);
+    console.log("thumbSrc:", thumbSrc);
 
   const hasThumb = !!thumbSrc;
   const [hovered, hoverProps] = useHover();
@@ -713,12 +725,12 @@ console.log("thumbSrc:", thumbSrc);
       <div style={styles.cardThumbWrap}>
         {hasThumb && (
           <img
-  src={thumbSrc}
-  alt={`${template.template_name} preview`}
-  style={{
-    ...styles.cardThumb,
-    transform: hovered ? "scale(1.04)" : "scale(1)",
-  }}
+    src={LOCAL_THUMBS[template.template_name]}
+    alt={template.template_name}
+    style={{
+        ...styles.cardThumb,
+        transform: hovered ? "scale(1.04)" : "scale(1)",
+    }}
   loading="lazy"
   onError={(e) => {
     e.currentTarget.style.display = "none";
@@ -792,13 +804,8 @@ function PreviewModal({ template, onClose, onUse }) {
     return () => ro.disconnect();
   }, []);
 
-  const localThumb =
-  LOCAL_THUMBS[template.category?.toLowerCase()] ||
-  LOCAL_THUMBS[template.template_name?.toLowerCase()];
+  const thumbSrc = LOCAL_THUMBS[template.template_name];
 
-const thumbSrc = template.thumbnail
-  ? `${BASE_URL}${template.thumbnail}`
-  : localThumb;
   return (
     <div style={styles.backdrop} onClick={(e) => e.target === e.currentTarget && onClose()} role="dialog" aria-modal="true">
       <div style={styles.modal(true)} ref={ref} tabIndex={-1}>
@@ -814,7 +821,7 @@ const thumbSrc = template.thumbnail
     src={thumbSrc}
     alt={template.template_name}
     style={styles.previewImg}
-  />
+/>
 ) : (
   <div style={{ ...styles.cardThumbPlaceholder, height: "100%" }}>
     <HiOutlineTemplate size={64} color={T.teal} opacity={0.4} />
