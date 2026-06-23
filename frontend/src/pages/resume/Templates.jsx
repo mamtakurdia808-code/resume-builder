@@ -20,7 +20,8 @@ import {
 // ─── Import your template components ─────────────────────────────────────────
 import ProfessionalTemplate from "../../components/templates/ProfessionalTemplate";
 import ModernTemplate       from "../../components/templates/ModernTemplate";
-// import MinimalTemplate      from "./templates/MinimalTemplate";
+import MinimalTemplate      from "../../components/templates/MinimalTemplate";
+import ExecutiveTemplate from "../../components/templates/ExecutiveTemplate";
 
 /**
  * TEMPLATE REGISTRY
@@ -31,7 +32,8 @@ import ModernTemplate       from "../../components/templates/ModernTemplate";
 const TEMPLATE_REGISTRY = {
   Professional:        ProfessionalTemplate,
   Modern:           ModernTemplate,
-  // Minimal:          MinimalTemplate,
+  Minimal:          MinimalTemplate,
+  Executive: ExecutiveTemplate,
 };
 
 /** Returns the component for a given template, falling back to ProfessionalTemplate. */
@@ -917,6 +919,10 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
 
   const TemplateComponent = resolveTemplate(template.template_name);
 
+  const photoTemplates = ["Modern", "Executive"];
+
+  const showPhotoUpload = photoTemplates.includes(template.template_name);
+
   // Handle local photo upload
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
@@ -1044,7 +1050,7 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
       <div style={styles.livePreviewTopbarRight}>
 
         {/* Hidden file input */}
-{template.template_name === "Modern" && (
+{showPhotoUpload && (
   <>
     <input
       ref={fileInputRef}
