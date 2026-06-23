@@ -23,6 +23,7 @@ import ModernTemplate       from "../../components/templates/ModernTemplate";
 import MinimalTemplate      from "../../components/templates/MinimalTemplate";
 import ExecutiveTemplate from "../../components/templates/ExecutiveTemplate";
 import CreativeTemplate from "../../components/templates/CreativeTemplate";
+import ClassicTemplate from "../../components/templates/ClassicTemplate";
 
 /**
  * TEMPLATE REGISTRY
@@ -36,6 +37,7 @@ const TEMPLATE_REGISTRY = {
   Minimal:          MinimalTemplate,
   Executive: ExecutiveTemplate,
   Creative: CreativeTemplate,
+  Classic: ClassicTemplate,
 };
 
 /** Returns the component for a given template, falling back to ProfessionalTemplate. */
