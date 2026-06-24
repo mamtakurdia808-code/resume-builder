@@ -154,10 +154,10 @@ export default function Profile() {
       try {
         const token = localStorage.getItem("token");
         const [profileRes, photoRes] = await Promise.all([
-          fetch("http://localhost:5000/api/profile", {
+          fetch(`${BASE_URL}/profile`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:5000/api/profile/photo", {
+          fetch(`${BASE_URL}/profile/photo`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

@@ -190,6 +190,7 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: "" });
   const [mounted, setMounted] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_URL;
 
   useEffect(() => { setTimeout(() => setMounted(true), 50); }, []);
 
@@ -235,7 +236,7 @@ export default function SignUp() {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post(`${API_BASE}/auth/register`, {
         full_name: form.full_name.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,

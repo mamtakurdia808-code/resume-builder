@@ -75,6 +75,24 @@ const updateProfile = async (req, res) => {
       experience_years,
     } = req.body;
 
+    // Convert experience_years to integer or NULL
+    let experienceYears = null;
+
+    if (
+      experience_years !== "" &&
+      experience_years !== undefined &&
+      experience_years !== null
+    ) {
+      experienceYears = Number(experience_years);
+
+      if (Number.isNaN(experienceYears) || experienceYears < 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Experience years must be a valid non-negative number.",
+        });
+      }
+    }
+
     const { rows } = await pool.query(
       `
       UPDATE users
@@ -98,20 +116,21 @@ const updateProfile = async (req, res) => {
         linkedin,
         github,
         portfolio,
+        profile_picture,
         currentrole,
         experience_years,
         created_at,
         updated_at
       `,
       [
-        full_name,
-        phone,
-        location,
-        linkedin,
-        github,
-        portfolio,
-        currentrole,
-        experience_years,
+        full_name?.trim() || null,
+        phone?.trim() || null,
+        location?.trim() || null,
+        linkedin?.trim() || null,
+        github?.trim() || null,
+        portfolio?.trim() || null,
+        currentrole?.trim() || null,
+        experienceYears,
         userId,
       ]
     );

@@ -165,7 +165,7 @@ export default function Login() {
     if (Object.keys(e).length) { setErrors(e); return; }
     setLoading(true);
 
-    const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+    const apiBaseUrl = import.meta.env.VITE_API_URL;
 
     try {
       const { data } = await axios.post(`${apiBaseUrl}/auth/login`, {
