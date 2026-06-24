@@ -1,8 +1,8 @@
-const ai = require("../config/gemini");
+const client = require("../config/groq");
 const buildATSPrompt = require("./atsPrompt");
-const parseGeminiJSON = require("./jsonParser");
+const parseGroqJSON = require("./jsonParser");
 
-const analyzeResumeWithGemini = async ({
+const analyzeResumeWithGroqai = async ({
   resume,
   jobTitle,
   companyName,
@@ -16,14 +16,22 @@ const analyzeResumeWithGemini = async ({
       jobDescription,
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    const response = await client.chat.completions.create({
+  model: "llama-3.3-70b-versatile",
+  messages: [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ],
+  response_format: {
+    type: "json_object",
+  },
+});
 
-    const text = response.text;
+    const text = response.choices[0].message.content;
 
-    const result = parseGeminiJSON(text);
+    const result = parseGroqJSON(text);
 
     // Validation
     const requiredFields = [
@@ -42,7 +50,7 @@ const analyzeResumeWithGemini = async ({
 
     for (const field of requiredFields) {
       if (!(field in result)) {
-        throw new Error(`Gemini response missing field: ${field}`);
+        throw new Error(`Groq response missing field: ${field}`);
       }
     }
 
@@ -50,8 +58,8 @@ const analyzeResumeWithGemini = async ({
   } catch (error) {
     console.error("ATS Service Error:", error);
 
-    throw new Error("Failed to analyze resume using Gemini.");
+    throw new Error("Failed to analyze resume using Groq.");
   }
 };
 
-module.exports = analyzeResumeWithGemini;
+module.exports = analyzeResumeWithGroqai;

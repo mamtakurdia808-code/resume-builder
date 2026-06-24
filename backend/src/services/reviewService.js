@@ -1,8 +1,8 @@
-const ai = require("../config/gemini");
+const client = require("../config/groq");
 const buildReviewPrompt = require("./reviewPrompt");
-const parseGeminiJSON = require("./jsonParser");
+const parseGroqaiJSON = require("./jsonParser");
 
-const reviewResumeWithGemini = async ({
+const reviewResumeWithGroqai = async ({
   resume,
   reviewType,
   inputText,
@@ -14,14 +14,22 @@ const reviewResumeWithGemini = async ({
       inputText,
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    const response = await client.chat.completions.create({
+  model: "llama-3.3-70b-versatile",
+  messages: [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ],
+  response_format: {
+    type: "json_object",
+  },
+});
 
-    const text = response.text;
+    const text = response.choices[0].message.content;
 
-    const result = parseGeminiJSON(text);
+    const result = parseGroqaiJSON(text);
 
     const requiredFields = [
       "overall_score",
@@ -54,4 +62,4 @@ const reviewResumeWithGemini = async ({
   }
 };
 
-module.exports = reviewResumeWithGemini;
+module.exports = reviewResumeWithGroqai;

@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const reviewResumeWithGemini = require("../services/reviewService");
+const reviewResumeWithGroqai = require("../services/reviewService");
 const rewriteResume = require("../services/rewriteService");
 
 /**
@@ -45,7 +45,7 @@ const createAIReview = async (req, res) => {
     }
 
     // Gemini Review
-    const aiResponse = await reviewResumeWithGemini({
+    const aiResponse = await reviewResumeWithGroqai({
       resume: resume.resume_data,
       reviewType: review_type,
       inputText: input_text || "",

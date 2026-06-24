@@ -1,5 +1,5 @@
 const pool = require("../config/db");
-const analyzeResumeWithGemini = require("../services/atsService");
+const analyzeResumeWithGroqai = require("../services/atsService");
 
 const extractPdfText = require("../utils/extractPdf");
 const extractDocxText = require("../utils/extractDocx");
@@ -96,7 +96,7 @@ if (resume_id) {
     // Gemini Analysis
     // -----------------------------
 
-    const analysis = await analyzeResumeWithGemini({
+    const analysis = await analyzeResumeWithGroqai({
       resume: resumeData,
       jobTitle: job_title,
       companyName: company_name,

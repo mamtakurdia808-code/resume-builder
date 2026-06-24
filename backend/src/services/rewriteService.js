@@ -1,6 +1,6 @@
-const ai = require("../config/gemini");
+const client = require("../config/groq");
 const buildRewritePrompt = require("./rewritePrompt");
-const parseGeminiJSON = require("./jsonParser");
+const parseGroqaiJSON = require("./jsonParser");
 
 const rewriteResume = async ({ section, content }) => {
   try {
@@ -9,12 +9,23 @@ const rewriteResume = async ({ section, content }) => {
       content,
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
+    const response = await client.chat.completions.create({
+  model: "llama-3.3-70b-versatile",
+  messages: [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ],
+  response_format: {
+    type: "json_object",
+  },
+});
 
-    const parsed = parseGeminiJSON(response.text);
+    const text = response.choices[0].message.content;
+
+const parsed = parseGroqaiJSON(text);
+
 return parsed.rewritten;
 
   } catch (error) {

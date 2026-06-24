@@ -1,6 +1,6 @@
-const ai = require("../config/gemini");
+const client = require("../config/groq");
 const buildJobAnalysisPrompt = require("./jobAnalysisPrompt");
-const parseGeminiJSON = require("../services/jsonParser");
+const parseGroqaiJSON = require("../services/jsonParser");
 
 const analyzeJobDescription = async ({
   jobTitle,
@@ -14,16 +14,26 @@ const analyzeJobDescription = async ({
       jobDescription,
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
+    const response = await client.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      response_format: {
+        type: "json_object",
+      },
     });
 
-    if (!response || !response.text) {
-      throw new Error("Empty response received from Gemini.");
+    const text = response?.choices?.[0]?.message?.content;
+
+    if (!text) {
+      throw new Error("Empty response received from Groq.");
     }
 
-    const analysis = parseGeminiJSON(response.text);
+    const analysis = parseGroqaiJSON(text);
 
     return analysis;
   } catch (error) {
