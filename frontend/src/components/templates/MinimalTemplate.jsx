@@ -2,6 +2,7 @@
  * MinimalTemplate.jsx
  * ResumeAI – AI Resume Builder & ATS Checker
  * Scandinavian-minimal single-column ATS-optimised resume template.
+ * Mobile-responsive: fluid layout down to ~320px, A4 restored on print.
  *
  * Usage:
  *   <MinimalTemplate resume={resume} />
@@ -22,7 +23,6 @@ import React from "react";
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const T = {
-  // Palette – near-pure black/white with two calibrated grays
   black:     "#0A0A0A",
   charcoal:  "#2C2C2C",
   mid:       "#6B6B6B",
@@ -30,20 +30,19 @@ const T = {
   rule:      "#E0E0E0",
   bg:        "#FFFFFF",
 
-  // Typography – pairing a geometric sans for headings with a humanist for body
   fontHead: "'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif",
   fontBody: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif",
 
-  // Scale
-  szName:    "28px",
+  // Font sizes — fluid via CSS clamp() in the stylesheet
+  szName:    "clamp(22px, 6vw, 28px)",
   szTagline: "12px",
   szSection: "9px",
   szBody:    "11.5px",
   szSmall:   "10px",
 
-  // Spacing
-  pagePadV:  "44px",
-  pagePadH:  "52px",
+  // Spacing — fluid horizontal padding, fixed vertical
+  pagePadV:  "clamp(24px, 5vw, 44px)",
+  pagePadH:  "clamp(16px, 6vw, 52px)",
   sectionGap:"22px",
   itemGap:   "14px",
   lineHeight:"1.65",
@@ -57,8 +56,10 @@ const S = {
     fontFamily:    T.fontBody,
     fontSize:      T.szBody,
     lineHeight:    T.lineHeight,
-    width:         "210mm",
-    minHeight:     "297mm",
+    // Fluid on screen; @media print restores 210mm
+    width:         "100%",
+    maxWidth:      "210mm",
+    minHeight:     "auto",
     margin:        "0 auto",
     padding:       `${T.pagePadV} ${T.pagePadH}`,
     boxSizing:     "border-box",
@@ -74,12 +75,13 @@ const S = {
   },
   name: {
     fontFamily:    T.fontHead,
-    fontSize:      T.szName,
+    fontSize:      T.szName,   // clamp — shrinks on narrow screens
     fontWeight:    700,
     color:         T.black,
     letterSpacing: "-0.03em",
     margin:        "0 0 5px",
     lineHeight:    1.1,
+    wordBreak:     "break-word",
   },
   tagline: {
     fontFamily:    T.fontBody,
@@ -93,7 +95,7 @@ const S = {
   contactRow: {
     display:    "flex",
     flexWrap:   "wrap",
-    gap:        "0",
+    gap:        "2px 0",        // small row-gap so wrapped items breathe
     fontSize:   T.szSmall,
     color:      T.mid,
     lineHeight: 1.7,
@@ -102,9 +104,9 @@ const S = {
     whiteSpace: "nowrap",
   },
   contactSep: {
-    margin:  "0 10px",
-    color:   T.rule,
-    userSelect: "none",
+    margin:    "0 8px",
+    color:     T.rule,
+    userSelect:"none",
   },
   contactLink: {
     color:          T.mid,
@@ -148,18 +150,22 @@ const S = {
     marginBottom:   "1px",
   },
   itemTitle: {
-    fontFamily:  T.fontHead,
-    fontSize:    "12.5px",
-    fontWeight:  700,
-    color:       T.black,
-    margin:      0,
+    fontFamily:    T.fontHead,
+    fontSize:      "12.5px",
+    fontWeight:    700,
+    color:         T.black,
+    margin:        0,
     letterSpacing: "-0.01em",
+    // Prevent overflow on very narrow phones
+    wordBreak:     "break-word",
+    flex:          "1 1 auto",
   },
   itemMeta: {
     fontSize:   T.szSmall,
     color:      T.light,
     whiteSpace: "nowrap",
     fontWeight: 400,
+    flexShrink: 0,
   },
   itemSub: {
     fontSize:   T.szSmall,
@@ -195,15 +201,16 @@ const S = {
     whiteSpace: "pre-line",
   },
   techLine: {
-    fontSize:    T.szSmall,
-    color:       T.mid,
-    fontStyle:   "italic",
-    margin:      "2px 0 4px",
-    fontWeight:  400,
+    fontSize:   T.szSmall,
+    color:      T.mid,
+    fontStyle:  "italic",
+    margin:     "2px 0 4px",
+    fontWeight: 400,
   },
   projectLinks: {
     display:   "flex",
-    gap:       "12px",
+    flexWrap:  "wrap",       // links wrap on narrow screens
+    gap:       "6px 12px",
     marginTop: "4px",
   },
   projectLink: {
@@ -213,6 +220,7 @@ const S = {
     borderBottom:   `1px solid ${T.rule}`,
     paddingBottom:  "1px",
     letterSpacing:  "0.01em",
+    wordBreak:      "break-all",  // long URLs won't overflow
   },
 
   // ── Education ─────────────────────────────────────────────────────────────
@@ -225,12 +233,14 @@ const S = {
     marginBottom:   "1px",
   },
   eduDegree: {
-    fontFamily:  T.fontHead,
-    fontSize:    "12.5px",
-    fontWeight:  700,
-    color:       T.black,
-    margin:      0,
+    fontFamily:    T.fontHead,
+    fontSize:      "12.5px",
+    fontWeight:    700,
+    color:         T.black,
+    margin:        0,
     letterSpacing: "-0.01em",
+    flex:          "1 1 auto",
+    wordBreak:     "break-word",
   },
   eduInstitution: {
     fontSize:   T.szSmall,
@@ -239,38 +249,39 @@ const S = {
     margin:     "0 0 2px",
   },
   eduMeta: {
-    fontSize:   T.szSmall,
-    color:      T.light,
-    marginTop:  "2px",
+    fontSize:  T.szSmall,
+    color:     T.light,
+    marginTop: "2px",
   },
 
   // ── Skills ────────────────────────────────────────────────────────────────
   skillFlatRow: {
-    display:    "flex",
-    flexWrap:   "wrap",
-    gap:        "6px 0",
-    marginTop:  "6px",
-    fontSize:   T.szBody,
-    color:      T.charcoal,
+    display:   "flex",
+    flexWrap:  "wrap",
+    gap:       "4px 0",
+    marginTop: "6px",
+    fontSize:  T.szBody,
+    color:     T.charcoal,
   },
   skillSep: {
-    margin:    "0 10px",
+    margin:    "0 8px",
     color:     T.rule,
-    userSelect: "none",
+    userSelect:"none",
   },
+  // Responsive grid: collapses from 2-col to 1-col via media query in CSS
   skillGroupWrap: {
-    display:        "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-    gap:            "10px 20px",
-    marginTop:      "8px",
+    display:             "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+    gap:                 "10px 20px",
+    marginTop:           "8px",
   },
   skillGroupLabel: {
-    fontFamily:  T.fontHead,
-    fontSize:    T.szSmall,
-    fontWeight:  700,
-    color:       T.black,
+    fontFamily:    T.fontHead,
+    fontSize:      T.szSmall,
+    fontWeight:    700,
+    color:         T.black,
     letterSpacing: "0.04em",
-    marginBottom: "4px",
+    marginBottom:  "4px",
     textTransform: "uppercase",
   },
   skillGroupItems: {
@@ -292,21 +303,24 @@ const S = {
   certName: {
     color:      T.charcoal,
     fontWeight: 600,
+    flex:       "1 1 auto",
+    wordBreak:  "break-word",
   },
   certMeta: {
     fontSize:   T.szSmall,
     color:      T.light,
     whiteSpace: "nowrap",
+    flexShrink: 0,
   },
 
   // ── Languages ─────────────────────────────────────────────────────────────
   langRow: {
-    display:    "flex",
-    flexWrap:   "wrap",
-    gap:        "0",
-    marginTop:  "6px",
-    fontSize:   T.szBody,
-    color:      T.charcoal,
+    display:   "flex",
+    flexWrap:  "wrap",
+    gap:       "4px 0",
+    marginTop: "6px",
+    fontSize:  T.szBody,
+    color:     T.charcoal,
   },
 
   // ── Achievements ──────────────────────────────────────────────────────────
@@ -319,10 +333,11 @@ const S = {
   },
 };
 
-// ─── Print stylesheet ─────────────────────────────────────────────────────────
+// ─── Print + responsive stylesheet ───────────────────────────────────────────
 const PRINT_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;500&display=swap');
 
+/* ── Print: restore fixed A4 dimensions ── */
 @media print {
   @page { size: A4; margin: 0; }
   body  { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -337,9 +352,48 @@ const PRINT_CSS = `
   a { color: inherit !important; text-decoration: none !important; }
   .page-break-avoid { break-inside: avoid; page-break-inside: avoid; }
 }
+
+/* ── Screen: card shadow ── */
 @media screen {
   .minimal-resume-page {
     box-shadow: 0 2px 40px rgba(0,0,0,0.08);
+  }
+}
+
+/* ── Responsive: small phones (≤ 480px) ── */
+@media screen and (max-width: 480px) {
+  /* Skills grid → single column */
+  .minimal-resume-page .skill-group-wrap {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Contact row → each item on its own line; hide separators */
+  .minimal-resume-page .contact-sep {
+    display: none !important;
+  }
+  .minimal-resume-page .contact-row {
+    flex-direction: column !important;
+    gap: 2px !important;
+  }
+
+  /* Item rows (role + date) → stack on separate lines */
+  .minimal-resume-page .item-row,
+  .minimal-resume-page .edu-row {
+    flex-direction: column !important;
+    gap: 1px !important;
+  }
+
+  /* Cert items → stack */
+  .minimal-resume-page .cert-item {
+    flex-direction: column !important;
+    gap: 1px !important;
+  }
+}
+
+/* ── Responsive: medium tablets (481px – 640px) ── */
+@media screen and (min-width: 481px) and (max-width: 640px) {
+  .minimal-resume-page .skill-group-wrap {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 `;
@@ -348,7 +402,6 @@ const PRINT_CSS = `
 const clean = (url = "") => url.replace(/^https?:\/\/(www\.)?/i, "");
 
 const BulletList = ({ text, bullets }) => {
-  // Support both a pre-split bullets array and a \n-separated responsibilities string
   const items = Array.isArray(bullets) && bullets.length > 0
     ? bullets
     : typeof text === "string"
@@ -394,10 +447,13 @@ const Header = ({ personal }) => {
       {fullName && <h1 style={S.name}>{fullName}</h1>}
       {title    && <p  style={S.tagline}>{title}</p>}
       {contacts.length > 0 && (
-        <div style={S.contactRow}>
+        // className used by the mobile media query
+        <div style={S.contactRow} className="contact-row">
           {contacts.map((c, i) => (
             <React.Fragment key={i}>
-              {i > 0 && <span style={S.contactSep} aria-hidden="true">/</span>}
+              {i > 0 && (
+                <span style={S.contactSep} className="contact-sep" aria-hidden="true">/</span>
+              )}
               <span style={S.contactItem}>
                 {c.href
                   ? <a href={c.href} style={S.contactLink}>{c.label}</a>
@@ -418,7 +474,7 @@ const Experience = ({ experience }) => {
     <Section title="Experience">
       {experience.map((job, i) => (
         <div key={i} style={S.itemBlock} className="page-break-avoid">
-          <div style={S.itemRow}>
+          <div style={S.itemRow} className="item-row">
             <h3 style={S.itemTitle}>{job.role || job.position || job.title}</h3>
             <span style={S.itemMeta}>
               {[job.startDate, job.endDate || "Present"].filter(Boolean).join(" – ")}
@@ -442,7 +498,7 @@ const Projects = ({ projects }) => {
     <Section title="Projects">
       {projects.map((proj, i) => (
         <div key={i} style={S.itemBlock} className="page-break-avoid">
-          <div style={S.itemRow}>
+          <div style={S.itemRow} className="item-row">
             <h3 style={S.itemTitle}>{proj.title || proj.name}</h3>
           </div>
           {(proj.technologies || proj.techStack) && (
@@ -485,7 +541,7 @@ const Education = ({ education }) => {
     <Section title="Education">
       {education.map((edu, i) => (
         <div key={i} style={S.itemBlock} className="page-break-avoid">
-          <div style={S.eduRow}>
+          <div style={S.eduRow} className="edu-row">
             <h3 style={S.eduDegree}>
               {[edu.degree, edu.field].filter(Boolean).join(", ")}
             </h3>
@@ -514,7 +570,8 @@ const Skills = ({ skills }) => {
   return (
     <Section title="Skills">
       {isCategorised ? (
-        <div style={S.skillGroupWrap}>
+        // className used by the mobile media query
+        <div style={S.skillGroupWrap} className="skill-group-wrap">
           {skills.map((group, i) => (
             <div key={i}>
               <div style={S.skillGroupLabel}>{group.category || group.name}</div>
@@ -548,7 +605,8 @@ const Certifications = ({ certifications }) => {
           return <p key={i} style={{ ...S.certItem, display: "block" }}>{cert}</p>;
         }
         return (
-          <div key={i} style={S.certItem}>
+          // className used by the mobile media query
+          <div key={i} style={S.certItem} className="cert-item">
             <span style={S.certName}>{cert.name}</span>
             <span style={S.certMeta}>
               {[cert.organization || cert.issuer, cert.year || cert.date]
@@ -602,7 +660,7 @@ const Achievements = ({ achievements }) => {
 // ─── Root Component ───────────────────────────────────────────────────────────
 const MinimalTemplate = ({ resume = {} }) => {
   const {
-    personal = {},
+    personal       = {},
     skills         = [],
     experience     = [],
     projects       = [],
@@ -626,13 +684,13 @@ const MinimalTemplate = ({ resume = {} }) => {
           </Section>
         )}
 
-        <Experience   experience={experience} />
-        <Projects     projects={projects} />
-        <Education    education={education} />
-        <Skills       skills={skills} />
+        <Experience     experience={experience} />
+        <Projects       projects={projects} />
+        <Education      education={education} />
+        <Skills         skills={skills} />
         <Certifications certifications={certifications} />
-        <Languages    languages={languages} />
-        <Achievements achievements={achievements} />
+        <Languages      languages={languages} />
+        <Achievements   achievements={achievements} />
       </article>
     </>
   );
