@@ -2,21 +2,6 @@
  * ModernTemplate.jsx
  * ResumeAI – AI Resume Builder & ATS Checker
  * A premium, print-ready A4 resume template with sidebar layout.
- *
- * Usage:
- *   <ModernTemplate resume={resume} />
- *
- * Props:
- *   resume {Object} – PostgreSQL-sourced resume object with the shape:
- *     resume.personalInfo   – { name, title, email, phone, location, photo, website, linkedin, github }
- *     resume.summary        – string
- *     resume.skills         – [{ category, items: [string] }]  OR  [string]
- *     resume.experience     – [{ company, role, startDate, endDate, location, bullets: [string] }]
- *     resume.projects       – [{ name, url, description, tech: [string] }]
- *     resume.education      – [{ institution, degree, field, startDate, endDate, gpa }]
- *     resume.certifications – [{ name, issuer, date, credentialId }]
- *     resume.languages      – [{ language, proficiency }]
- *     resume.achievements   – [string]
  */
 
 import React from "react";
@@ -36,18 +21,15 @@ const T = {
   border:     "#E5E7EB",
   bgPage:     "#F3F4F6",
 
-  // Typography
   fontDisplay: "'Inter', 'Segoe UI', system-ui, sans-serif",
   fontMono:    "'JetBrains Mono', 'Fira Code', monospace",
 
-  // Spacing
   sidebarW: "30%",
   contentW: "70%",
 };
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = {
-  // Root wrapper – centres the A4 page on screen
   pageWrapper: {
     background: T.bgPage,
     minHeight:  "100vh",
@@ -60,7 +42,6 @@ const styles = {
     MozOsxFontSmoothing: "grayscale",
   },
 
-  // A4 card
   page: {
     width:     "210mm",
     minHeight: "297mm",
@@ -73,7 +54,6 @@ const styles = {
     position:  "relative",
   },
 
-  // ── Sidebar ────────────────────────────────────────────────────────────────
   sidebar: {
     width:      T.sidebarW,
     minWidth:   "200px",
@@ -85,7 +65,6 @@ const styles = {
     flexShrink: 0,
   },
 
-  // Profile photo
   photoWrapper: {
     display:       "flex",
     justifyContent: "center",
@@ -114,7 +93,6 @@ const styles = {
     userSelect:      "none",
   },
 
-  // Name / title
   name: {
     fontSize:   "20px",
     fontWeight: 700,
@@ -135,13 +113,11 @@ const styles = {
     marginBottom: "28px",
   },
 
-  // Divider
   divider: {
     borderTop: `1px solid ${T.sidebarAlt}`,
     margin:    "0 0 20px",
   },
 
-  // Sidebar section label
   sidebarLabel: {
     fontSize:      "9px",
     fontWeight:    700,
@@ -151,12 +127,10 @@ const styles = {
     marginBottom:  "12px",
   },
 
-  // Sidebar section block
   sidebarSection: {
     marginBottom: "24px",
   },
 
-  // Contact row
   contactRow: {
     display:    "flex",
     alignItems: "flex-start",
@@ -179,7 +153,6 @@ const styles = {
     textDecoration: "none",
   },
 
-  // Skill chip
   skillGroup: {
     marginBottom: "12px",
   },
@@ -207,7 +180,6 @@ const styles = {
     lineHeight:   1.6,
   },
 
-  // Language row
   langRow: {
     display:        "flex",
     justifyContent: "space-between",
@@ -227,7 +199,6 @@ const styles = {
     fontWeight:    600,
   },
 
-  // Sidebar link
   sidebarLink: {
     display:        "block",
     color:          "#CBD5E1",
@@ -237,7 +208,6 @@ const styles = {
     wordBreak:      "break-all",
   },
 
-  // ── Main content ───────────────────────────────────────────────────────────
   content: {
     width:    T.contentW,
     padding:  "36px 32px 40px",
@@ -246,7 +216,6 @@ const styles = {
     gap:      "24px",
   },
 
-  // Section
   section: {
     display:      "flex",
     flexDirection: "column",
@@ -272,7 +241,6 @@ const styles = {
     background: T.border,
   },
 
-  // Summary text
   summaryText: {
     fontSize:   "12px",
     color:      T.inkMid,
@@ -280,7 +248,6 @@ const styles = {
     margin:     0,
   },
 
-  // Experience / Education card
   entryCard: {
     borderLeft:  `2px solid ${T.tealLight}`,
     paddingLeft: "14px",
@@ -341,7 +308,6 @@ const styles = {
     marginBottom: "3px",
   },
 
-  // Project card
   projectCard: {
     background:   "#F8FAFC",
     border:       `1px solid ${T.border}`,
@@ -390,7 +356,6 @@ const styles = {
     letterSpacing: "0.03em",
   },
 
-  // Cert row
   certRow: {
     display:      "flex",
     alignItems:   "flex-start",
@@ -418,7 +383,6 @@ const styles = {
     margin:   "1px 0 0",
   },
 
-  // Achievement
   achievementItem: {
     display:      "flex",
     alignItems:   "flex-start",
@@ -438,7 +402,7 @@ const styles = {
   },
 };
 
-// ─── Small SVG icons (inline, no dependency) ─────────────────────────────────
+// ─── Small SVG icons ──────────────────────────────────────────────────────────
 const Icon = {
   Mail: () => (
     <svg style={styles.contactIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -472,7 +436,7 @@ const Icon = {
   ),
 };
 
-// ─── Helper: format date range ────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 const fmtDate = (d) => {
   if (!d) return "";
   const parsed = new Date(d);
@@ -487,7 +451,6 @@ const dateRange = (start, end) => {
   return `${s} – ${e}`;
 };
 
-// ─── Helper: initials for photo fallback ─────────────────────────────────────
 const getInitials = (name = "") => {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "?";
@@ -495,8 +458,6 @@ const getInitials = (name = "") => {
 };
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
-
-/** Section wrapper with labelled heading + horizontal rule */
 const Section = ({ title, children }) => (
   <div style={styles.section}>
     <div style={styles.sectionHeader}>
@@ -507,7 +468,6 @@ const Section = ({ title, children }) => (
   </div>
 );
 
-/** Sidebar section */
 const SidebarSection = ({ label, children }) => (
   <div style={styles.sidebarSection}>
     <div style={styles.sidebarLabel}>{label}</div>
@@ -515,7 +475,6 @@ const SidebarSection = ({ label, children }) => (
   </div>
 );
 
-/** Experience / Education entry */
 const TimelineEntry = ({ title, subtitle, meta, location, bullets = [] }) => (
   <div style={styles.entryCard}>
     <div style={styles.entryCardDot} />
@@ -525,7 +484,7 @@ const TimelineEntry = ({ title, subtitle, meta, location, bullets = [] }) => (
     </div>
     {subtitle && <p style={styles.entrySubtitle}>{subtitle}</p>}
     {location && <p style={styles.entryLocation}>📍 {location}</p>}
-    {Array.isArray(bullets) && bullets.length > 0 && (  // ← guard added
+    {Array.isArray(bullets) && bullets.length > 0 && (
       <ul style={styles.bulletList}>
         {bullets.map((b, i) => (
           <li key={i} style={styles.bullet}>{b}</li>
@@ -535,19 +494,90 @@ const TimelineEntry = ({ title, subtitle, meta, location, bullets = [] }) => (
   </div>
 );
 
-// ─── Print styles injected once ──────────────────────────────────────────────
+// ─── Responsive + Print styles ────────────────────────────────────────────────
 const PRINT_STYLES = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ── Mobile: stack sidebar above content ── */
+@media screen and (max-width: 680px) {
+  .resume-page-wrapper {
+    padding: 0 !important;
+    background: #fff !important;
+    align-items: flex-start !important;
+  }
+  .resume-a4-page {
+    width: 100% !important;
+    min-height: unset !important;
+    flex-direction: column !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .resume-sidebar {
+    width: 100% !important;
+    min-width: unset !important;
+    padding: 24px 20px 20px !important;
+    flex-direction: column !important;
+  }
+  /* On mobile the name/title are left-aligned inside the flex column */
+  .resume-sidebar h1,
+  .resume-sidebar p.resume-job-title {
+    text-align: left !important;
+  }
+  /* Photo row: center horizontally */
+  .resume-photo-wrapper {
+    justify-content: flex-start !important;
+    margin-bottom: 16px !important;
+  }
+  .resume-content {
+    width: 100% !important;
+    padding: 20px 20px 32px !important;
+    gap: 20px !important;
+  }
+}
+
+/* ── Tablet: keep sidebar but shrink it ── */
+@media screen and (min-width: 681px) and (max-width: 900px) {
+  .resume-page-wrapper {
+    padding: 16px 8px !important;
+  }
+  .resume-a4-page {
+    width: 100% !important;
+    min-height: unset !important;
+  }
+  .resume-sidebar {
+    width: 34% !important;
+    min-width: 160px !important;
+    padding: 28px 16px 32px !important;
+  }
+  .resume-content {
+    padding: 28px 20px 32px !important;
+  }
+}
+
+/* ── Print: always render true A4 ── */
 @media print {
   body { margin: 0; padding: 0; background: white !important; }
-  .resume-page-wrapper { padding: 0 !important; background: white !important; min-height: unset !important; }
+  .resume-page-wrapper {
+    padding: 0 !important;
+    background: white !important;
+    min-height: unset !important;
+  }
   .resume-a4-page {
     width: 210mm !important;
     min-height: 297mm !important;
+    flex-direction: row !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     page-break-after: always;
+  }
+  .resume-sidebar {
+    width: 30% !important;
+    min-width: 200px !important;
+    padding: 36px 24px 40px !important;
+  }
+  .resume-content {
+    width: 70% !important;
+    padding: 36px 32px 40px !important;
   }
 }
 
@@ -558,10 +588,9 @@ const PRINT_STYLES = `
 `;
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-
 const ModernTemplate = ({ resume = {} }) => {
   const {
-    personal = {},        // DB stores as "personal"
+    personal = {},
     skills = [],
     experience = [],
     projects = [],
@@ -571,20 +600,19 @@ const ModernTemplate = ({ resume = {} }) => {
     achievements = [],
   } = resume;
 
-  // summary lives inside personal in DB
   const {
-    fullName: name = "",      // DB field is "fullName"
+    fullName: name = "",
     title: jobTitle = "",
     email = "",
     phone = "",
     location = "",
     photo = "",
-    portfolio: website = "",  // DB field is "portfolio", not "website"
+    portfolio: website = "",
     linkedin = "",
     github = "",
-    summary = "",             // summary is INSIDE personal in DB
+    summary = "",
   } = personal;
-  // Normalise skills: support both [{category, items}] and [string]
+
   const normalisedSkills = skills.length > 0
     ? typeof skills[0] === "string"
       ? [{ category: "Skills", items: skills }]
@@ -593,37 +621,27 @@ const ModernTemplate = ({ resume = {} }) => {
 
   return (
     <>
-      {/* Inject print + font styles once */}
       <style>{PRINT_STYLES}</style>
 
       <div style={styles.pageWrapper} className="resume-page-wrapper">
         <div style={styles.page} className="resume-a4-page">
 
-          {/* ── LEFT SIDEBAR ────────────────────────────────────────────── */}
-          <aside style={styles.sidebar}>
+          {/* ── LEFT SIDEBAR ── */}
+          <aside style={styles.sidebar} className="resume-sidebar">
 
-            {/* Photo */}
-<div style={styles.photoWrapper}>
-  {photo ? (
-    <img
-      src={photo}
-      alt={name || "Profile"}
-      style={styles.photo}
-    />
-  ) : (
-    <div style={styles.photoPlaceholder}>
-      {getInitials(name)}
-    </div>
-  )}
-</div>
+            <div style={styles.photoWrapper} className="resume-photo-wrapper">
+              {photo ? (
+                <img src={photo} alt={name || "Profile"} style={styles.photo} />
+              ) : (
+                <div style={styles.photoPlaceholder}>{getInitials(name)}</div>
+              )}
+            </div>
 
-            {/* Name + Title */}
             {name && <h1 style={styles.name}>{name}</h1>}
-            {jobTitle && <p style={styles.jobTitle}>{jobTitle}</p>}
+            {jobTitle && <p style={styles.jobTitle} className="resume-job-title">{jobTitle}</p>}
 
             <div style={styles.divider} />
 
-            {/* Contact */}
             {(email || phone || location) && (
               <SidebarSection label="Contact">
                 {email && (
@@ -647,7 +665,6 @@ const ModernTemplate = ({ resume = {} }) => {
               </SidebarSection>
             )}
 
-            {/* Skills */}
             {normalisedSkills.length > 0 && (
               <SidebarSection label="Skills">
                 {normalisedSkills.map((group, gi) => (
@@ -665,7 +682,6 @@ const ModernTemplate = ({ resume = {} }) => {
               </SidebarSection>
             )}
 
-            {/* Languages */}
             {languages.length > 0 && (
               <SidebarSection label="Languages">
                 {languages.map((l, i) => (
@@ -679,7 +695,6 @@ const ModernTemplate = ({ resume = {} }) => {
               </SidebarSection>
             )}
 
-            {/* Links */}
             {(website || linkedin || github) && (
               <SidebarSection label="Links">
                 {website && (
@@ -711,109 +726,81 @@ const ModernTemplate = ({ resume = {} }) => {
 
           </aside>
 
-          {/* ── RIGHT CONTENT ───────────────────────────────────────────── */}
-          <main style={styles.content}>
+          {/* ── RIGHT CONTENT ── */}
+          <main style={styles.content} className="resume-content">
 
-            {/* Summary */}
             {summary && (
-  <Section title="Professional Summary">
-    <p style={styles.summaryText}>{summary}</p>
-  </Section>
-)}
-
-            {/* Experience */}
-            {Array.isArray(experience) && experience.length > 0 && (
-              <Section title="Experience">
-                {experience.map((exp, i) => (
-  <TimelineEntry
-    key={i}
-    title={exp.role}
-    subtitle={exp.company}
-    meta={dateRange(exp.startDate, exp.endDate)}
-    bullets={
-        exp.responsibilities
-            ? exp.responsibilities
-                  .split("\n")
-                  .filter(Boolean)
-            : []
-    }
-/>
-))}
+              <Section title="Professional Summary">
+                <p style={styles.summaryText}>{summary}</p>
               </Section>
             )}
 
-            {/* Projects */}
+            {Array.isArray(experience) && experience.length > 0 && (
+              <Section title="Experience">
+                {experience.map((exp, i) => (
+                  <TimelineEntry
+                    key={i}
+                    title={exp.role}
+                    subtitle={exp.company}
+                    meta={dateRange(exp.startDate, exp.endDate)}
+                    bullets={
+                      exp.responsibilities
+                        ? exp.responsibilities.split("\n").filter(Boolean)
+                        : []
+                    }
+                  />
+                ))}
+              </Section>
+            )}
+
             {projects.length > 0 && (
               <Section title="Projects">
                 {projects.map((proj, i) => (
                   <div key={i} style={styles.projectCard}>
                     <div style={styles.projectHeader}>
-  <p style={styles.projectName}>{proj.title}</p>
-
-  <div style={{ display: "flex", gap: "10px" }}>
-    {proj.demo && (
-      <a
-        href={proj.demo}
-        target="_blank"
-        rel="noreferrer"
-        style={styles.projectLink}
-      >
-        Live Demo
-      </a>
-    )}
-
-    {proj.github && (
-      <a
-        href={proj.github}
-        target="_blank"
-        rel="noreferrer"
-        style={styles.projectLink}
-      >
-        GitHub
-      </a>
-    )}
-  </div>
-</div>
+                      <p style={styles.projectName}>{proj.title}</p>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        {proj.demo && (
+                          <a href={proj.demo} target="_blank" rel="noreferrer" style={styles.projectLink}>
+                            Live Demo
+                          </a>
+                        )}
+                        {proj.github && (
+                          <a href={proj.github} target="_blank" rel="noreferrer" style={styles.projectLink}>
+                            GitHub
+                          </a>
+                        )}
+                      </div>
+                    </div>
                     {proj.description && (
                       <p style={styles.projectDesc}>{proj.description}</p>
                     )}
                     {proj.technologies && (
-  <div style={styles.techStack}>
-    {proj.technologies
-      .split(",")
-      .map((tech, index) => (
-        <span key={index} style={styles.techTag}>
-          {tech.trim()}
-        </span>
-      ))}
-  </div>
-)}
+                      <div style={styles.techStack}>
+                        {proj.technologies.split(",").map((tech, index) => (
+                          <span key={index} style={styles.techTag}>{tech.trim()}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </Section>
             )}
 
-            {/* Education */}
             {education.length > 0 && (
               <Section title="Education">
                 {education.map((edu, i) => (
                   <TimelineEntry
                     key={i}
                     title={edu.college}
-
-subtitle={`${edu.degree}${
-    edu.university ? ` • ${edu.university}` : ""
-}`}
-
-meta={`${edu.startYear} - ${edu.endYear}`}
-
-bullets={edu.cgpa ? [`CGPA: ${edu.cgpa}`] : []}
+                    subtitle={`${edu.degree}${edu.university ? ` • ${edu.university}` : ""}`}
+                    meta={`${edu.startYear} - ${edu.endYear}`}
+                    bullets={edu.cgpa ? [`CGPA: ${edu.cgpa}`] : []}
                   />
                 ))}
               </Section>
             )}
 
-            {/* Certifications */}
             {certifications.length > 0 && (
               <Section title="Certifications">
                 {certifications.map((cert, i) => (
@@ -822,9 +809,7 @@ bullets={edu.cgpa ? [`CGPA: ${edu.cgpa}`] : []}
                     <div>
                       <p style={styles.certName}>{cert.name}</p>
                       <p style={styles.certMeta}>
-                        {[cert.organization, cert.year]
-                          .filter(Boolean)
-                          .join(" · ")}
+                        {[cert.organization, cert.year].filter(Boolean).join(" · ")}
                         {cert.credentialId && ` · ID: ${cert.credentialId}`}
                       </p>
                     </div>
@@ -833,7 +818,6 @@ bullets={edu.cgpa ? [`CGPA: ${edu.cgpa}`] : []}
               </Section>
             )}
 
-            {/* Achievements */}
             {achievements.length > 0 && (
               <Section title="Achievements">
                 {achievements.map((ach, i) => (
