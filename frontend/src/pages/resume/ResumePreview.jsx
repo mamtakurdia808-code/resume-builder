@@ -67,49 +67,50 @@ export default function ResumePreview() {
   // Download PDF using html2canvas and jsPDF libraries
   const handleDownloadPDF = async () => {
   const element = document.getElementById("printable-resume-sheet");
-  if (!element) {
-    console.error("Could not find the printable resume sheet container.");
-    return;
-  }
+
+  if (!element) return;
 
   try {
     setDownloading(true);
 
-    // Render canvas with safe options that ignore modern oklch/color functions
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
-      allowTaint: true,
+      backgroundColor: "#ffffff",
       scrollY: -window.scrollY,
-      // CRITICAL FIX: Stops html2canvas from crashing when encountering modern framework styles
-      onclone: (clonedDoc) => {
-        const clonedElement = clonedDoc.getElementById("printable-resume-sheet");
-        if (clonedElement) {
-          // Remove potential framework classes from layout that break old color parsers
-          clonedElement.removeAttribute("class");
-          // Re-apply the clean preview class manually
-          clonedElement.classList.add("preview-doc-canvas");
-        }
-      }
+      windowWidth: 794,
+      windowHeight: 1123,
     });
 
     const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
 
-    const imgWidth = 210;
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const pageWidth = 210;
+    const pageHeight = 297;
+
+    const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    
-    const fileName = `${resumeTitle.replace(/\s+/g, "_")}_Resume.pdf`;
-    pdf.save(fileName);
 
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save(`${resumeTitle}.pdf`);
   } catch (err) {
-    console.error("PDF generation failed:", err);
+    console.error(err);
   } finally {
     setDownloading(false);
   }
@@ -307,7 +308,13 @@ const PREVIEW_STYLES = `
   .btn-outline-action:hover { background: #F1F5F9; border-color: #CBD5E1; }
 
   .canvas-scroll-container { flex: 1; overflow-y: auto; padding: 40px 24px; display: flex; justify-content: center; align-items: flex-start; }
-  .preview-doc-canvas { background: #ffffff; color: #111827; border-radius: 8px; padding: 48px; font-size: 11px; line-height: 1.6; box-shadow: 0 4px 20px rgba(15,23,42,0.03), 0 10px 30px rgba(15,23,42,0.04); width: 100%; max-width: 800px; min-height: 1024px; border: 1px solid #E2E8F0; }
+  .preview-doc-canvas{
+    width:794px;
+    min-height:1123px;
+    max-width:794px;
+    background:#fff;
+    margin:auto;
+}
 
   .prev-header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #0D9488; margin-bottom: 20px; }
   .prev-name { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; color: #111827; letter-spacing: -0.02em; line-height: 1.2; text-transform: uppercase; }
