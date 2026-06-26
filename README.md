@@ -15,7 +15,17 @@ Built with React, Vite, Node.js, Express, and PostgreSQL, ResumeAI provides a mo
 
 ---
 
-[Live Demo](https://resume-builder-nu-eight-48.vercel.app/)
+## Live Demo
+
+https://resume-builder-nu-eight-48.vercel.app/
+
+## Demo
+
+<p align="center">
+  <img src="assets/demo.gif" alt="ResumeAI Demo" width="100%">
+</p>
+
+---
 
 ## Features
 
@@ -92,33 +102,21 @@ ResumeAI
 
 ## Screenshots
 
-### Landing Page
+| Landing Page | Dashboard |
+|--------------|-----------|
+| <img src="screenshots/LandingPage.png" width="100%"> | <img src="screenshots/Dashboard.png" width="100%"> |
 
-<img src="screenshots/landing-page.png" width="100%"/>
+| Resume Builder | ATS Checker |
+|----------------|-------------|
+| <img src="screenshots/ResumeBuilder.png" width="100%"> | <img src="screenshots/ATSChecker.png" width="100%"> |
 
-### Dashboard
+| ATS Report | AI Review |
+|------------|-----------|
+| <img src="screenshots/ATSReport.png" width="100%"> | <img src="screenshots/AIReview.png" width="100%"> |
 
-<img src="screenshots/dashboard.png" width="100%"/>
-
-### Resume Builder
-
-<img src="screenshots/resume-builder.png" width="100%"/>
-
-### ATS Checker
-
-<img src="screenshots/ats-checker.png" width="100%"/>
-
-### ATS Report
-
-<img src="screenshots/ats-report.png" width="100%"/>
-
-### AI Review
-
-<img src="screenshots/ai-review.png" width="100%"/>
-
-### AI Rewrite
-
-<img src="screenshots/ai-rewrite.png" width="100%"/>
+| AI Rewrite |
+|------------|
+| <img src="screenshots/AIRewrite.png" width="100%"> |
 
 ---
 
