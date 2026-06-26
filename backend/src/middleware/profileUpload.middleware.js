@@ -1,30 +1,22 @@
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary");
 
-const uploadDir = "uploads/profile";
-
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-
-    cb(
-      null,
-      `profile-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`
-    );
-  },
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: async (req, file) => ({
+    folder: "ResumeAI/profile",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    public_id: `profile-${Date.now()}-${Math.round(Math.random() * 1e9)}`,
+  }),
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = ["image/jpeg", "image/png", "image/webp"];
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
 
   if (allowed.includes(file.mimetype)) {
     cb(null, true);

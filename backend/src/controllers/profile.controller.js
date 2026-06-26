@@ -171,7 +171,9 @@ const uploadProfilePhoto = async (req, res) => {
         message: "Please upload a profile image.",
       });
     }
-    const imagePath = `/uploads/profile/${req.file.filename}`;
+
+    // Cloudinary image URL
+    const imageUrl = req.file.path;
 
     const result = await pool.query(
       `
@@ -181,13 +183,13 @@ const uploadProfilePhoto = async (req, res) => {
       WHERE id = $2
       RETURNING id, full_name, email, profile_picture
       `,
-      [imagePath, userId]
+      [imageUrl, userId]
     );
 
     return res.status(200).json({
       success: true,
       message: "Profile photo updated successfully.",
-      profile_picture: imagePath,
+      profile_picture: imageUrl,
       user: result.rows[0],
     });
   } catch (error) {

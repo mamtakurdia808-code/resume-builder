@@ -147,17 +147,17 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const isMobile = useIsMobile();
 
-  const BASE_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
         const [profileRes, photoRes] = await Promise.all([
-          fetch(`${BASE_URL}/profile`, {
+          fetch(`${API_URL}/profile`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`${BASE_URL}/profile/photo`, {
+          fetch(`${API_URL}/profile`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -226,8 +226,8 @@ export default function Profile() {
       <div style={{ position: "relative", marginBottom: isMobile ? 14 : 18, flexShrink: 0 }}>
         {u.profile_picture ? (
           <img
-            src={`${BASE_URL}${u.profile_picture}`}
-            alt={u.full_name}
+             src={u.profile_picture}
+             alt={u.full_name}
             style={{
               width: isMobile ? 88 : 120,
               height: isMobile ? 88 : 120,

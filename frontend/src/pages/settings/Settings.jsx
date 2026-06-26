@@ -349,9 +349,7 @@ const EditProfileModal = ({ user, onClose, onSaved }) => {
   const [profileImage, setProfileImage] = useState(null);
   const BASE_URL = API_URL.replace("/api", "");
   const [preview, setPreview] = useState(
-  user.profile_picture
-    ? `${BASE_URL}${user.profile_picture}`
-    : ""
+  user.profile_picture || ""
 );
 
   const [loading, setLoading] = useState(false);
@@ -407,7 +405,7 @@ if (profileImage) {
     throw new Error(uploadJson.message);
   }
 
-  uploadedPhoto = `${API_URL.replace("/api", "")}${uploadJson.profile_picture}`;
+  uploadedPhoto = uploadJson.profile_picture;
 
 setPreview(uploadedPhoto);
 }
@@ -516,11 +514,7 @@ setPreview(uploadedPhoto);
     }}
   >
     <img
-      src={
-        preview ||
-        "https://ui-avatars.com/api/?background=0d9488&color=fff&name=" +
-          encodeURIComponent(form.full_name || "User")
-      }
+      src={user.profile_picture}
       alt="Profile"
       style={{
         width: 90,

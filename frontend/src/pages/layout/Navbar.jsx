@@ -229,7 +229,7 @@ export default function Navbar({ sidebarWidth, setMobileOpen }) {
               <div style={{ position: "relative" }}>
                 {user.profile_picture ? (
                   <img
-                    src={`${BASE_URL}${user.profile_picture}`}
+                    src={user.profile_picture}
                     alt={displayName}
                     style={{
                       width: 34, height: 34, borderRadius: "10px",
