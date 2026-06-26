@@ -12,7 +12,7 @@ const tokens = {
   color: {
     ink:       "#111111",
     heading:   "#000000",
-    accent:    "#1A1A2E",   // deep navy – used sparingly on name / rule
+    accent:    "#1A1A2E",
     muted:     "#555555",
     divider:   "#CCCCCC",
     bg:        "#FFFFFF",
@@ -20,8 +20,8 @@ const tokens = {
     tagText:   "#333333",
   },
   font: {
-    serif:  "'Georgia', 'Times New Roman', serif",        // name & section heads
-    sans:   "'Arial', 'Helvetica Neue', Helvetica, sans-serif", // body / ATS safe
+    serif:  "'Georgia', 'Times New Roman', serif",
+    sans:   "'Arial', 'Helvetica Neue', Helvetica, sans-serif",
   },
   size: {
     name:        "26px",
@@ -40,7 +40,6 @@ const tokens = {
 
 // ─── Inline Styles ────────────────────────────────────────────────────────────
 const styles = {
-  // Page wrapper – A4 proportions, print-safe
   page: {
     background:    tokens.color.bg,
     color:         tokens.color.ink,
@@ -52,12 +51,10 @@ const styles = {
     margin:        "0 auto",
     padding:       tokens.spacing.pagePad,
     boxSizing:     "border-box",
-    // Print reset
     WebkitPrintColorAdjust: "exact",
     printColorAdjust:       "exact",
   },
 
-  // ── Header ──────────────────────────────────────────────────────────────────
   header: {
     textAlign:    "center",
     marginBottom: "20px",
@@ -95,7 +92,6 @@ const styles = {
     textDecoration: "none",
   },
 
-  // ── Section ──────────────────────────────────────────────────────────────────
   section: {
     marginBottom: tokens.spacing.sectionGap,
   },
@@ -111,13 +107,11 @@ const styles = {
     borderBottom:   `1px solid ${tokens.color.divider}`,
   },
 
-  // ── Summary ──────────────────────────────────────────────────────────────────
   summaryText: {
     margin:  "6px 0 0",
     color:   tokens.color.ink,
   },
 
-  // ── Experience / Projects ─────────────────────────────────────────────────────
   itemBlock: {
     marginBottom: tokens.spacing.itemGap,
   },
@@ -159,7 +153,6 @@ const styles = {
     color:  tokens.color.ink,
   },
 
-  // ── Education ────────────────────────────────────────────────────────────────
   eduHeader: {
     display:        "flex",
     justifyContent: "space-between",
@@ -180,7 +173,6 @@ const styles = {
     margin:      "1px 0 0",
   },
 
-  // ── Skills ────────────────────────────────────────────────────────────────────
   skillsGrid: {
     display:             "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
@@ -210,7 +202,6 @@ const styles = {
     borderRadius: "2px",
     whiteSpace:   "nowrap",
   },
-  // Flat skill list (when skills is a plain array, not categorised)
   skillFlatRow: {
     display:   "flex",
     flexWrap:  "wrap",
@@ -218,7 +209,6 @@ const styles = {
     marginTop: "6px",
   },
 
-  // ── Certifications / Achievements / Languages ────────────────────────────────
   inlineList: {
     margin:      "6px 0 0",
     paddingLeft: "18px",
@@ -230,12 +220,61 @@ const styles = {
   achievementItem: {
     marginBottom: "3px",
   },
-
-  // ── Print overrides (injected as a <style> tag) ───────────────────────────────
 };
 
-// ─── Print stylesheet (injected once) ─────────────────────────────────────────
+// ─── Print + Responsive stylesheet ────────────────────────────────────────────
 const PRINT_CSS = `
+/* ── Mobile: fluid single column ── */
+@media screen and (max-width: 680px) {
+  .resume-page {
+    width: 100% !important;
+    min-height: unset !important;
+    padding: 20px 16px !important;
+    box-shadow: none !important;
+  }
+  .resume-contact-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  .resume-contact-dot {
+    display: none !important;
+  }
+  .resume-item-header,
+  .resume-edu-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+  .resume-item-meta {
+    white-space: normal !important;
+  }
+  .resume-skills-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .resume-name {
+    font-size: 20px !important;
+    letter-spacing: 0.02em !important;
+  }
+}
+
+/* ── Tablet: shrink padding, constrain width ── */
+@media screen and (min-width: 681px) and (max-width: 900px) {
+  .resume-page {
+    width: 100% !important;
+    min-height: unset !important;
+    padding: 28px 32px !important;
+  }
+}
+
+/* ── Screen shadow (desktop only) ── */
+@media screen and (min-width: 901px) {
+  .resume-page {
+    box-shadow: 0 2px 32px rgba(0,0,0,0.10);
+  }
+}
+
+/* ── Print: true A4 ── */
 @media print {
   @page {
     size: A4;
@@ -256,11 +295,6 @@ const PRINT_CSS = `
   }
   a { color: inherit !important; text-decoration: none !important; }
 }
-@media screen {
-  .resume-page {
-    box-shadow: 0 2px 32px rgba(0,0,0,0.10);
-  }
-}
 `;
 
 // ─── Helper components ────────────────────────────────────────────────────────
@@ -269,7 +303,7 @@ const SectionHeading = ({ children }) => (
 );
 
 const Dot = () => (
-  <span style={{ margin: "0 4px", color: "#999" }}>·</span>
+  <span className="resume-contact-dot" style={{ margin: "0 4px", color: "#999" }}>·</span>
 );
 
 // ─── Section: Personal Info / Header ─────────────────────────────────────────
@@ -284,25 +318,25 @@ const HeaderSection = ({ info }) => {
   const displayName = fullName || [firstName, lastName].filter(Boolean).join(" ");
 
   const links = [
-  email    && { label: email,                                          href: `mailto:${email}` },
-  phone    && { label: phone,                                          href: `tel:${phone}` },
-  location && { label: location,                                       href: null },
-  linkedin && { label: linkedin.replace(/^https?:\/\/(www\.)?/i, ""), href: linkedin },
-  github   && { label: github.replace(/^https?:\/\/(www\.)?/i, ""),   href: github },
-  website  && { label: website.replace(/^https?:\/\/(www\.)?/i, ""),  href: website },
-  portfolio && { label: portfolio.replace(/^https?:\/\/(www\.)?/i, ""), href: portfolio },
-].filter(Boolean);
+    email     && { label: email,                                           href: `mailto:${email}` },
+    phone     && { label: phone,                                           href: `tel:${phone}` },
+    location  && { label: location,                                        href: null },
+    linkedin  && { label: linkedin.replace(/^https?:\/\/(www\.)?/i, ""),  href: linkedin },
+    github    && { label: github.replace(/^https?:\/\/(www\.)?/i, ""),    href: github },
+    website   && { label: website.replace(/^https?:\/\/(www\.)?/i, ""),   href: website },
+    portfolio && { label: portfolio.replace(/^https?:\/\/(www\.)?/i, ""), href: portfolio },
+  ].filter(Boolean);
 
   return (
     <header style={styles.header}>
-      {displayName && <h1 style={styles.name}>{displayName}</h1>}
-      {title       && <p  style={styles.tagline}>{title}</p>}
+      {displayName && <h1 className="resume-name" style={styles.name}>{displayName}</h1>}
+      {title       && <p style={styles.tagline}>{title}</p>}
       {links.length > 0 && (
-        <div style={styles.contactRow}>
+        <div className="resume-contact-row" style={styles.contactRow}>
           {links.map((l, i) => (
             <React.Fragment key={i}>
               {i > 0 && <Dot />}
-              <span style={styles.contactItem}>
+              <span className="resume-contact-item" style={styles.contactItem}>
                 {l.href
                   ? <a href={l.href} style={styles.contactLink}>{l.label}</a>
                   : l.label
@@ -335,31 +369,30 @@ const ExperienceSection = ({ experience }) => {
       <SectionHeading>Experience</SectionHeading>
       {experience.map((job, i) => (
         <div key={i} style={styles.itemBlock}>
-          <div style={styles.itemHeader}>
+          <div className="resume-item-header" style={styles.itemHeader}>
             <h3 style={styles.itemTitle}>{job.title || job.position || job.role}</h3>
-            <span style={styles.itemMeta}>
+            <span className="resume-item-meta" style={styles.itemMeta}>
               {[job.startDate, job.endDate || "Present"].filter(Boolean).join(" – ")}
             </span>
           </div>
           <p style={styles.itemSubtitle}>
             {[job.company, job.location].filter(Boolean).join("  ·  ")}
           </p>
-          {/* Bullets take priority; fall back to description string */}
           {Array.isArray(job.bullets) && job.bullets.length > 0 ? (
-  <ul style={styles.bulletList}>
-    {job.bullets.map((b, j) => (
-      <li key={j} style={styles.bulletItem}>{b}</li>
-    ))}
-  </ul>
-) : job.responsibilities ? (
-  <ul style={styles.bulletList}>
-    {job.responsibilities.split("\n").filter(Boolean).map((b, j) => (
-      <li key={j} style={styles.bulletItem}>{b}</li>
-    ))}
-  </ul>
-) : job.description ? (
-  <p style={styles.descriptionText}>{job.description}</p>
-) : null}
+            <ul style={styles.bulletList}>
+              {job.bullets.map((b, j) => (
+                <li key={j} style={styles.bulletItem}>{b}</li>
+              ))}
+            </ul>
+          ) : job.responsibilities ? (
+            <ul style={styles.bulletList}>
+              {job.responsibilities.split("\n").filter(Boolean).map((b, j) => (
+                <li key={j} style={styles.bulletItem}>{b}</li>
+              ))}
+            </ul>
+          ) : job.description ? (
+            <p style={styles.descriptionText}>{job.description}</p>
+          ) : null}
         </div>
       ))}
     </section>
@@ -374,7 +407,7 @@ const ProjectsSection = ({ projects }) => {
       <SectionHeading>Projects</SectionHeading>
       {projects.map((proj, i) => (
         <div key={i} style={styles.itemBlock}>
-          <div style={styles.itemHeader}>
+          <div className="resume-item-header" style={styles.itemHeader}>
             <h3 style={styles.itemTitle}>
               {proj.demo || proj.github || proj.url
                 ? <a href={proj.demo || proj.github || proj.url} style={{ color: tokens.color.heading, textDecoration: "none" }}>
@@ -383,7 +416,7 @@ const ProjectsSection = ({ projects }) => {
                 : proj.title || proj.name
               }
             </h3>
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               {proj.github && (
                 <a href={proj.github} style={{ ...styles.itemMeta, color: tokens.color.muted, textDecoration: "none" }}>
                   {proj.github.replace(/^https?:\/\/(www\.)?github\.com\//, "github.com/")}
@@ -425,23 +458,23 @@ const EducationSection = ({ education }) => {
     <section style={styles.section}>
       <SectionHeading>Education</SectionHeading>
       {education.map((edu, i) => (
-        <div key={i} style={{ ...styles.itemBlock }}>
-          <div style={styles.eduHeader}>
+        <div key={i} style={styles.itemBlock}>
+          <div className="resume-edu-header" style={styles.eduHeader}>
             <h3 style={styles.eduDegree}>
               {[edu.degree, edu.field].filter(Boolean).join(", ")}
             </h3>
-            <span style={styles.itemMeta}>
+            <span className="resume-item-meta" style={styles.itemMeta}>
               {[edu.startYear || edu.startDate, edu.endYear || edu.endDate || "Present"]
                 .filter(Boolean).join(" – ")}
             </span>
           </div>
           <p style={styles.eduInstitution}>
-  {[edu.college, edu.university].filter(Boolean).join(", ")}
-</p>
+            {[edu.college, edu.university].filter(Boolean).join(", ")}
+          </p>
           {(edu.cgpa || edu.gpa) && (
-  <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
-    CGPA: {edu.cgpa || edu.gpa}
-  </p>
+            <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
+              CGPA: {edu.cgpa || edu.gpa}
+            </p>
           )}
           {edu.honors && (
             <p style={{ ...styles.descriptionText, fontSize: tokens.size.small }}>
@@ -455,9 +488,6 @@ const EducationSection = ({ education }) => {
 };
 
 // ─── Section: Skills ──────────────────────────────────────────────────────────
-// Supports two shapes:
-//   1. Array of { category: "Languages", items: ["Python","JS"] }
-//   2. Plain string array ["Python","JS","React"]
 const SkillsSection = ({ skills }) => {
   if (!skills?.length) return null;
 
@@ -468,7 +498,7 @@ const SkillsSection = ({ skills }) => {
     <section style={styles.section}>
       <SectionHeading>Skills</SectionHeading>
       {isCategorised ? (
-        <div style={styles.skillsGrid}>
+        <div className="resume-skills-grid" style={styles.skillsGrid}>
           {skills.map((group, i) => (
             <div key={i} style={styles.skillCategory}>
               {(group.category || group.name) && (
@@ -504,9 +534,9 @@ const CertificationsSection = ({ certifications }) => {
       <ul style={styles.inlineList}>
         {certifications.map((cert, i) => {
           const label = typeof cert === "string"
-  ? cert
-  : [cert.name, cert.organization || cert.issuer, cert.year || cert.date]
-      .filter(Boolean).join("  ·  ");
+            ? cert
+            : [cert.name, cert.organization || cert.issuer, cert.year || cert.date]
+                .filter(Boolean).join("  ·  ");
           return <li key={i} style={styles.inlineItem}>{label}</li>;
         })}
       </ul>
@@ -552,21 +582,6 @@ const AchievementsSection = ({ achievements }) => {
 };
 
 // ─── Root Component ───────────────────────────────────────────────────────────
-/**
- * ProfessionalTemplate
- *
- * @param {{ resume: {
- *   personalInfo:   object,
- *   summary:        string,
- *   experience:     object[],
- *   projects:       object[],
- *   education:      object[],
- *   skills:         (string[]|object[]),
- *   certifications: (string[]|object[]),
- *   languages:      (string[]|object[]),
- *   achievements:   (string[]|object[]),
- * }}} props
- */
 const ProfessionalTemplate = ({ resume = {} }) => {
   const {
     personal = {},
@@ -579,7 +594,6 @@ const ProfessionalTemplate = ({ resume = {} }) => {
     achievements,
   } = resume;
 
-  // Map DB shape → what HeaderSection expects
   const personalInfo = {
     fullName:  personal.fullName  || "",
     title:     personal.title     || "",
@@ -595,19 +609,18 @@ const ProfessionalTemplate = ({ resume = {} }) => {
 
   return (
     <>
-      {/* Inject print + screen CSS once */}
       <style>{PRINT_CSS}</style>
 
       <article className="resume-page" style={styles.page}>
-        <HeaderSection       info={personalInfo} />
-        <SummarySection      summary={summary} />
-        <ExperienceSection   experience={experience} />
-        <ProjectsSection     projects={projects} />
-        <EducationSection    education={education} />
-        <SkillsSection       skills={skills} />
+        <HeaderSection         info={personalInfo} />
+        <SummarySection        summary={summary} />
+        <ExperienceSection     experience={experience} />
+        <ProjectsSection       projects={projects} />
+        <EducationSection      education={education} />
+        <SkillsSection         skills={skills} />
         <CertificationsSection certifications={certifications} />
-        <AchievementsSection achievements={achievements} />
-        <LanguagesSection    languages={languages} />
+        <AchievementsSection   achievements={achievements} />
+        <LanguagesSection      languages={languages} />
       </article>
     </>
   );
