@@ -1,10 +1,21 @@
 # ResumeAI – AI Resume Builder & ATS Resume Checker
 
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Gemini AI](https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+
 ResumeAI is a full-stack AI-powered web application that enables users to create professional resumes, analyze ATS compatibility, receive AI-powered feedback, and enhance resume content using Google Gemini AI.
 
 Built with React, Vite, Node.js, Express, and PostgreSQL, ResumeAI provides a modern, responsive interface with secure authentication and cloud-based profile image management.
 
 ---
+
+[Live Demo](https://resume-builder-nu-eight-48.vercel.app/)
 
 ## Features
 
