@@ -19,7 +19,7 @@ const app = express();
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://resume-builder-nu-eight-48.vercel.app"
+        "https://resumebuilder-atschecker.vercel.app"
     ],
     credentials: true
 }));
