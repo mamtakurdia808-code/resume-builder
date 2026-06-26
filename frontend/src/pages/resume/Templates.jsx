@@ -966,15 +966,13 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
   const [applying,    setApplying]    = useState(false);
   const [applied,     setApplied]     = useState(false);
   const [photoUrl,    setPhotoUrl]    = useState(null);
-  const fileInputRef = useRef(null);                   
+  const fileInputRef = useRef(null);
 
   const TemplateComponent = resolveTemplate(template.template_name);
 
   const photoTemplates = ["Modern", "Executive", "Creative"];
-
   const showPhotoUpload = photoTemplates.includes(template.template_name);
 
-  // Handle local photo upload
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -982,69 +980,62 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
     setPhotoUrl(url);
   };
 
-  // Merge uploaded photo into resumeData before passing to template
   const resumeWithPhoto = resumeData
-  ? {
-      ...resumeData,
-      personal: {                          // ← was "personalInfo"
-        ...resumeData.personal,
-        photo: photoUrl || resumeData.personal?.photo || "",
-      },
-    }
-  : null;
+    ? {
+        ...resumeData,
+        personal: {
+          ...resumeData.personal,
+          photo: photoUrl || resumeData.personal?.photo || "",
+        },
+      }
+    : null;
 
-  // Fetch resume data
   useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    setLoading(true);
-    setFetchError(null);
-    try {
-      const { data } = await axios.get(`${BASE_URL}/resumes/${resumeId}`, { headers: authHeader }); // ← this was missing!
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setFetchError(null);
+      try {
+        const { data } = await axios.get(`${BASE_URL}/resumes/${resumeId}`, { headers: authHeader });
+        const raw = data?.resume || data;
+        const r = raw?.resume_data || raw;
+        const normalized = {
+          personal: {
+            fullName:  r.personal?.fullName  || "",
+            title:     r.personal?.title     || "",
+            email:     r.personal?.email     || "",
+            phone:     r.personal?.phone     || "",
+            location:  r.personal?.location  || "",
+            photo:     r.personal?.photo     || "",
+            portfolio: r.personal?.portfolio || r.personal?.website || "",
+            linkedin:  r.personal?.linkedin  || "",
+            github:    r.personal?.github    || "",
+            summary:   r.personal?.summary   || "",
+          },
+          skills:         Array.isArray(r.skills)         ? r.skills         : [],
+          experience:     Array.isArray(r.experience)     ? r.experience     : [],
+          projects:       Array.isArray(r.projects)       ? r.projects       : [],
+          education:      Array.isArray(r.education)      ? r.education      : [],
+          certifications: Array.isArray(r.certifications) ? r.certifications : [],
+          languages:      Array.isArray(r.languages)      ? r.languages      : [],
+          achievements:   Array.isArray(r.achievements)   ? r.achievements   : [],
+        };
+        if (!cancelled) setResumeData(normalized);
+      } catch (err) {
+        if (!cancelled) setFetchError(err?.response?.data?.message || "Failed to load resume data.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [resumeId]);
 
-      const raw = data?.resume || data;
-      const r = raw?.resume_data || raw;
-
-      const normalized = {
-  personal: {                                    // ← was "personalInfo"
-    fullName: r.personal?.fullName || "",        // ← was name/full_name
-    title:    r.personal?.title    || "",
-    email:    r.personal?.email    || "",
-    phone:    r.personal?.phone    || "",
-    location: r.personal?.location || "",
-    photo:    r.personal?.photo    || "",
-    portfolio: r.personal?.portfolio || r.personal?.website || "",
-    linkedin: r.personal?.linkedin || "",
-    github:   r.personal?.github   || "",
-    summary:  r.personal?.summary  || "",
-  },
-  skills:         Array.isArray(r.skills)         ? r.skills         : [],
-  experience:     Array.isArray(r.experience)     ? r.experience     : [],
-  projects:       Array.isArray(r.projects)       ? r.projects       : [],
-  education:      Array.isArray(r.education)      ? r.education      : [],
-  certifications: Array.isArray(r.certifications) ? r.certifications : [],
-  languages:      Array.isArray(r.languages)      ? r.languages      : [],
-  achievements:   Array.isArray(r.achievements)   ? r.achievements   : [],
-};
-
-      if (!cancelled) setResumeData(normalized);
-    } catch (err) {
-      if (!cancelled) setFetchError(err?.response?.data?.message || "Failed to load resume data.");
-    } finally {
-      if (!cancelled) setLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [resumeId]);
-
-  // Escape key
   useEffect(() => {
     const h = (e) => { if (e.key === "Escape" && !applying) onClose(); };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
   }, [onClose, applying]);
 
-  // Lock body scroll
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -1059,7 +1050,6 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
         { resume_id: Number(resumeId), template_id: template.id },
         { headers: { ...authHeader, "Content-Type": "application/json" } }
       );
-      // Accept any truthy success flag OR any 2xx (no explicit success field)
       if (data?.success !== false) {
         setApplied(true);
         onApplied({ type: "success", message: data?.message || "Template applied successfully!" });
@@ -1076,130 +1066,182 @@ function LivePreviewOverlay({ template, resumeId, onClose, onApplied, authHeader
   const handleDownload = () => window.print();
 
   return (
-  <div style={styles.livePreviewOverlay} role="dialog" aria-modal="true" aria-label="Live resume preview">
-    
-    {/* ── Top bar ── */}
-    <div className="live-preview-topbar" style={styles.livePreviewTopbar}>
-      
-      {/* Left: Back + title */}
-      <div style={styles.livePreviewTopbarLeft}>
-        <button style={styles.btnDark("outline")} onClick={onClose} disabled={applying}>
-          <HiOutlineArrowLeft size={15} /> Back
-        </button>
-        <div>
-          <p style={styles.livePreviewTopbarTitle}>
-            {template.template_name} Template
-            {resumeData && ` · ${resumeData.personal?.fullName || "Your Resume"}`}
-          </p>
-          <p style={styles.livePreviewTopbarSub}>
-            {applied ? "Changes saved to your resume" : "Preview only — nothing is saved yet"}
-          </p>
+    <>
+      {/* ── Mobile responsive styles only ── */}
+      <style>{`
+        .lpo-topbar {
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .lpo-topbar-left {
+          min-width: 0;
+          flex: 1 1 auto;
+        }
+        .lpo-topbar-title {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+        }
+        .lpo-topbar-right {
+          flex-shrink: 0;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        @media (max-width: 600px) {
+          .lpo-topbar {
+            flex-direction: column;
+            align-items: flex-start !important;
+            padding: 10px 12px !important;
+            gap: 8px;
+          }
+          .lpo-topbar-left {
+            width: 100%;
+          }
+          .lpo-topbar-right {
+            width: 100%;
+            justify-content: flex-start;
+          }
+          .lpo-topbar-title {
+            font-size: 13px !important;
+          }
+          .lpo-topbar-sub {
+            font-size: 11px !important;
+          }
+          .lpo-content {
+            padding: 12px !important;
+          }
+          .lpo-paper {
+            width: 100% !important;
+            min-width: unset !important;
+            overflow-x: auto;
+          }
+        }
+        @media (max-width: 400px) {
+          .lpo-topbar-right button,
+          .lpo-topbar-right span {
+            font-size: 12px !important;
+            padding: 6px 10px !important;
+          }
+        }
+      `}</style>
+
+      <div style={styles.livePreviewOverlay} role="dialog" aria-modal="true" aria-label="Live resume preview">
+
+        {/* ── Top bar ── */}
+        <div className="live-preview-topbar lpo-topbar" style={styles.livePreviewTopbar}>
+
+          {/* Left: Back + title */}
+          <div className="lpo-topbar-left" style={styles.livePreviewTopbarLeft}>
+            <button style={styles.btnDark("outline")} onClick={onClose} disabled={applying}>
+              <HiOutlineArrowLeft size={15} /> Back
+            </button>
+            <div style={{ minWidth: 0 }}>
+              <p className="lpo-topbar-title" style={styles.livePreviewTopbarTitle}>
+                {template.template_name} Template
+                {resumeData && ` · ${resumeData.personal?.fullName || "Your Resume"}`}
+              </p>
+              <p className="lpo-topbar-sub" style={styles.livePreviewTopbarSub}>
+                {applied ? "Changes saved to your resume" : "Preview only — nothing is saved yet"}
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Photo + Applied pill + Download + Apply */}
+          <div className="lpo-topbar-right" style={styles.livePreviewTopbarRight}>
+
+            {showPhotoUpload && (
+              <>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handlePhotoChange}
+                />
+                <button
+                  style={{
+                    ...styles.btnDark("outline"),
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={loading || !!fetchError}
+                  title="Upload profile photo"
+                >
+                  {photoUrl ? (
+                    <img
+                      src={photoUrl}
+                      alt="photo"
+                      style={{ width: "18px", height: "18px", borderRadius: "50%", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: "15px" }}>📷</span>
+                  )}
+                  {photoUrl ? "Change Photo" : "Add Photo"}
+                </button>
+              </>
+            )}
+
+            {applied && (
+              <span style={styles.appliedPill}>
+                <HiOutlineCheck size={13} /> Applied
+              </span>
+            )}
+
+            <button
+              style={styles.btnDark("outline")}
+              onClick={handleDownload}
+              disabled={loading || !!fetchError}
+            >
+              <HiOutlineDownload size={15} /> Download PDF
+            </button>
+
+            {!applied && (
+              <button
+                style={{
+                  ...styles.btnDark("primary"),
+                  opacity: applying || loading || !!fetchError ? 0.6 : 1,
+                }}
+                onClick={handleApply}
+                disabled={applying || loading || !!fetchError}
+              >
+                {applying ? <><Spinner /> Applying…</> : "Apply Template"}
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* ── Content area ── */}
+        <div className="lpo-content" style={styles.livePreviewContent}>
+          {loading && (
+            <div style={styles.livePreviewLoadingWrap}>
+              <Spinner dark />
+              <span>Loading your resume…</span>
+            </div>
+          )}
+
+          {!loading && fetchError && (
+            <div style={styles.livePreviewErrorWrap}>
+              <HiOutlineExclamationCircle size={32} color="#F87171" />
+              <p style={{ margin: 0, fontWeight: 600, color: "#F87171" }}>Couldn't load resume</p>
+              <p style={{ margin: 0, color: "#94A3B8", fontSize: "13px" }}>{fetchError}</p>
+              <button style={styles.btnDark("outline")} onClick={onClose}>Go Back</button>
+            </div>
+          )}
+
+          {!loading && !fetchError && resumeWithPhoto && (
+            <div className="lpo-paper" style={styles.livePreviewPaper}>
+              <TemplateComponent resume={resumeWithPhoto} />
+            </div>
+          )}
+        </div>
+
       </div>
-
-      {/* Right: Photo + Applied pill + Download + Apply */}
-      <div style={styles.livePreviewTopbarRight}>
-
-        {/* Hidden file input */}
-{showPhotoUpload && (
-  <>
-    <input
-      ref={fileInputRef}
-      type="file"
-      accept="image/*"
-      style={{ display: "none" }}
-      onChange={handlePhotoChange}
-    />
-
-    <button
-      style={{
-        ...styles.btnDark("outline"),
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "6px",
-      }}
-      onClick={() => fileInputRef.current?.click()}
-      disabled={loading || !!fetchError}
-      title="Upload profile photo"
-    >
-      {photoUrl ? (
-        <img
-          src={photoUrl}
-          alt="photo"
-          style={{
-            width: "18px",
-            height: "18px",
-            borderRadius: "50%",
-            objectFit: "cover",
-          }}
-        />
-      ) : (
-        <span style={{ fontSize: "15px" }}>📷</span>
-      )}
-      {photoUrl ? "Change Photo" : "Add Photo"}
-    </button>
-  </>
-)}
-
-        {applied && (
-          <span style={styles.appliedPill}>
-            <HiOutlineCheck size={13} /> Applied
-          </span>
-        )}
-
-        <button
-          style={styles.btnDark("outline")}
-          onClick={handleDownload}
-          disabled={loading || !!fetchError}
-        >
-          <HiOutlineDownload size={15} /> Download PDF
-        </button>
-
-        {!applied && (
-          <button
-            style={{
-              ...styles.btnDark("primary"),
-              opacity: applying || loading || !!fetchError ? 0.6 : 1,
-            }}
-            onClick={handleApply}
-            disabled={applying || loading || !!fetchError}
-          >
-            {applying ? <><Spinner /> Applying…</> : "Apply Template"}
-          </button>
-        )}
-      </div>
-    </div>
-
-    {/* ── Content area ── */}
-    <div style={styles.livePreviewContent}>
-      {loading && (
-        <div style={styles.livePreviewLoadingWrap}>
-          <Spinner dark />
-          <span>Loading your resume…</span>
-        </div>
-      )}
-
-      {!loading && fetchError && (
-        <div style={styles.livePreviewErrorWrap}>
-          <HiOutlineExclamationCircle size={32} color="#F87171" />
-          <p style={{ margin: 0, fontWeight: 600, color: "#F87171" }}>Couldn't load resume</p>
-          <p style={{ margin: 0, color: "#94A3B8", fontSize: "13px" }}>{fetchError}</p>
-          <button style={styles.btnDark("outline")} onClick={onClose}>Go Back</button>
-        </div>
-      )}
-
-      {/* ← Use resumeWithPhoto here, not resumeData */}
-      {!loading && !fetchError && resumeWithPhoto && (
-        <div style={styles.livePreviewPaper}>
-          <TemplateComponent resume={resumeWithPhoto} />
-        </div>
-      )}
-    </div>
-
-  </div>
-);
+    </>
+  );
 }
-
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function Templates() {
   const [templates,        setTemplates]        = useState([]);
