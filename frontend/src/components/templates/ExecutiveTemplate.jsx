@@ -2,6 +2,7 @@
  * ExecutiveTemplate.jsx
  * ResumeAI – AI Resume Builder & ATS Checker
  * Premium executive resume — dark sidebar, gold accents, profile photo.
+ * Mobile-responsive: sidebar stacks above content on narrow screens.
  *
  * Usage:
  *   <ExecutiveTemplate resume={resume} />
@@ -22,19 +23,16 @@ import React from "react";
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const T = {
-  // Sidebar palette
   sidebarBg:     "#0E1117",
   sidebarDeep:   "#161B24",
   sidebarBorder: "#1F2733",
 
-  // Gold system — three weights for hierarchy
   goldPrimary:   "#C9A84C",
   goldLight:     "#E2C87A",
   goldDim:       "#7A6230",
   goldRule:      "rgba(201,168,76,0.25)",
   goldGlow:      "rgba(201,168,76,0.08)",
 
-  // Main content palette
   contentBg:     "#FFFFFF",
   ink:           "#0D0D0D",
   inkMid:        "#2C2C2C",
@@ -43,60 +41,58 @@ const T = {
   border:        "#EBEBEB",
   rowAlt:        "#FAFAFA",
 
-  // Typography
   fontSerif: "'Georgia', 'Times New Roman', serif",
   fontSans:  "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif",
 
-  // Sidebar widths
-  sidebarW:  "31%",
-  contentW:  "69%",
+  sidebarW: "31%",
+  contentW: "69%",
 };
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const S = {
-  // Root A4 wrapper
   pageWrapper: {
-    background: "#E8E4DC",
-    minHeight:  "100vh",
-    display:    "flex",
+    background:     "#E8E4DC",
+    minHeight:      "100vh",
+    display:        "flex",
     justifyContent: "center",
-    alignItems: "flex-start",
-    padding:    "32px 16px",
-    fontFamily: T.fontSans,
+    alignItems:     "flex-start",
+    padding:        "32px 16px",
+    fontFamily:     T.fontSans,
     WebkitFontSmoothing: "antialiased",
+    boxSizing:      "border-box",
   },
 
   page: {
-    width:        "210mm",
-    minHeight:    "297mm",
-    background:   T.contentBg,
-    display:      "flex",
-    flexDirection: "row",
-    boxShadow:    "0 8px 60px rgba(0,0,0,0.22)",
-    position:     "relative",
-    overflow:     "hidden",
+    width:         "100%",
+    maxWidth:      "210mm",
+    minHeight:     "auto",
+    background:    T.contentBg,
+    display:       "flex",
+    flexDirection: "row",   // overridden to column on mobile via CSS
+    boxShadow:     "0 8px 60px rgba(0,0,0,0.22)",
+    position:      "relative",
+    overflow:      "hidden",
   },
 
   // ── Sidebar ───────────────────────────────────────────────────────────────
   sidebar: {
-    width:         T.sidebarW,
-    minWidth:      "188px",
+    width:         T.sidebarW,     // overridden to 100% on mobile via CSS
+    minWidth:      "0",            // allow shrinking (mobile overrides width anyway)
     background:    T.sidebarBg,
     display:       "flex",
     flexDirection: "column",
     padding:       "0 0 40px",
     flexShrink:    0,
     position:      "relative",
+    boxSizing:     "border-box",
   },
 
-  // Sidebar top gold bar
   sidebarTopBar: {
     height:     "4px",
     background: `linear-gradient(90deg, ${T.goldPrimary}, ${T.goldLight}, ${T.goldPrimary})`,
     flexShrink: 0,
   },
 
-  // Photo area
   photoArea: {
     padding:       "28px 24px 20px",
     display:       "flex",
@@ -122,19 +118,19 @@ const S = {
     background:   T.sidebarDeep,
   },
   photoPlaceholder: {
-    width:           "100%",
-    height:          "100%",
-    borderRadius:    "50%",
-    background:      T.sidebarDeep,
-    display:         "flex",
-    alignItems:      "center",
-    justifyContent:  "center",
-    fontSize:        "32px",
-    fontWeight:      700,
-    color:           T.goldPrimary,
-    letterSpacing:   "-0.02em",
-    fontFamily:      T.fontSerif,
-    userSelect:      "none",
+    width:          "100%",
+    height:         "100%",
+    borderRadius:   "50%",
+    background:     T.sidebarDeep,
+    display:        "flex",
+    alignItems:     "center",
+    justifyContent: "center",
+    fontSize:       "32px",
+    fontWeight:     700,
+    color:          T.goldPrimary,
+    letterSpacing:  "-0.02em",
+    fontFamily:     T.fontSerif,
+    userSelect:     "none",
   },
   sidebarName: {
     fontFamily:    T.fontSerif,
@@ -145,6 +141,7 @@ const S = {
     letterSpacing: "0.02em",
     lineHeight:    1.2,
     margin:        "0 0 5px",
+    wordBreak:     "break-word",
   },
   sidebarTitle: {
     fontFamily:    T.fontSans,
@@ -157,7 +154,6 @@ const S = {
     margin:        0,
   },
 
-  // Sidebar sections
   sidebarBody: {
     padding:  "0 20px",
     flex:     1,
@@ -178,7 +174,6 @@ const S = {
     borderBottom:  `1px solid ${T.goldRule}`,
   },
 
-  // Contact rows
   contactRow: {
     display:      "flex",
     alignItems:   "flex-start",
@@ -207,34 +202,6 @@ const S = {
     wordBreak:      "break-all",
   },
 
-  // Skill bar
-  skillRow: {
-    marginBottom: "9px",
-  },
-  skillLabel: {
-    display:        "flex",
-    justifyContent: "space-between",
-    marginBottom:   "4px",
-  },
-  skillName: {
-    fontSize:   "10px",
-    color:      "#C8CDD6",
-    fontWeight: 500,
-  },
-  skillBarTrack: {
-    height:       "2px",
-    background:   T.sidebarBorder,
-    borderRadius: "2px",
-    overflow:     "hidden",
-  },
-  skillBarFill: (pct) => ({
-    height:       "100%",
-    width:        `${pct}%`,
-    background:   `linear-gradient(90deg, ${T.goldDim}, ${T.goldPrimary})`,
-    borderRadius: "2px",
-  }),
-
-  // Flat skill chip (for string arrays)
   skillChip: {
     display:      "inline-block",
     background:   T.sidebarDeep,
@@ -248,7 +215,6 @@ const S = {
     lineHeight:   1.5,
   },
 
-  // Language row
   langRow: {
     display:        "flex",
     justifyContent: "space-between",
@@ -270,13 +236,13 @@ const S = {
 
   // ── Main content ──────────────────────────────────────────────────────────
   content: {
-    width:         T.contentW,
+    width:         T.contentW,   // overridden to 100% on mobile via CSS
     display:       "flex",
     flexDirection: "column",
     position:      "relative",
+    boxSizing:     "border-box",
   },
 
-  // Content top bar
   contentTopBar: {
     height:     "4px",
     background: `linear-gradient(90deg, ${T.border}, ${T.border})`,
@@ -284,19 +250,19 @@ const S = {
   },
 
   contentInner: {
-    padding: "28px 30px 40px",
+    padding: "28px clamp(16px, 4vw, 30px) 40px",
     flex:    1,
   },
 
-  // Name / title hero (main content top)
   heroName: {
     fontFamily:    T.fontSerif,
-    fontSize:      "30px",
+    fontSize:      "clamp(20px, 5vw, 30px)",
     fontWeight:    700,
     color:         T.ink,
     letterSpacing: "-0.02em",
     lineHeight:    1.1,
     margin:        "0 0 5px",
+    wordBreak:     "break-word",
   },
   heroTitle: {
     fontFamily:    T.fontSans,
@@ -314,7 +280,6 @@ const S = {
     border:     "none",
   },
 
-  // Content section
   section: {
     marginBottom: "20px",
   },
@@ -347,18 +312,16 @@ const S = {
     background: T.border,
   },
 
-  // Summary
   summaryText: {
-    fontSize:   "11.5px",
-    color:      T.inkMid,
-    lineHeight: 1.8,
-    margin:     0,
-    fontStyle:  "italic",
-    borderLeft: `3px solid ${T.goldPrimary}`,
+    fontSize:    "11.5px",
+    color:       T.inkMid,
+    lineHeight:  1.8,
+    margin:      0,
+    fontStyle:   "italic",
+    borderLeft:  `3px solid ${T.goldPrimary}`,
     paddingLeft: "14px",
   },
 
-  // Entry (experience / projects)
   entryBlock: {
     marginBottom:  "16px",
     paddingBottom: "16px",
@@ -366,26 +329,28 @@ const S = {
     position:      "relative",
   },
   entryBlockLast: {
-    marginBottom: "0",
+    marginBottom:  "0",
     paddingBottom: "0",
-    borderBottom: "none",
+    borderBottom:  "none",
   },
   entryRow: {
     display:        "flex",
     justifyContent: "space-between",
     alignItems:     "flex-start",
     flexWrap:       "wrap",
-    gap:            "2px 8px",
+    gap:            "4px 8px",
     marginBottom:   "2px",
   },
   entryTitle: {
-    fontFamily:  T.fontSans,
-    fontSize:    "12.5px",
-    fontWeight:  700,
-    color:       T.ink,
-    margin:      0,
-    lineHeight:  1.3,
+    fontFamily:    T.fontSans,
+    fontSize:      "12.5px",
+    fontWeight:    700,
+    color:         T.ink,
+    margin:        0,
+    lineHeight:    1.3,
     letterSpacing: "-0.01em",
+    flex:          "1 1 auto",
+    wordBreak:     "break-word",
   },
   entryDate: {
     fontSize:      "9px",
@@ -397,6 +362,8 @@ const S = {
     padding:       "2px 7px",
     borderRadius:  "3px",
     border:        `1px solid ${T.goldRule}`,
+    flexShrink:    0,
+    alignSelf:     "flex-start",
   },
   entrySubtitle: {
     fontSize:   "10.5px",
@@ -418,17 +385,16 @@ const S = {
     position:     "relative",
   },
   bulletDot: {
-    position:  "absolute",
-    left:      "0",
-    top:       "7px",
-    width:     "4px",
-    height:    "4px",
+    position:     "absolute",
+    left:         "0",
+    top:          "7px",
+    width:        "4px",
+    height:       "4px",
     borderRadius: "50%",
-    background: T.goldPrimary,
-    flexShrink: 0,
+    background:   T.goldPrimary,
+    flexShrink:   0,
   },
 
-  // Project
   projectCard: {
     background:   T.rowAlt,
     border:       `1px solid ${T.border}`,
@@ -446,15 +412,19 @@ const S = {
     marginBottom:   "4px",
   },
   projectTitle: {
-    fontSize:    "12px",
-    fontWeight:  700,
-    color:       T.ink,
-    margin:      0,
+    fontSize:      "12px",
+    fontWeight:    700,
+    color:         T.ink,
+    margin:        0,
     letterSpacing: "-0.01em",
+    flex:          "1 1 auto",
+    wordBreak:     "break-word",
   },
   projectLinks: {
-    display: "flex",
-    gap:     "8px",
+    display:   "flex",
+    gap:       "8px",
+    flexWrap:  "wrap",
+    flexShrink: 0,
   },
   projectLink: {
     fontSize:       "9px",
@@ -481,30 +451,34 @@ const S = {
     letterSpacing: "0.04em",
   },
 
-  // Education
   eduRow: {
     display:        "flex",
     justifyContent: "space-between",
     alignItems:     "flex-start",
-    gap:            "8px",
+    flexWrap:       "wrap",
+    gap:            "4px 8px",
     marginBottom:   "3px",
   },
   eduDegree: {
-    fontSize:    "12px",
-    fontWeight:  700,
-    color:       T.ink,
-    margin:      0,
+    fontSize:      "12px",
+    fontWeight:    700,
+    color:         T.ink,
+    margin:        0,
     letterSpacing: "-0.01em",
+    flex:          "1 1 auto",
+    wordBreak:     "break-word",
   },
   eduDate: {
-    fontSize:   "9px",
-    color:      T.goldPrimary,
-    fontWeight: 600,
-    whiteSpace: "nowrap",
-    background: T.goldGlow,
-    padding:    "2px 7px",
+    fontSize:     "9px",
+    color:        T.goldPrimary,
+    fontWeight:   600,
+    whiteSpace:   "nowrap",
+    background:   T.goldGlow,
+    padding:      "2px 7px",
     borderRadius: "3px",
-    border:     `1px solid ${T.goldRule}`,
+    border:       `1px solid ${T.goldRule}`,
+    flexShrink:   0,
+    alignSelf:    "flex-start",
   },
   eduInstitution: {
     fontSize:   "10.5px",
@@ -517,7 +491,6 @@ const S = {
     color:    T.inkFaint,
   },
 
-  // Cert row
   certRow: {
     display:      "flex",
     alignItems:   "center",
@@ -537,14 +510,14 @@ const S = {
     color:      T.ink,
     margin:     0,
     lineHeight: 1.3,
+    wordBreak:  "break-word",
   },
   certMeta: {
-    fontSize: "9.5px",
-    color:    T.inkFaint,
+    fontSize:  "9.5px",
+    color:     T.inkFaint,
     marginTop: "1px",
   },
 
-  // Achievement
   achieveItem: {
     display:      "flex",
     alignItems:   "flex-start",
@@ -559,24 +532,82 @@ const S = {
     lineHeight: 1,
   },
   achieveText: {
-    fontSize:  "11px",
-    color:     T.inkMid,
+    fontSize:   "11px",
+    color:      T.inkMid,
     lineHeight: 1.65,
-    margin:    0,
+    margin:     0,
+    wordBreak:  "break-word",
   },
 };
 
-// ─── Print CSS ────────────────────────────────────────────────────────────────
+// ─── Print + responsive stylesheet ───────────────────────────────────────────
 const PRINT_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ── Print: lock to A4 two-column layout ── */
 @media print {
   @page { size: A4; margin: 0; }
   body  { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .exec-page-wrapper { padding: 0 !important; background: white !important; min-height: unset !important; }
-  .exec-a4-page      { box-shadow: none !important; }
-  .page-break-avoid  { break-inside: avoid; page-break-inside: avoid; }
+
+  .exec-page-wrapper {
+    padding: 0 !important;
+    background: white !important;
+    min-height: unset !important;
+  }
+  .exec-a4-page {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: none !important;
+    flex-direction: row !important;
+    box-shadow: none !important;
+  }
+  .exec-sidebar {
+    width: 31% !important;
+    padding-bottom: 40px !important;
+  }
+  .exec-content {
+    width: 69% !important;
+  }
+  .exec-sidebar-body {
+    padding: 0 20px !important;
+  }
+  .page-break-avoid { break-inside: avoid; page-break-inside: avoid; }
   a { color: inherit !important; text-decoration: none !important; }
+}
+
+/* ── Mobile: stack sidebar above main content (≤ 600px) ── */
+@media screen and (max-width: 600px) {
+  .exec-page-wrapper {
+    padding: 0 !important;
+    background: ${T.sidebarBg} !important;
+    align-items: stretch !important;
+  }
+  .exec-a4-page {
+    flex-direction: column !important;
+    box-shadow: none !important;
+    max-width: 100% !important;
+  }
+  .exec-sidebar {
+    width: 100% !important;
+    padding-bottom: 24px !important;
+  }
+  /* On mobile, lay sidebar internals in a more compact way */
+  .exec-sidebar-body {
+    padding: 0 16px !important;
+  }
+  .exec-content {
+    width: 100% !important;
+  }
+}
+
+/* ── Narrow tablet: slightly tighten sidebar (601px – 768px) ── */
+@media screen and (min-width: 601px) and (max-width: 768px) {
+  .exec-page-wrapper {
+    padding: 16px 8px !important;
+  }
+  .exec-a4-page {
+    max-width: 100% !important;
+  }
 }
 `;
 
@@ -655,7 +686,6 @@ const ExecutiveTemplate = ({ resume = {} }) => {
 
   const topSummary = summary || resume.summary || "";
 
-  // Normalise skills
   const isCategorised = skills.length > 0 && typeof skills[0] === "object";
   const flatSkills    = isCategorised ? null : skills;
   const groupedSkills = isCategorised ? skills : null;
@@ -667,7 +697,7 @@ const ExecutiveTemplate = ({ resume = {} }) => {
         <div style={S.page} className="exec-a4-page">
 
           {/* ── SIDEBAR ─────────────────────────────────────────────────── */}
-          <aside style={S.sidebar}>
+          <aside style={S.sidebar} className="exec-sidebar">
             <div style={S.sidebarTopBar} />
 
             {/* Photo + Name */}
@@ -683,7 +713,7 @@ const ExecutiveTemplate = ({ resume = {} }) => {
               {title    && <p  style={S.sidebarTitle}>{title}</p>}
             </div>
 
-            <div style={S.sidebarBody}>
+            <div style={S.sidebarBody} className="exec-sidebar-body">
 
               {/* Contact */}
               {(email || phone || location) && (
@@ -794,23 +824,20 @@ const ExecutiveTemplate = ({ resume = {} }) => {
           </aside>
 
           {/* ── MAIN CONTENT ──────────────────────────────────────────────── */}
-          <main style={S.content}>
+          <main style={S.content} className="exec-content">
             <div style={S.contentTopBar} />
             <div style={S.contentInner}>
 
-              {/* Hero name / title */}
               {fullName && <h1 style={S.heroName}>{fullName}</h1>}
               {title    && <p  style={S.heroTitle}>{title}</p>}
               <hr style={S.heroRule} />
 
-              {/* Executive Summary */}
               {topSummary && (
                 <ContentSection title="Executive Summary">
                   <p style={S.summaryText}>{topSummary}</p>
                 </ContentSection>
               )}
 
-              {/* Leadership Experience */}
               {Array.isArray(experience) && experience.length > 0 && (
                 <ContentSection title="Leadership Experience">
                   {experience.map((job, i) => (
@@ -837,7 +864,6 @@ const ExecutiveTemplate = ({ resume = {} }) => {
                 </ContentSection>
               )}
 
-              {/* Projects */}
               {projects.length > 0 && (
                 <ContentSection title="Projects">
                   {projects.map((proj, i) => (
@@ -875,7 +901,6 @@ const ExecutiveTemplate = ({ resume = {} }) => {
                 </ContentSection>
               )}
 
-              {/* Achievements */}
               {achievements.length > 0 && (
                 <ContentSection title="Achievements">
                   {achievements.map((ach, i) => {
@@ -892,7 +917,6 @@ const ExecutiveTemplate = ({ resume = {} }) => {
                 </ContentSection>
               )}
 
-              {/* Education */}
               {education.length > 0 && (
                 <ContentSection title="Education">
                   {education.map((edu, i) => (
@@ -917,7 +941,6 @@ const ExecutiveTemplate = ({ resume = {} }) => {
                 </ContentSection>
               )}
 
-              {/* Certifications */}
               {certifications.length > 0 && (
                 <ContentSection title="Certifications">
                   {certifications.map((cert, i) => (
