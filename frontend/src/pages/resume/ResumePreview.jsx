@@ -295,7 +295,7 @@ export default function ResumePreview() {
 const PREVIEW_STYLES = `
   .preview-page-wrapper { min-height: 100vh; background-color: #F1F5F9; display: flex; flex-direction: column; font-family: 'DM Sans', sans-serif; }
   .flex-center { display: flex; align-items: center; justify-content: center; }
-  .preview-topbar { height: 64px; background: #ffffff; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; z-index: 50; }
+  .preview-topbar { height: 64px; background: #ffffff; border-bottom: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: sticky; top: 0; }
   .topbar-left { display: flex; align-items: center; gap: 12px; }
   .btn-back { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #475569; background: transparent; border: none; cursor: pointer; }
   .btn-back:hover { color: #111827; }
