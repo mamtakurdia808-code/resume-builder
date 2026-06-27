@@ -307,7 +307,7 @@ const PREVIEW_STYLES = `
   .btn-outline-action { background: #ffffff; color: #475569; border: 1px solid #E2E8F0; }
   .btn-outline-action:hover { background: #F1F5F9; border-color: #CBD5E1; }
 
-  .canvas-scroll-container { flex: 1; overflow-y: auto; padding: 40px 24px; display: flex; justify-content: center; align-items: flex-start; }
+  .canvas-scroll-container { flex: 1; padding: 40px 24px; display: flex; justify-content: center; align-items: flex-start; }
   .preview-doc-canvas{
     width:794px;
     min-height:1123px;
