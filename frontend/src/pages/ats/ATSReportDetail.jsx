@@ -349,6 +349,7 @@ const css = `
     border: 1px solid #cde8e8;
     border-radius: 14px;
     overflow: hidden;
+    page-break-inside: avoid;
   }
 
   .rd-card-full {
@@ -357,6 +358,7 @@ const css = `
     border-radius: 14px;
     overflow: hidden;
     margin-bottom: 20px;
+    page-break-inside: avoid;
   }
 
   .rd-card-header {
@@ -400,6 +402,7 @@ const css = `
 
   .rd-card-body {
     padding: 20px 22px;
+    page-break-inside: avoid;
   }
 
   /* ── Score Breakdown Bars ────────────────────────── */
