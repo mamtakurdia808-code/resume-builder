@@ -314,6 +314,8 @@ const PREVIEW_STYLES = `
     max-width:794px;
     background:#fff;
     margin:auto;
+    padding: 48px 56px;
+    box-sizing: border-box;
 }
 
   .prev-header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #0D9488; margin-bottom: 20px; }
