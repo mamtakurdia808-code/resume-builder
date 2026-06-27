@@ -72,44 +72,36 @@ export default function ResumePreview() {
   try {
     setDownloading(true);
 
-    // Temporarily force the element to exactly 794px for capture
-    const originalWidth = element.style.width;
-    const originalMaxWidth = element.style.maxWidth;
-    element.style.width = "794px";
-    element.style.maxWidth = "794px";
-
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollY: -window.scrollY,
-      width: 794,
-      windowWidth: 794,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
     });
-
-    // Restore original styles
-    element.style.width = originalWidth;
-    element.style.maxWidth = originalMaxWidth;
 
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
 
-    const pageWidth = 210;   // A4 width in mm
-    const pageHeight = 297;  // A4 height in mm
+    const pageWidth = 210;
+    const pageHeight = 297;
 
-    // Fix: calculate image height based on A4 width exactly
-    const imgHeight = (canvas.height / canvas.width) * pageWidth;
+    // Scale image to exactly fill A4 width
+    const imgHeightMm = (canvas.height * pageWidth) / canvas.width;
 
-    let heightLeft = imgHeight;
+    let heightLeft = imgHeightMm;
     let position = 0;
 
-    pdf.addImage(imgData, "PNG", 0, 0, pageWidth, imgHeight);
+    pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeightMm);
     heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
       position -= pageHeight;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
+      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeightMm);
       heightLeft -= pageHeight;
     }
 
@@ -313,14 +305,15 @@ const PREVIEW_STYLES = `
   .btn-outline-action:hover { background: #F1F5F9; border-color: #CBD5E1; }
 
   .canvas-scroll-container { flex: 1; padding: 40px 24px; display: flex; justify-content: center; align-items: flex-start; }
-  .preview-doc-canvas{
-    width:794px;
-    min-height:1123px;
-    max-width:794px;
-    background:#fff;
-    margin:auto;
-    padding: 48px 56px;
-    box-sizing: border-box;
+.preview-doc-canvas {
+  width: 794px;
+  min-height: 1123px;
+  max-width: 794px;
+  background: #fff;
+  margin: auto;
+  padding: 48px 56px;
+  box-sizing: border-box;
+  overflow: hidden; /* ADD THIS */
 }
 
   .prev-header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #0D9488; margin-bottom: 20px; }
