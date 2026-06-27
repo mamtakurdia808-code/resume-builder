@@ -67,44 +67,49 @@ export default function ResumePreview() {
   // Download PDF using html2canvas and jsPDF libraries
   const handleDownloadPDF = async () => {
   const element = document.getElementById("printable-resume-sheet");
-
   if (!element) return;
 
   try {
     setDownloading(true);
+
+    // Temporarily force the element to exactly 794px for capture
+    const originalWidth = element.style.width;
+    const originalMaxWidth = element.style.maxWidth;
+    element.style.width = "794px";
+    element.style.maxWidth = "794px";
 
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollY: -window.scrollY,
+      width: 794,
       windowWidth: 794,
-      windowHeight: 1123,
     });
 
-    const imgData = canvas.toDataURL("image/png");
+    // Restore original styles
+    element.style.width = originalWidth;
+    element.style.maxWidth = originalMaxWidth;
 
+    const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
 
-    const pageWidth = 210;
-    const pageHeight = 297;
+    const pageWidth = 210;   // A4 width in mm
+    const pageHeight = 297;  // A4 height in mm
 
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // Fix: calculate image height based on A4 width exactly
+    const imgHeight = (canvas.height / canvas.width) * pageWidth;
 
     let heightLeft = imgHeight;
     let position = 0;
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-
+    pdf.addImage(imgData, "PNG", 0, 0, pageWidth, imgHeight);
     heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-
+      position -= pageHeight;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-
+      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeight);
       heightLeft -= pageHeight;
     }
 
