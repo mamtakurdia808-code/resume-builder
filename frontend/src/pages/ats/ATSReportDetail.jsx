@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import html2pdf from "html2pdf.js";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
@@ -743,6 +742,50 @@ const css = `
     .rd-score-row-label { width: 100px; font-size: 12px; }
     .rd-btn-outline span, .rd-btn-danger-outline span { display: none; }
   }
+
+  .rd-card,
+.rd-card-full,
+.rd-hero,
+.rd-suggestion-item,
+.rd-score-row{
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.rd-body{
+    width:210mm;
+    max-width:210mm;
+    min-height:297mm;
+    margin:auto;
+    padding:12mm;
+    background:white;
+}
+@media print {
+
+  body{
+      background:white !important;
+  }
+
+  .rd-topbar{
+      display:none;
+  }
+
+  .rd-overlay{
+      display:none;
+  }
+
+  .rd-root{
+      background:white;
+  }
+
+  .rd-body{
+      width:100%;
+      max-width:100%;
+      padding:10mm;
+      margin:0;
+  }
+
+}
 `;
 
 /* ── Animated gauge ───────────────────────────────── */
@@ -837,57 +880,60 @@ export default function ATSReportDetail() {
 
   /* ── Download PDF via html2canvas + jsPDF ──────── */
   const handleDownload = async () => {
-    if (!printRef.current || downloading) return;
-    setDownloading(true);
-    try {
-      const element = printRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#f0fafa",
-        scrollY: -window.scrollY,
-        windowWidth: element.scrollWidth,
-        windowHeight: element.scrollHeight,
-      });
+  if (!printRef.current || downloading) return;
 
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
+  setDownloading(true);
 
-      const pdfW = pdf.internal.pageSize.getWidth();
-      const pdfH = pdf.internal.pageSize.getHeight();
-      const ratio = canvas.width / canvas.height;
-      const imgW = pdfW;
-      const imgH = imgW / ratio;
+  try {
+    const element = printRef.current;
 
-      let heightLeft = imgH;
-      let position = 0;
+    const opt = {
+      margin: [8, 8, 8, 8],
 
-      pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
-      heightLeft -= pdfH;
-
-      while (heightLeft > 0) {
-        position -= pdfH;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
-        heightLeft -= pdfH;
-      }
-
-      const fileName = `ATS-Report-${job_title || "report"}-${company_name || ""}`
+      filename: `ATS-Report-${job_title || "report"}-${company_name || ""}`
         .replace(/\s+/g, "-")
         .replace(/[^a-zA-Z0-9-]/g, "")
-        .toLowerCase();
+        .toLowerCase() + ".pdf",
 
-      pdf.save(`${fileName}.pdf`);
-    } catch (err) {
-      console.error("PDF generation failed:", err);
-    } finally {
-      setDownloading(false);
-    }
-  };
+      image: {
+        type: "jpeg",
+        quality: 1,
+      },
+
+      html2canvas: {
+        scale: 3,
+        useCORS: true,
+        backgroundColor: "#f0fafa",
+        scrollX: 0,
+        scrollY: 0,
+        letterRendering: true,
+      },
+
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+      },
+
+      pagebreak: {
+        mode: ["css", "legacy"],
+        avoid: [
+          ".rd-card",
+          ".rd-card-full",
+          ".rd-hero",
+          ".rd-suggestion-item",
+          ".rd-score-row",
+        ],
+      },
+    };
+
+    await html2pdf().set(opt).from(element).save();
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setDownloading(false);
+  }
+};
 
   /* ── Delete ───────────────────────────────────── */
   const handleDelete = async () => {
@@ -1018,7 +1064,9 @@ export default function ATSReportDetail() {
         </div>
 
         {/* ── Body ── */}
-        <div className="rd-body" ref={printRef}>
+        <div ref={printRef}>
+
+    <div className="rd-body">
 
           {/* ── Hero ── */}
           <div className="rd-hero">
@@ -1047,6 +1095,7 @@ export default function ATSReportDetail() {
               <div className="rd-hero-date-time">{time}</div>
             </div>
           </div>
+    </div>
 
           {/* ── Score Breakdown ── */}
           <div className="rd-card-full">
