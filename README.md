@@ -9,9 +9,7 @@
 ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
-ResumeAI is a full-stack AI-powered web application that enables users to create professional resumes, analyze ATS compatibility, receive AI-powered feedback, and enhance resume content using Google Gemini AI.
-
-Built with React, Vite, Node.js, Express, and PostgreSQL, ResumeAI provides a modern, responsive interface with secure authentication and cloud-based profile image management.
+ResumeAI is a full-stack AI-powered web application that enables users to build professional resumes, analyze ATS compatibility, receive AI-generated resume reviews, and rewrite resume content for improved job application success. Built with React, Node.js, Express, PostgreSQL, and Groq AI, it offers secure authentication, cloud-based profile management, and a responsive user experience.
 
 ---
 
@@ -165,9 +163,10 @@ npm run dev
 
 **Mamta Kurdia**
 
-GitHub: https://github.com/mamtakurdia808-code
+- GitHub: https://github.com/mamtakurdia808-code
+- LinkedIn: https://www.linkedin.com/in/mamta-kurdia808
 
-LinkedIn:https://www.linkedin.com/in/mamta-kurdia808
+⭐ If you like this project, consider starring the repository.
 
 ---
 
