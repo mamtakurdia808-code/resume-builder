@@ -9,6 +9,7 @@ import { getResumeById } from "../../services/resumeService";
 // PDF Generation Libraries
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
 
 function PreviewSection({ title, children }) {
   return (
@@ -65,52 +66,42 @@ export default function ResumePreview() {
   }, [id]);
 
   // Download PDF using html2canvas and jsPDF libraries
-  const handleDownloadPDF = async () => {
+  
+const handleDownloadPDF = () => {
   const element = document.getElementById("printable-resume-sheet");
+
   if (!element) return;
 
-  try {
-    setDownloading(true);
+  setDownloading(true);
 
-    const canvas = await html2canvas(element, {
-      scale: 2,
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: `${resumeTitle}.pdf`,
+    image: {
+      type: "jpeg",
+      quality: 1,
+    },
+    html2canvas: {
+      scale: 3,
       useCORS: true,
       backgroundColor: "#ffffff",
-      scrollY: -window.scrollY,
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
-    });
+      letterRendering: true,
+    },
+    jsPDF: {
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait",
+    },
+    pagebreak: {
+      mode: ["css", "legacy"],
+    },
+  };
 
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const pageWidth = 210;
-    const pageHeight = 297;
-
-    // Scale image to exactly fill A4 width
-    const imgHeightMm = (canvas.height * pageWidth) / canvas.width;
-
-    let heightLeft = imgHeightMm;
-    let position = 0;
-
-    pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeightMm);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position -= pageHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, pageWidth, imgHeightMm);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save(`${resumeTitle}.pdf`);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setDownloading(false);
-  }
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .save()
+    .finally(() => setDownloading(false));
 };
 
   if (loading) {
@@ -305,15 +296,13 @@ const PREVIEW_STYLES = `
   .btn-outline-action:hover { background: #F1F5F9; border-color: #CBD5E1; }
 
   .canvas-scroll-container { flex: 1; padding: 40px 24px; display: flex; justify-content: center; align-items: flex-start; }
-.preview-doc-canvas {
-  width: 794px;
-  min-height: 1123px;
-  max-width: 794px;
-  background: #fff;
-  margin: auto;
-  padding: 48px 56px;
-  box-sizing: border-box;
-  overflow: hidden; /* ADD THIS */
+.preview-doc-canvas{
+    width:210mm;
+    min-height:297mm;
+    box-sizing:border-box;
+    padding:15mm;
+    margin:auto;
+    background:#fff;
 }
 
   .prev-header { text-align: center; padding-bottom: 20px; border-bottom: 2px solid #0D9488; margin-bottom: 20px; }
