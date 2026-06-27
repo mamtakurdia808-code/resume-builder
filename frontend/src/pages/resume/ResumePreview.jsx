@@ -300,7 +300,7 @@ const PREVIEW_STYLES = `
     width:210mm;
     min-height:297mm;
     box-sizing:border-box;
-    padding:15mm;
+    padding:10mm;
     margin:auto;
     background:#fff;
 }
